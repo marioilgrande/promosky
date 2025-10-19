@@ -324,39 +324,23 @@
     else if(group==='tv'){ const pressed = btn.getAttribute('aria-pressed')==='true'; btn.setAttribute('aria-pressed', String(!pressed)); if(pressed) state.tv.delete(value); else state.tv.add(value) }
   })
 
+  /* ===== Listino TV (include anche UHD/4K) ===== */
   function composeTVListino(sel, nf){
     let subtotal = 0; const breakdown = []
     if(nf && nf!=='none'){ const nfv = LISTINO.base.netflix[nf]||0; subtotal += nfv; breakdown.push(`Sky TV + Netflix ${nf} ${nfv.toFixed(2)}€`) }
     else { subtotal += LISTINO.base.sky_tv; breakdown.push(`Sky TV ${LISTINO.base.sky_tv.toFixed(2)}€`) }
-    const P = LISTINO.base.pacchetti; const L={sport:'Sport',cinema:'Cinema',calcio:'Calcio',kids:'Kids'}
-    ;['sport','cinema','calcio','kids'].forEach(p=>{ if(sel.has(p)){ const add=P[p]||0; subtotal+=add; if(add>0) breakdown.push(`${L[p]} ${add.toFixed(2)}€`) } })
+    const P = LISTINO.base.pacchetti; const L={sport:'Sport',cinema:'Cinema',calcio:'Calcio',kids:'Kids',uhd:'UHD/4K'}
+    ;['sport','cinema','calcio','kids','uhd'].forEach(p=>{ if(sel.has(p)){ const add=P[p]||0; subtotal+=add; if(add>0) breakdown.push(`${L[p]} ${add.toFixed(2)}€`) } })
     return {subtotal:Number(subtotal.toFixed(2)), breakdown}
   }
 
+  /* ===== Extra per 3P (include anche UHD/4K se non incluso) ===== */
   function computeExtraFor3P(base, sel, nf){
-    const P=LISTINO.base.pacchetti; const L={sport:'Sport',cinema:'Cinema',calcio:'Calcio',kids:'Kids'}
+    const P=LISTINO.base.pacchetti; const L={sport:'Sport',cinema:'Cinema',calcio:'Calcio',kids:'Kids',uhd:'UHD/4K'}
     const included = new Set(base.included||[]); let extra=0; const breakdown=[]
-    ;['sport','cinema','calcio','kids'].forEach(p=>{ if(sel.has(p) && !included.has(p)){ const add=P[p]||0; if(add>0){ extra+=add; breakdown.push(`${L[p]} ${add.toFixed(2)}€`) } } })
+    ;['sport','cinema','calcio','kids','uhd'].forEach(p=>{ if(sel.has(p) && !included.has(p)){ const add=P[p]||0; if(add>0){ extra+=add; breakdown.push(`${L[p]} ${add.toFixed(2)}€`) } } })
     if(nf && nf!=='none'){ const delta = Math.max(0,(LISTINO.base.netflix[nf]||0) - LISTINO.base.sky_tv); if(delta>0){ extra+=delta; breakdown.push(`Netflix ${nf} +${delta.toFixed(2)}€`) } }
     return {extra:Number(extra.toFixed(2)), breakdown}
-  }
-
-  /* ===== UTIL: parsing scadenza e verifica con data locale ===== */
-  function parseScadenza(str){
-    if(!str) return null;
-    const m = String(str).match(/(\d{2})\/(\d{2})\/(\d{4})/);
-    if(!m) return null;
-    const d = new Date(+m[3], +m[2]-1, +m[1]); // yyyy, mm-1, dd
-    const backlog = String(str).match(/\+(\d+)gg/);
-    if(backlog){ d.setDate(d.getDate() + parseInt(backlog[1],10)); }
-    d.setHours(23,59,59,999); // valida fino a fine giorno
-    return d;
-  }
-  function isPromoExpired(scadenzaStr){
-    const end = parseScadenza(scadenzaStr);
-    if(!end) return false;
-    const today = new Date(); today.setHours(0,0,0,0);
-    return today > end;
   }
 
   function computeBest(){
@@ -372,12 +356,14 @@
       if(!voce) return {error:'Seleziona l\'opzione Voce (a consumo/unlimited).'}
       const std = PROMO.wifi.find(x=>x.id==='WIFI_STD')
       const of  = PROMO.wifi.find(x=>x.id==='WIFI_OF')
-      const best = {...std, totalValue: std.priceValue, isPromo:true, codice: std.codiceVoce ? (std.codiceVoce.unlimited || Object.values(std.codiceVoce)[0]) : '—', durata:'12 mesi' }
-      const alt  = {...of,  totalValue: of.priceValue,  isPromo:true, codice: of.codiceVoce ? (of.codiceVoce.unlimited  || Object.values(of.codiceVoce)[0]) : '—', openFiber:true, durata:'12 mesi' }
+      const voceKey = voce || 'consumo'
+      const best = {...std, totalValue: std.priceValue, isPromo:true, codice: std.codiceVoce ? (std.codiceVoce[voceKey] || Object.values(std.codiceVoce)[0]) : '—', durata:'12 mesi' }
+      const alt  = {...of,  totalValue: of.priceValue,  isPromo:true, codice: of.codiceVoce ? (of.codiceVoce[voceKey]  || Object.values(of.codiceVoce)[0]) : '—', openFiber:true, durata:'12 mesi' }
       return {best, alternatives:[alt], context:'wifi'}
     } else if(off==='upsell_wifi'){
       if(!voce) return {error:'Seleziona l\'opzione Voce (a consumo/unlimited).'}
       const std = PROMO.wifi.find(x=>x.id==='WIFI_STD')
+      const voceKey = voce || 'consumo'
       const best = {
         ...std,
         id:'UPSELL_WIFI',
@@ -385,14 +371,14 @@
         totalValue: std.priceValue,
         isPromo:true,
         durata:'12 mesi',
-        codice: std.codiceVoce ? (std.codiceVoce.unlimited || Object.values(std.codiceVoce)[0]) : '—',
+        codice: std.codiceVoce ? (std.codiceVoce[voceKey] || Object.values(std.codiceVoce)[0]) : '—',
         note: 'Solo per già clienti TV. Verifica con codice fiscale per eventuale offerta dedicata a 20,90€ per 12 mesi.'
       }
       return {best, context:'upsell_wifi'}
     } else if(off==='only_tv'){
       candidates = PROMO.tvOnly.filter(p=>p.match(sel,nf)).map(p=>{
         const included=new Set(p.included||[]); const P=LISTINO.base.pacchetti; let extra=0; const breakdown=[]
-        ;['sport','cinema','calcio','kids'].forEach(pk=>{ if(sel.has(pk) && !included.has(pk)){ const add=P[pk]||0; if(add>0){ extra+=add; breakdown.push(`${pk.charAt(0).toUpperCase()+pk.slice(1)} ${add.toFixed(2)}€`) } } })
+        ;['sport','cinema','calcio','kids','uhd'].forEach(pk=>{ if(sel.has(pk) && !included.has(pk)){ const add=P[pk]||0; if(add>0){ extra+=add; breakdown.push(`${pk.toUpperCase()==='UHD'?'UHD/4K':pk.charAt(0).toUpperCase()+pk.slice(1)} ${add.toFixed(2)}€`) } } })
         if(nf && nf!=='none'){
           if(p.includedNetflix){ const current=LISTINO.base.netflix[p.includedNetflix]||0; const wanted=LISTINO.base.netflix[nf]||0; const delta=Math.max(0,wanted-current); if(delta>0){ extra+=delta; breakdown.push(`Netflix upgrade +${delta.toFixed(2)}€`) } }
           else { const delta=Math.max(0,(LISTINO.base.netflix[nf]||0) - LISTINO.base.sky_tv); if(delta>0){ extra+=delta; breakdown.push(`Netflix ${nf} +${delta.toFixed(2)}€`) } }
@@ -402,14 +388,15 @@
     }
     if(candidates.length){
       candidates.sort((a,b)=> a.total!==b.total ? a.total-b.total : ((b.base.included||[]).filter(x=>sel.has(x)).length - (a.base.included||[]).filter(x=>sel.has(x)).length))
-      const ch=candidates[0]; const best={...ch.base}; best.totalValue=ch.total; best.breakdown=ch.breakdown; best.isPromo=true; if(best.codiceVoce){ best.codice = best.codiceVoce[voce] || Object.values(best.codiceVoce)[0] } return {best}
+      const ch=candidates[0]; const best={...ch.base}; best.totalValue=ch.total; best.breakdown=ch.breakdown; best.isPromo=true; if(best.codiceVoce){ const voceKey=state.voce||'consumo'; best.codice = best.codiceVoce[voceKey] || Object.values(best.codiceVoce)[0] } return {best}
     }
     if(off==='only_tv'){ const tv=composeTVListino(sel,nf); const best={ id:'LIST_TV', name: (nf!=='none'?`Composizione listino: Sky TV + Netflix ${nf}`:'Composizione listino: Sky TV'), priceValue:tv.subtotal, totalValue:tv.subtotal, attivazione:'Stream 19€', codice:'—', scadenza:'—', durata:'—', note:'Combinazione da listino (Sky TV + pacchetti + Netflix).', breakdown:tv.breakdown }; return {best} }
-    if(off==='wifi_tv'){ const wifiBest = PROMO.wifi[1]||PROMO.wifi[0]; const tv=composeTVListino(sel,nf); const total=Number((wifiBest.priceValue+tv.subtotal).toFixed(2)); const best={ id:'LIST_3P', name:`Composizione listino: ${wifiBest.name} + Sky TV`, priceValue:total, totalValue:total, attivazione:(wifiBest.attivazione||'-')+' + Stream 19€', codice:(wifiBest.codiceVoce?(wifiBest.codiceVoce[voce]||Object.values(wifiBest.codiceVoce)[0]):'—'), scadenza:wifiBest.scadenza||'—', durata:'—', note:'Composizione WiFi promo + TV a listino.', breakdown:[`${wifiBest.name} ${wifiBest.priceValue.toFixed(2)}€`].concat(tv.breakdown)}; return {best} }
-    if(off==='wifi'){ const wifiBest=PROMO.wifi[1]||PROMO.wifi[0]; const best={...wifiBest}; best.totalValue=wifiBest.priceValue; best.codice= wifiBest.codiceVoce? (wifiBest.codiceVoce[state.voce]||Object.values(best.codiceVoce)[0]):'—'; return {best} }
+    if(off==='wifi_tv'){ const wifiBest = PROMO.wifi[1]||PROMO.wifi[0]; const tv=composeTVListino(sel,nf); const total=Number((wifiBest.priceValue+tv.subtotal).toFixed(2)); const voceKey=state.voce||'consumo'; const best={ id:'LIST_3P', name:`Composizione listino: ${wifiBest.name} + Sky TV`, priceValue:total, totalValue:total, attivazione:(wifiBest.attivazione||'-')+' + Stream 19€', codice:(wifiBest.codiceVoce?(wifiBest.codiceVoce[voceKey]||Object.values(wifiBest.codiceVoce)[0]):'—'), scadenza:wifiBest.scadenza||'—', durata:'—', note:'Composizione WiFi promo + TV a listino.', breakdown:[`${wifiBest.name} ${wifiBest.priceValue.toFixed(2)}€`].concat(tv.breakdown)}; return {best} }
+    if(off==='wifi'){ const wifiBest=PROMO.wifi[1]||PROMO.wifi[0]; const voceKey=state.voce||'consumo'; const best={...wifiBest}; best.totalValue=wifiBest.priceValue; best.codice= wifiBest.codiceVoce? (wifiBest.codiceVoce[voceKey]||Object.values(wifiBest.codiceVoce)[0]):'—'; return {best} }
     return {error:'Nessuna combinazione disponibile.'}
   }
 
+  /* ===== Render risultati ===== */
   function renderResult(r){
     const noRes=qs('#noResult'), res=qs('#result'); if(r.error){ noRes.style.display='block'; noRes.textContent=r.error; res.style.display='none'; return }
     noRes.style.display='none'; res.style.display='block'
@@ -421,16 +408,7 @@
 
     qs('#attivazione').textContent = r.best.attivazione || '-'
     qs('#codice').textContent = r.best.codice || '-'
-
-    // Scadenza + badge "scaduta" se necessario
-    const scadStr = r.best.scadenza || '-'
-    const scadEl = qs('#scadenza')
-    const expired = isPromoExpired(scadStr)
-    if(expired){
-      scadEl.innerHTML = `${scadStr} <span class="badge" style="margin-left:8px;background:#ffe8e8;border-color:#ffcaca;color:#b42318">PROMO ATTUALMENTE SCADUTA</span>`
-    } else {
-      scadEl.textContent = scadStr
-    }
+    qs('#scadenza').textContent = r.best.scadenza || '-'
 
     const fBox = qs('#formulaBox');
     if(r.best.breakdown && r.best.breakdown.length){ fBox.style.display='inline-block'; fBox.innerHTML = `<b>Formula:</b> ${r.best.breakdown.join(' + ')} = <b>${formatEUR(total)}</b>` } else { fBox.style.display='none' }
@@ -456,7 +434,6 @@
     const altBox = qs('#wifiAlternatives');
     if (r.alternatives && r.alternatives.length) {
       const a = r.alternatives[0];
-      const altExpired = isPromoExpired(a.scadenza || '')
       altBox.style.display = 'block';
       altBox.innerHTML = `
         <div class="offerAlt">
@@ -468,7 +445,6 @@
             <span>Attivazione: ${a.attivazione || '-'}</span>
             <span>Scadenza: ${a.scadenza || '-'}</span>
             <span>Codice attivazione: <b>${a.codice || '-'}</b></span>
-            ${altExpired ? `<span style="background:#ffe8e8;border-color:#ffcaca;color:#b42318;font-weight:800">PROMO ATTUALMENTE SCADUTA</span>` : ``}
           </div>
           <div class="foot">
             <a class="btn secondary cover" href="https://www.sky.it/sky-wifi-fibra/verifica-copertura/zone" target="_blank" rel="noopener">
