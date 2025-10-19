@@ -350,8 +350,19 @@
     if(state.tipo==='business' && off==='wifi'){
       candidates = PROMO.businessWifi.map(p=>({base:p,total:p.priceValue,breakdown:[]}))
     } else if(off==='wifi_tv'){
-      if(!voce) return {error:'Seleziona l\'opzione Voce (a consumo/unlimited).'}
-      candidates = PROMO.threeP.filter(p=>p.match(sel,nf)).map(p=>{ const {extra,breakdown}=computeExtraFor3P(p,sel,nf); return {base:p,total:Number((p.priceValue+extra).toFixed(2)), breakdown} })
+  if(!voce) return {error:'Seleziona l\'opzione Voce (a consumo/unlimited).'}
+
+  // >>> FIX: includi SEMPRE il 3P base tra i candidati,
+  // anche se l'utente ha selezionato dei pack (es. solo Calcio)
+  const base3P = PROMO.threeP.find(p => p.id === '3P_BASE')
+  const others = PROMO.threeP.filter(p => p.id !== '3P_BASE' && p.match(sel, nf))
+  const list   = (base3P ? [base3P] : []).concat(others)
+
+  candidates = list.map(p => {
+    const { extra, breakdown } = computeExtraFor3P(p, sel, nf)
+    return { base: p, total: Number((p.priceValue + extra).toFixed(2)), breakdown }
+  })
+
     } else if(off==='wifi'){
       if(!voce) return {error:'Seleziona l\'opzione Voce (a consumo/unlimited).'}
       const std = PROMO.wifi.find(x=>x.id==='WIFI_STD')
