@@ -305,8 +305,10 @@
         included:['sport','uhd'], includedNetflix:null, attivazione:'Stream 19€',
         codice:'1100759', scadenza:'09/11/2025 (No backlog)', durata:'6 mesi promo',
         note:'Aggiunte possibili: Kids 5€, Calcio 8€, Cinema 10€.' },
-      { id:'TV_NF_STD', name:'SKY TV + Netflix Standard (con pubblicità)', match:(_,nf)=> nf==='standard' || nf==='none', price:'15,99€', priceValue:15.99, included:[], includedNetflix:'standard', attivazione:'Stream 19€', codice:'1100766', scadenza:'09/11/2025 (No backlog)', durata:'18 mesi', note:'Aggiunte: Kids 5€, Calcio 8€, Cinema 10€, Sport 22,90€.' },
-      { id:'TV_NF_STD_CIN', name:'SKY TV + Netflix Standard + CINEMA', match:(s,nf)=> (s.has('cinema')) && (nf==='standard' || nf==='none'), price:'15,99€ per 6 mesi poi 24,99€', priceValue:15.99, included:['cinema'], includedNetflix:'standard', attivazione:'Stream 19€', codice:'1100772', scadenza:'09/11/2025 (No backlog)', durata:'18 mesi (6+12)', note:'Include Cinema. Aggiunte: Kids 5€, Calcio 8€, Sport 22,90€.' },
+      // >>> QUI: la promo con Netflix Standard si attiva anche se l'utente seleziona "base"
+      { id:'TV_NF_STD', name:'SKY TV + Netflix Standard (con pubblicità)', match:(_,nf)=> nf==='standard' || nf==='none' || nf==='base', price:'15,99€', priceValue:15.99, included:[], includedNetflix:'standard', attivazione:'Stream 19€', codice:'1100766', scadenza:'09/11/2025 (No backlog)', durata:'18 mesi', note:'Aggiunte: Kids 5€, Calcio 8€, Cinema 10€, Sport 22,90€.' },
+      // idem per la variante con Cinema
+      { id:'TV_NF_STD_CIN', name:'SKY TV + Netflix Standard + CINEMA', match:(s,nf)=> (s.has('cinema')) && (nf==='standard' || nf==='none' || nf==='base'), price:'15,99€ per 6 mesi poi 24,99€', priceValue:15.99, included:['cinema'], includedNetflix:'standard', attivazione:'Stream 19€', codice:'1100772', scadenza:'09/11/2025 (No backlog)', durata:'18 mesi (6+12)', note:'Include Cinema. Aggiunte: Kids 5€, Calcio 8€, Sport 22,90€.' },
       { id:'TV_CIN_CAL', name:'SKY TV + CINEMA + CALCIO', match:(s)=> s.has('cinema') && s.has('calcio'), price:'19,99€', priceValue:19.99, included:['cinema','calcio'], includedNetflix:null, attivazione:'Stream 19€', codice:'1100739', scadenza:'09/11/2025 (No backlog)', durata:'18 mesi', note:'Aggiunte: Kids 5€, Netflix Base +5€, Sport 22,90€.' }
     ],
     threeP:[
@@ -416,7 +418,7 @@
             const add=P[pk]||0; if(add>0){ extra+=add; breakdown.push(`${pk.toUpperCase()==='UHD'?'UHD/4K':pk.charAt(0).toUpperCase()+pk.slice(1)} ${add.toFixed(2)}€`) }
           }
         })
-        // FIX: se l'utente ha Sport ma la promo NON include UHD e l'utente NON ha spuntato UHD, aggiungi automaticamente UHD +5€
+        // se ho Sport ma la promo NON include UHD e non è selezionato UHD, aggiungo UHD +5€
         if(sel.has('sport') && !included.has('uhd') && !sel.has('uhd')){
           const add = P.uhd || 0; if(add>0){ extra+=add; breakdown.push(`UHD/4K ${add.toFixed(2)}€ (con Sport)`) }
         }
