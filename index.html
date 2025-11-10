@@ -24,24 +24,24 @@
     .step{width:26px;height:26px;display:inline-grid;place-items:center;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:800;font-size:13px}
 
     .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    @media(max-width:820px){.row{grid-template-columns:1fr}}
     label{display:block;font-size:13px;color:#344052;margin:0 0 6px 2px;font-weight:700}
     select{width:100%;background:#fff;color:var(--text);border:1px solid var(--border);padding:12px;border-radius:12px;outline:none;font-size:14px;transition:box-shadow .2s,border-color .2s}
     select:focus{box-shadow:var(--ring);border-color:#96b8ff}
 
     .chips{display:flex;flex-wrap:wrap;gap:8px;padding:10px;background:var(--muted);border-radius:14px;border:1px solid var(--border)}
-    .chip{appearance:none;border:1px solid #dbe1f4;padding:9px 12px;border-radius:999px;font-size:13px;cursor:pointer;background:#fff;white-space:nowrap}
+    .chip{appearance:none;border:1px solid #dbe1f4;padding:11px 14px;border-radius:999px;font-size:14px;cursor:pointer;background:#fff;white-space:nowrap;line-height:1;min-height:40px}
     .chip[aria-pressed="true"]{background:linear-gradient(135deg,var(--accent),var(--accent2));border-color:transparent;color:#fff;font-weight:800}
+    .chip:focus-visible{outline:none;box-shadow:var(--ring)}
 
     .btn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:12px 16px;border-radius:12px;font-weight:800;cursor:pointer;box-shadow:0 6px 18px rgba(12,100,197,.25)}
     .btn.secondary{background:#fff;color:#0c64c5;border:1px solid #cfe1ff}
+    .btn:focus-visible{outline:none;box-shadow:var(--ring)}
 
     .results{margin-top:16px}
     .result-card{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);padding:22px}
     .result-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}
     .result-name{font-size:20px;font-weight:900}
     .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
-    @media(max-width:820px){.kpis{grid-template-columns:1fr}}
     .kpi{background:#f3f8ff;border:1px solid #d9e6ff;border-radius:12px;padding:12px}
     .kpi b{font-size:18px}
     .code{font-family:ui-monospace,monospace;background:#fff;border:1px solid #e5e9f6;padding:10px 12px;border-radius:10px}
@@ -77,6 +77,10 @@
     .pulse{animation:pulse 1.4s ease-in-out 1}
     @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(12,100,197,.25)}70%{box-shadow:0 0 0 12px rgba(12,100,197,0)}100%{box-shadow:none}}
 
+    /* ===== MOBILE OPTIMIZATION ===== */
+    @media (max-width:820px){
+      .row{grid-template-columns:1fr}
+    }
     @media (max-width:640px){
       .wrap{padding:0 12px}
       header{gap:10px}
@@ -85,6 +89,8 @@
       .form-header{flex-direction:column;align-items:flex-start;gap:6px}
       .row{gap:10px}
       .chips{overflow-x:auto;flex-wrap:nowrap;gap:8px;padding:10px 8px}
+      .chip{font-size:15px;padding:12px 14px;min-height:44px}
+      select{padding:14px;font-size:15px}
       .result-card{padding:16px;border-radius:16px}
       .result-head{flex-direction:column;gap:12px}
       .result-name{font-size:18px}
@@ -92,6 +98,7 @@
       .priceValue{font-size:38px}
       .priceLabel{font-size:11px}
       .priceDetail{font-size:13px}
+      .kpis{grid-template-columns:1fr}
       .kpi b{font-size:16px}
       .btn,.btn.secondary{width:100%}
       #contractCta{padding:14px}
@@ -100,14 +107,24 @@
       .offerAlt .meta span{font-size:12px}
       dialog{width:96%}
       .recap{padding:14px}
+
+      /* Sticky action bar per i CTA principali */
+      .actions-sticky{position:sticky;bottom:8px;z-index:5;background:linear-gradient(180deg, rgba(247,249,255,.6), rgba(247,249,255,1));padding:8px;border-radius:14px;border:1px solid var(--border);backdrop-filter:saturate(1.2) blur(6px);box-shadow:0 8px 24px rgba(12,100,197,.10)}
+      .actions-sticky .btn{width:100%}
+    }
+
+    /* Riduzione animazioni per utenti sensibili */
+    @media (prefers-reduced-motion: reduce){
+      .pulse{animation:none}
+      *{scroll-behavior:auto}
     }
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <div class="brand"><div class="logo"></div><div><h1>PROMO SKY IN CORSO</h1></div></div>
-      <button class="btn secondary" id="resetBtn">Pulisci</button>
+      <div class="brand"><div class="logo" aria-hidden="true"></div><div><h1>PROMO SKY IN CORSO</h1></div></div>
+      <button class="btn secondary" id="resetBtn" aria-label="Pulisci tutti i campi">Pulisci</button>
     </header>
 
     <section class="form-card" id="formCard">
@@ -118,14 +135,14 @@
 
       <div class="row">
         <div>
-          <label>Tipologia cliente</label>
+          <label for="tipoCliente">Tipologia cliente</label>
           <select id="tipoCliente">
             <option value="" selected disabled>Seleziona…</option>
             <option value="privato">Privato</option>
           </select>
         </div>
         <div>
-          <label>Offerta richiesta</label>
+          <label for="offerta">Offerta richiesta</label>
           <select id="offerta">
             <option value="" selected disabled>Seleziona…</option>
             <option value="only_tv">Only TV</option>
@@ -160,9 +177,7 @@
           <div>
             <label>Netflix</label>
             <div class="chips" id="chipsNF">
-              <!-- default: none -->
               <button class="chip" data-group="nf" data-value="none" aria-pressed="true">Nessuno</button>
-              <!-- renamed options with notes in title -->
               <button class="chip" data-group="nf" data-value="base" aria-pressed="false" title="2 schermi in HD">Standard con pubblicità</button>
               <button class="chip" data-group="nf" data-value="standard" aria-pressed="false" title="2 schermi in HD">Standard</button>
               <button class="chip" data-group="nf" data-value="premium" aria-pressed="false" title="4 schermi in 4K">Premium</button>
@@ -175,9 +190,9 @@
         <div class="muted">Seleziona i pacchetti desiderati. Le promo TV/3P vengono proposte automaticamente.</div>
       </div>
 
-      <div class="row" style="margin-top:12px">
+      <div class="row actions-sticky" style="margin-top:12px">
         <div></div>
-        <div style="text-align:right;display:flex;gap:8px;justify-content:flex-end">
+        <div style="text-align:right;display:flex;gap:8px;justify-content:flex-end;width:100%">
           <button class="btn secondary" id="listinoBtn" title="Visualizza dataset interno">Dataset</button>
           <button class="btn" id="calcBtn">Calcola offerta</button>
         </div>
@@ -211,7 +226,7 @@
           </div>
           <div class="kpi">
             <div class="muted">Codice attivazione</div>
-            <div style="display:flex;align-items:center;gap:8px">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
               <span class="code" id="codice">-</span>
               <button class="btn secondary" id="copyCode">Copia</button>
             </div>
@@ -248,14 +263,12 @@
           const LISTINO = {
             base:{
               sky_tv:14.90,
-              /* Prezzi invariati: rinomina solo etichette */
               netflix:{ base:14.90, standard:21.90, premium:27.90 },
               pacchetti:{ cinema:10.00, sport:22.90, calcio:8.00, kids:5.00, hd:5.00, uhd:5.00 }
             }
           }
 
           const PROMO = {
-            /* TV-ONLY — Black Friday */
             tvOnly:[
               {
                 id:'BF_TV_NF',
@@ -294,7 +307,6 @@
                 note:'Compatibile con SKY GLASS 43" Nero a 199€ una tantum (consegna gratuita).'
               }
             ],
-            /* 3P standard */
             threeP:[
               { id:'3P_CIN', name:'3P + CINEMA (TV+UHD+WiFi+Cinema)', match:(s)=> s.has('cinema'),
                 price:'35,80€', priceValue:35.80, included:['cinema','uhd'],
@@ -312,7 +324,6 @@
                 scadenza:'01/12/2025 (No backlog)', durata:'18 mesi',
                 note:'Pacchetti aggiuntivi a listino; Netflix opzionale.' }
             ],
-            /* GLASS invariato */
             glassThreeP:[
               { id:'GLASS_CINEMA', name:'3P GLASS: TV + Cinema + 4K + Netflix Base',
                 match:(s)=> s.has('cinema'),
@@ -336,7 +347,6 @@
                 codice:'1300221', scadenza:'10/12/2025', durata:'18 mesi',
                 note:'SKY GLASS 43" Nero incluso nel bundle · costo in soluzione unica 199€ (una tantum).' }
             ],
-            /* WiFi privati — PATCH: 22,90€, attivazione 29€, senza vincoli */
             wifi:[
               {
                 id:'WIFI_ONLY',
@@ -352,7 +362,6 @@
                 note:'Offerta solo WiFi BLACK FRIDAY. Nessun vincolo di permanenza.'
               }
             ],
-            /* WiFi business invariato */
             businessWifi:[
               { id:'BIZ_WIFI_STD', name:'Sky WiFi Business', match:()=>true,
                 price:'24,50€ + IVA (12 mesi)', priceValue:24.50,
@@ -386,7 +395,6 @@
             else if(group==='tv'){ const pressed = btn.getAttribute('aria-pressed')==='true'; btn.setAttribute('aria-pressed', String(!pressed)); if(pressed) state.tv.delete(value); else state.tv.add(value) }
           })
 
-          /* Listino TV con UHD obbligatorio se c'è Sport e non incluso */
           function composeTVListino(sel, nf){
             let subtotal = 0; const breakdown = []
             if(nf && nf!=='none'){
@@ -407,7 +415,6 @@
             return {subtotal:Number(subtotal.toFixed(2)), breakdown}
           }
 
-          /* Extra rispetto a included[] (usato anche per GLASS) */
           function computeExtraAgainstIncluded(base, sel, nf){
             const P=LISTINO.base.pacchetti; const L={sport:'Sport',cinema:'Cinema',calcio:'Calcio',kids:'Kids',uhd:'UHD/4K'}
             const included = new Set(base.included||[]); let extra=0; const breakdown=[]
@@ -437,7 +444,7 @@
             if(state.tipo==='business' && off==='wifi'){
               candidates = PROMO.businessWifi.map(p=>({base:p,total:p.priceValue,breakdown:[],extra:0}))
             }
-            else if(off==='wifi_tv'){ /* 3P standard */
+            else if(off==='wifi_tv'){
               if(!voce) return {error:'Seleziona l\'opzione Voce (a consumo/unlimited).'}
               const base3P   = PROMO.threeP.find(p => p.id === '3P_BASE')
               const others   = PROMO.threeP.filter(p => p.id !== '3P_BASE' && p.match(sel, nf))
@@ -448,7 +455,7 @@
                 return { base: p, total: Number((p.priceValue + extra).toFixed(2)), breakdown, extra }
               })
             }
-            else if(off==='wifi_tv_glass'){ /* GLASS */
+            else if(off==='wifi_tv_glass'){
               const list = PROMO.glassThreeP
                 .filter(p => p.match(sel, nf))
                 .concat(PROMO.glassThreeP.filter(p => !p.match(sel, nf)))
@@ -542,7 +549,6 @@
           }
 
           function extractMonths(str){ if(!str) return null; const m = String(str).match(/(\d+)\s*mesi/i); return m ? parseInt(m[1],10) : null }
-          function cap(s){ return s ? s.charAt(0).toUpperCase()+s.slice(1) : s }
           function sumExtrasFromBreakdown(breakdown){
             if(!breakdown || !breakdown.length) return 0;
             return breakdown.reduce((acc, item)=>{
@@ -604,7 +610,6 @@
             const extrasSum = r.best.extraMonthly ?? sumExtrasFromBreakdown(r.best.breakdown);
             const att = r.best.attivazione || '—';
 
-            // gestione "senza vincoli"
             let vincolo, durata;
             if (r.best.noCommitment || /senza\s*vincoli/i.test(String(r.best.durata||''))) {
               vincolo = '—';
@@ -645,13 +650,16 @@
 
             const altBox = qs('#wifiAlternatives'); altBox.style.display='none'; altBox.innerHTML='';
             qs('#contractCta').style.display = 'block';
+
+            // Scroll in evidenza su mobile
+            res.classList.remove('pulse'); void res.offsetWidth; res.classList.add('pulse');
+            res.scrollIntoView({behavior:'smooth', block:'start'});
           }
 
           qs('#calcBtn').addEventListener('click', ()=> renderResult(computeBest()))
           qs('#resetBtn').addEventListener('click', ()=> location.reload())
           qs('#copyCode').addEventListener('click', ()=>{ const code=qs('#codice').textContent.trim(); if(!code||code==='-') return; navigator.clipboard.writeText(code) })
 
-          /* ===== COSTI DI RECESSO ===== */
           const COSTI_RECESSO = {
             tv:  [10.10,20.20,30.30,40.40,50.50,50.50,50.50,50.50,50.50,50.50,50.50,50.50,50.50,40.40,30.30,20.20,10.10,0.00],
             tv1: [14.10,28.20,42.30,56.40,70.50,70.50,70.50,70.50,70.50,70.50,70.50,70.50,70.50,56.40,42.30,28.20,14.10,0.00],
@@ -659,7 +667,6 @@
             tv3: [22.10,44.20,66.30,88.40,110.50,110.50,110.50,110.50,110.50,110.50,110.50,110.50,110.50,88.40,66.30,44.20,22.10,0.00],
           };
 
-          /* --- FIX RECESSO: delegazione click --- */
           document.addEventListener('click', (ev)=>{
             const btn = ev.target.closest('#calcRecesso');
             if(!btn) return;
@@ -682,7 +689,6 @@
             qs('#detailRecesso').textContent = `Mese ${meseSel}° · Configurazione: ${labelPack} · Valore tabellare: ${formatEUR(valore)}.`;
           });
 
-          /* Dataset dialog */
           const datasetDlg=qs('#datasetDlg')
           qs('#listinoBtn').addEventListener('click', ()=>{
             const DATA={
@@ -695,7 +701,6 @@
         })();
     </script>
 
-    <!-- Sezione Recesso + Dataset dialog -->
     <details class="result-card" style="margin-top:16px">
       <summary class="btn" style="list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center">
         Calcolo costi di recesso (Privato) <span class="muted">clicca per aprire</span>
@@ -703,7 +708,7 @@
       <div style="padding-top:12px">
         <div class="row">
           <div>
-            <label>Mesi trascorsi dall'attivazione</label>
+            <label for="mesiTrascorsi">Mesi trascorsi dall'attivazione</label>
             <select id="mesiTrascorsi">
               <option value="" selected disabled>Seleziona mese…</option>
               <option value="1">1°</option><option value="2">2°</option><option value="3">3°</option>
@@ -715,7 +720,7 @@
             </select>
           </div>
           <div>
-            <label>Numero pacchetti TV attivi</label>
+            <label for="nPacchetti">Numero pacchetti TV attivi</label>
             <select id="nPacchetti">
               <option value="" selected disabled>Seleziona configurazione…</option>
               <option value="tv">Sky TV</option>
