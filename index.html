@@ -55,23 +55,46 @@
   }
   select:focus{box-shadow:var(--ring);border-color:#96b8ff}
 
-  /* Chip group scrollabile */
+  /* --- CHIPS: layout che non sborda su mobile --- */
+.chips{
+  /* da flex-scroll a griglia responsiva */
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap:8px;
+  padding:10px;
+  background:var(--muted);
+  border-radius:14px;
+  border:1px solid var(--border);
+  overflow:visible;              /* niente scroll orizzontale */
+}
+
+.chips .chip{
+  appearance:none;
+  width:100%;                    /* occupa tutta la cella */
+  text-align:center;
+  border:1px solid #dbe1f4;
+  padding:10px 12px;
+  border-radius:999px;
+  font-size:14px;
+  background:#fff;
+  box-shadow:var(--softshadow);
+  white-space:normal;            /* consente andare a capo se il testo è lungo */
+}
+
+.chip[aria-pressed="true"]{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-color:transparent;
+  color:#fff;
+  font-weight:800;
+}
+
+/* Su tablet/desktop torniamo a una disposizione più “compatta” */
+@media (min-width:760px){
   .chips{
-    display:flex; gap:8px; padding:10px;
-    background:var(--muted); border-radius:14px; border:1px solid var(--border);
-    overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;
-    scroll-snap-type:x mandatory;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   }
-  .chips::-webkit-scrollbar{display:none}
-  .chip{
-    appearance:none; border:1px solid #dbe1f4; padding:10px 14px;
-    border-radius:999px; font-size:14px; background:#fff; white-space:nowrap;
-    scroll-snap-align:start; box-shadow:var(--softshadow);
-  }
-  .chip[aria-pressed="true"]{
-    background:linear-gradient(135deg,var(--accent),var(--accent2));
-    border-color:transparent; color:#fff; font-weight:800;
-  }
+}
+
 
   .btn{
     background:linear-gradient(135deg,var(--accent),var(--accent2));
