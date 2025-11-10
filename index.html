@@ -74,7 +74,6 @@
     .recap-value{font-weight:800}
     .recap-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 
-    /* highlight recesso */
     .pulse{animation:pulse 1.4s ease-in-out 1}
     @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(12,100,197,.25)}70%{box-shadow:0 0 0 12px rgba(12,100,197,0)}100%{box-shadow:none}}
 
@@ -129,7 +128,7 @@
           <label>Offerta richiesta</label>
           <select id="offerta">
             <option value="" selected disabled>Seleziona…</option>
-            <option value="only_tv">Only TV e Sky Glass</option>
+            <option value="only_tv">Only TV</option>
             <option value="wifi">Sky Wifi</option>
             <option value="upsell_wifi">Upsell Wifi (già cliente TV)</option>
             <option value="wifi_tv">Sky Wifi + TV (3P)</option>
@@ -161,10 +160,15 @@
           <div>
             <label>Netflix</label>
             <div class="chips" id="chipsNF">
+              <!-- default: none -->
               <button class="chip" data-group="nf" data-value="none" aria-pressed="true">Nessuno</button>
-              <button class="chip" data-group="nf" data-value="base" aria-pressed="false">Base</button>
-              <button class="chip" data-group="nf" data-value="standard" aria-pressed="false">Standard</button>
-              <button class="chip" data-group="nf" data-value="premium" aria-pressed="false">Premium</button>
+              <!-- renamed options with notes in title -->
+              <button class="chip" data-group="nf" data-value="base" aria-pressed="false" title="2 schermi in HD">Standard con pubblicità</button>
+              <button class="chip" data-group="nf" data-value="standard" aria-pressed="false" title="2 schermi in HD">Standard</button>
+              <button class="chip" data-group="nf" data-value="premium" aria-pressed="false" title="4 schermi in 4K">Premium</button>
+            </div>
+            <div class="muted" style="margin-top:6px;font-size:12px">
+              Netflix: <b>Standard con pubblicità</b> = 2 schermi in HD · <b>Standard</b> = 2 schermi in HD · <b>Premium</b> = 4 schermi in 4K.
             </div>
           </div>
         </div>
@@ -235,27 +239,33 @@
           const qs = s => document.querySelector(s)
           const qsa = s => Array.from(document.querySelectorAll(s))
           const formatEUR = n => new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR'}).format(n)
-        
+
+          /* Helpers per etichette Netflix */
+          const NF_LABEL = { base:'Standard con pubblicità', standard:'Standard', premium:'Premium' }
+          const NF_NOTE  = { base:'2 schermi in HD', standard:'2 schermi in HD', premium:'4 schermi in 4K' }
+          const nfLabel = k => NF_LABEL[k] || k
+
           const LISTINO = {
             base:{
               sky_tv:14.90,
-              netflix:{ base:19.90, standard:23.90, premium:27.90 },
+              /* Prezzi invariati: rinomina solo etichette */
+              netflix:{ base:14.90, standard:21.90, premium:27.90 },
               pacchetti:{ cinema:10.00, sport:22.90, calcio:8.00, kids:5.00, hd:5.00, uhd:5.00 }
             }
           }
-        
+
           const PROMO = {
             /* TV-ONLY — Black Friday */
             tvOnly:[
               {
                 id:'BF_TV_NF',
-                name:'BLACK FRIDAY · Sky TV + Netflix (con pubblicità)',
-                match:(_,nf)=> nf==='standard' || nf==='none',
+                name:'BLACK FRIDAY · Sky TV + Netflix (Standard con pubblicità)',
+                match:(_,nf)=> nf==='base' || nf==='none',
                 price:'14,99€', priceValue:14.99,
-                included:[], includedNetflix:'standard',
+                included:[], includedNetflix:'base',
                 attivazione:'Stream 19€',
                 codice:'1100731',
-                scadenza:'01/12/2025',
+                scadenza:'01/11/2025',
                 durata:'18 mesi',
                 note:'Compatibile con SKY GLASS 43" Nero a 199€ una tantum (consegna gratuita).'
               },
@@ -267,24 +277,24 @@
                 included:['sport','uhd'], includedNetflix:null,
                 attivazione:'Stream 19€',
                 codice:'1100741',
-                scadenza:'01/12/2025',
+                scadenza:'01/11/2025',
                 durata:'18 mesi',
                 note:'Compatibile con SKY GLASS 43" Nero a 199€ una tantum (consegna gratuita).'
               },
               {
                 id:'BF_TV_NF_CIN',
-                name:'BLACK FRIDAY · Sky TV + Netflix (con pubblicità) + Cinema',
-                match:(s,nf)=> s.has('cinema') && (nf==='standard' || nf==='none'),
+                name:'BLACK FRIDAY · Sky TV + Netflix (Standard con pubblicità) + Cinema',
+                match:(s,nf)=> s.has('cinema') && (nf==='base' || nf==='none'),
                 price:'19,99€', priceValue:19.99,
-                included:['cinema'], includedNetflix:'standard',
+                included:['cinema'], includedNetflix:'base',
                 attivazione:'Stream 19€',
                 codice:'1100732',
-                scadenza:'01/12/2025',
+                scadenza:'01/11/2025',
                 durata:'18 mesi',
                 note:'Compatibile con SKY GLASS 43" Nero a 199€ una tantum (consegna gratuita).'
               }
             ],
-            /* 3P standard (ripulito: rimossa promo 3P_TV_CALCIO scaduta) */
+            /* 3P standard */
             threeP:[
               { id:'3P_CIN', name:'3P + CINEMA (TV+UHD+WiFi+Cinema)', match:(s)=> s.has('cinema'),
                 price:'35,80€', priceValue:35.80, included:['cinema','uhd'],
@@ -302,7 +312,7 @@
                 scadenza:'01/12/2025 (No backlog)', durata:'18 mesi',
                 note:'Pacchetti aggiuntivi a listino; Netflix opzionale.' }
             ],
-            /* NUOVE GLASS (invariato) */
+            /* GLASS invariato */
             glassThreeP:[
               { id:'GLASS_CINEMA', name:'3P GLASS: TV + Cinema + 4K + Netflix Base',
                 match:(s)=> s.has('cinema'),
@@ -326,20 +336,23 @@
                 codice:'1300221', scadenza:'10/12/2025', durata:'18 mesi',
                 note:'SKY GLASS 43" Nero incluso nel bundle · costo in soluzione unica 199€ (una tantum).' }
             ],
-            /* WiFi privati (invariato) */
+            /* WiFi privati — PATCH: 22,90€, attivazione 29€, senza vincoli */
             wifi:[
-              { id:'WIFI_STD', name:'Sky WiFi (Promo 12 mesi)', match:()=>true,
-                price:'25,90€ (12 mesi) – listino 29,90€', priceValue:25.90,
-                attivazione:'29,90€', codiceVoce:{consumo:'8122', unlimited:'8123'},
-                scadenza:'28/12/2025 (+2gg backlog)',
-                note:'Ultra WiFi +5€; Voce Unlimited +5€ (cod. 8123).' },
-              { id:'WIFI_OF', name:'Sky WiFi – Open Fiber Only (Promo 12 mesi)', match:()=>true,
-                price:'22,90€ (12 mesi)', priceValue:22.90,
-                attivazione:'29,90€', codiceVoce:{consumo:'1401189', unlimited:'1401190'},
-                scadenza:'28/12/2025 (+2gg backlog)',
-                note:'OF Only. Ultra WiFi +5€. Voce Unlimited codice 1401190.' }
+              {
+                id:'WIFI_ONLY',
+                name:'Sky WiFi (Only WiFi · Senza vincoli)',
+                match:()=>true,
+                price:'22,90€',
+                priceValue:22.90,
+                attivazione:'29€',
+                codiceVoce:{consumo:'1400936', unlimited:'1400937'},
+                scadenza:'08/12/2025',
+                durata:'Senza vincoli',
+                noCommitment:true,
+                note:'Offerta solo WiFi BLACK FRIDAY. Nessun vincolo di permanenza.'
+              }
             ],
-            /* WiFi business (invariato) */
+            /* WiFi business invariato */
             businessWifi:[
               { id:'BIZ_WIFI_STD', name:'Sky WiFi Business', match:()=>true,
                 price:'24,50€ + IVA (12 mesi)', priceValue:24.50,
@@ -352,19 +365,19 @@
                 note:'Promo OF Only. Dopo 12 mesi: 24,51€ + IVA / 28,61€ + IVA.' }
             ]
           }
-        
+
           const state = { tipo:null, off:null, voce:null, tv:new Set(), nf:'none' }
-        
+
           function syncBlocks(){
             const off = state.off
             qs('#voiceBlock').style.display = (off==='wifi' || off==='wifi_tv' || off==='upsell_wifi') ? 'block' : 'none'
             qs('#tvBlock').style.display    = (off==='only_tv' || off==='wifi_tv' || off==='wifi_tv_glass') ? 'block' : 'none'
           }
-        
+
           qs('#tipoCliente').addEventListener('change', e=>{ state.tipo=e.target.value })
           qs('#offerta').addEventListener('change', e=>{ state.off=e.target.value; syncBlocks() })
           ;(function(){ const t=qs('#tipoCliente'); const o=qs('#offerta'); if(t&&t.value) state.tipo=t.value; if(o&&o.value) state.off=o.value; syncBlocks() })()
-        
+
           document.addEventListener('click', (e)=>{
             const btn = e.target.closest('.chip'); if(!btn) return
             const group = btn.dataset.group, value = btn.dataset.value
@@ -372,22 +385,28 @@
             else if(group==='nf'){ qsa('#chipsNF .chip').forEach(b=>b.setAttribute('aria-pressed','false')); btn.setAttribute('aria-pressed','true'); state.nf=value }
             else if(group==='tv'){ const pressed = btn.getAttribute('aria-pressed')==='true'; btn.setAttribute('aria-pressed', String(!pressed)); if(pressed) state.tv.delete(value); else state.tv.add(value) }
           })
-        
+
           /* Listino TV con UHD obbligatorio se c'è Sport e non incluso */
           function composeTVListino(sel, nf){
             let subtotal = 0; const breakdown = []
-            if(nf && nf!=='none'){ const nfv = LISTINO.base.netflix[nf]||0; subtotal += nfv; breakdown.push(`Sky TV + Netflix ${nf} ${nfv.toFixed(2)}€`) }
-            else { subtotal += LISTINO.base.sky_tv; breakdown.push(`Sky TV ${LISTINO.base.sky_tv.toFixed(2)}€`) }
-        
+            if(nf && nf!=='none'){
+              const nfv = LISTINO.base.netflix[nf]||0;
+              subtotal += nfv;
+              breakdown.push(`Sky TV + Netflix ${nfLabel(nf)} ${nfv.toFixed(2)}€`)
+            } else {
+              subtotal += LISTINO.base.sky_tv;
+              breakdown.push(`Sky TV ${LISTINO.base.sky_tv.toFixed(2)}€`)
+            }
+
             const P = LISTINO.base.pacchetti; const L={sport:'Sport',cinema:'Cinema',calcio:'Calcio',kids:'Kids',uhd:'UHD/4K'}
             ;['sport','cinema','calcio','kids','uhd'].forEach(p=>{ if(sel.has(p)){ const add=P[p]||0; subtotal+=add; if(add>0) breakdown.push(`${L[p]} ${add.toFixed(2)}€`) } })
-        
+
             if(sel.has('sport') && !sel.has('uhd')){
               const add = P.uhd || 0; if(add>0){ subtotal += add; breakdown.push(`UHD/4K ${add.toFixed(2)}€ (con Sport)`) }
             }
             return {subtotal:Number(subtotal.toFixed(2)), breakdown}
           }
-        
+
           /* Extra rispetto a included[] (usato anche per GLASS) */
           function computeExtraAgainstIncluded(base, sel, nf){
             const P=LISTINO.base.pacchetti; const L={sport:'Sport',cinema:'Cinema',calcio:'Calcio',kids:'Kids',uhd:'UHD/4K'}
@@ -398,10 +417,10 @@
             if(nf && nf!=='none'){
               if(base.includedNetflix){
                 const current=LISTINO.base.netflix[base.includedNetflix]||0; const wanted=LISTINO.base.netflix[nf]||0;
-                const delta=Math.max(0,wanted-current); if(delta>0){ extra+=delta; breakdown.push(`Netflix upgrade +${delta.toFixed(2)}€`) }
+                const delta=Math.max(0,wanted-current); if(delta>0){ extra+=delta; breakdown.push(`Netflix ${nfLabel(nf)} +${delta.toFixed(2)}€`) }
               } else {
                 const delta=Math.max(0,(LISTINO.base.netflix[nf]||0) - LISTINO.base.sky_tv);
-                if(delta>0){ extra+=delta; breakdown.push(`Netflix ${nf} +${delta.toFixed(2)}€`) }
+                if(delta>0){ extra+=delta; breakdown.push(`Netflix ${nfLabel(nf)} +${delta.toFixed(2)}€`) }
               }
             }
             if(sel.has('sport') && !included.has('uhd') && !sel.has('uhd')){
@@ -440,21 +459,32 @@
             }
             else if(off==='wifi'){
               if(!voce) return {error:'Seleziona l\'opzione Voce (a consumo/unlimited).'}
-              const std = PROMO.wifi.find(x=>x.id==='WIFI_STD')
-              const of  = PROMO.wifi.find(x=>x.id==='WIFI_OF')
+              const std = PROMO.wifi.find(x=>x.id==='WIFI_ONLY')
               const voceKey = voce || 'consumo'
-              const best = {...std, totalValue: std.priceValue, isPromo:true, codice: std.codiceVoce ? (std.codiceVoce[voceKey] || Object.values(std.codiceVoce)[0]) : '—', durata:'12 mesi' }
-              const alt  = {...of,  totalValue: of.priceValue,  isPromo:true, codice: of.codiceVoce ? (of.codiceVoce[voceKey]  || Object.values(of.codiceVoce)[0]) : '—', openFiber:true, durata:'12 mesi' }
-              return {best, alternatives:[alt], context:'wifi'}
+              const best = {
+                ...std,
+                totalValue: std.priceValue,
+                isPromo: true,
+                codice: std.codiceVoce ? (std.codiceVoce[voceKey] || Object.values(std.codiceVoce)[0]) : '—',
+                durata: 'Senza vincoli',
+                noCommitment: true
+              }
+              return {best, context:'wifi'}
             }
             else if(off==='upsell_wifi'){
               if(!voce) return {error:'Seleziona l\'opzione Voce (a consumo/unlimited).'}
-              const std = PROMO.wifi.find(x=>x.id==='WIFI_STD')
+              const std = PROMO.wifi.find(x=>x.id==='WIFI_ONLY')
               const voceKey = voce || 'consumo'
-              const best = {...std, id:'UPSELL_WIFI', name:'Upsell WiFi (già cliente TV)',
-                totalValue: std.priceValue, isPromo:true, durata:'12 mesi',
+              const best = {
+                ...std,
+                id:'UPSELL_WIFI',
+                name:'Upsell WiFi (già cliente TV) · Senza vincoli',
+                totalValue: std.priceValue,
+                isPromo:true,
+                durata:'Senza vincoli',
+                noCommitment:true,
                 codice: std.codiceVoce ? (std.codiceVoce[voceKey] || Object.values(std.codiceVoce)[0]) : '—',
-                note: 'Solo per già clienti TV. Verifica CF per eventuale offerta dedicata a 20,90€ per 12 mesi.'
+                note: 'Solo per già clienti TV. Nessun vincolo. Verifica CF per eventuali offerte dedicate.'
               }
               return {best, context:'upsell_wifi'}
             }
@@ -484,13 +514,13 @@
 
             if(off==='only_tv'){
               const tv=composeTVListino(sel,nf);
-              const best={ id:'LIST_TV', name: (nf!=='none'?`Composizione listino: Sky TV + Netflix ${nf}`:'Composizione listino: Sky TV'),
+              const best={ id:'LIST_TV', name: (nf!=='none'?`Composizione listino: Sky TV + Netflix ${nfLabel(nf)}`:'Composizione listino: Sky TV'),
                 priceValue:tv.subtotal, totalValue:tv.subtotal, attivazione:'Stream 19€', codice:'—', scadenza:'—', durata:'—',
                 note:'Combinazione da listino (Sky TV + pacchetti + Netflix).', breakdown:tv.breakdown, extraMonthly:0 };
               return {best}
             }
             if(off==='wifi_tv'){
-              const wifiBest = PROMO.wifi[1]||PROMO.wifi[0];
+              const wifiBest = PROMO.wifi[0];
               const tv=composeTVListino(sel,nf);
               const total=Number((wifiBest.priceValue+tv.subtotal).toFixed(2));
               const voceKey=state.voce||'consumo';
@@ -502,7 +532,7 @@
               return {best}
             }
             if(off==='wifi'){
-              const wifiBest=PROMO.wifi[1]||PROMO.wifi[0];
+              const wifiBest=PROMO.wifi[0];
               const voceKey=state.voce||'consumo';
               const best={...wifiBest};
               best.totalValue=wifiBest.priceValue; best.codice= wifiBest.codiceVoce? (wifiBest.codiceVoce[voceKey]||Object.values(wifiBest.codiceVoce)[0]):'—'; best.extraMonthly=0;
@@ -521,7 +551,7 @@
             },0);
           }
           function buildCompositionText(best){
-            let base = best.includedNetflix ? `Sky TV + Netflix ${cap(best.includedNetflix)}` : 'Sky TV';
+            let base = best.includedNetflix ? `Sky TV + Netflix ${nfLabel(best.includedNetflix)}` : 'Sky TV';
             const inc = new Set(best.included||[]);
             const order = ['sport','cinema','calcio','kids','uhd'];
             const map = {sport:'Sport',cinema:'Cinema',calcio:'Calcio',kids:'Kids',uhd:'UHD/4K'};
@@ -553,8 +583,13 @@
 
             const priceDet = qs('#priceDetail');
             let baseSentence = '';
-            if(r.best.isPromo && r.best.price){ baseSentence = `Promo base: ${r.best.price}${r.best.durata?` per ${r.best.durata}`:''}` }
-            else if(String(r.best.id).startsWith('LIST_')){ baseSentence = 'Prezzo di listino (Smart)' }
+            if (r.best.noCommitment || /senza\s*vincoli/i.test(String(r.best.durata||''))) {
+              baseSentence = `Canone: ${r.best.price || formatEUR(r.best.totalValue)} · Senza vincoli`;
+            } else if(r.best.isPromo && r.best.price){
+              baseSentence = `Promo base: ${r.best.price}${r.best.durata?` per ${r.best.durata}`:''}`
+            } else if(String(r.best.id).startsWith('LIST_')){
+              baseSentence = 'Prezzo di listino (Smart)'
+            }
             const addSentence = (r.best.breakdown && r.best.breakdown.length) ? `Aggiunte: ${r.best.breakdown.join(' + ')} al mese` : ''
             const glassSentence = isGlass ? 'DISPOSITIVO INCLUSO: SKY GLASS 43" Nero – costo una tantum 199€ (consegna gratuita).' : ''
             priceDet.textContent = [baseSentence, glassSentence, addSentence].filter(Boolean).join(' · ')
@@ -568,8 +603,17 @@
             const compText = buildCompositionText(r.best);
             const extrasSum = r.best.extraMonthly ?? sumExtrasFromBreakdown(r.best.breakdown);
             const att = r.best.attivazione || '—';
-            let durata = extractMonths(r.best.durata) || extractMonths(r.best.price) || (String(r.best.id).startsWith('WIFI') ? 12 : 18);
-            let vincolo = (String(r.best.id).startsWith('WIFI') ? 12 : 18);
+
+            // gestione "senza vincoli"
+            let vincolo, durata;
+            if (r.best.noCommitment || /senza\s*vincoli/i.test(String(r.best.durata||''))) {
+              vincolo = '—';
+              durata  = '—';
+            } else {
+              durata  = extractMonths(r.best.durata) || extractMonths(r.best.price) || (String(r.best.id).startsWith('WIFI') ? 12 : 18);
+              vincolo = (String(r.best.id).startsWith('WIFI') ? 12 : 18);
+            }
+
             recap.innerHTML = `
               <h4>Composizione offerta</h4>
               <div class="recap-grid">
@@ -615,7 +659,7 @@
             tv3: [22.10,44.20,66.30,88.40,110.50,110.50,110.50,110.50,110.50,110.50,110.50,110.50,110.50,88.40,66.30,44.20,22.10,0.00],
           };
 
-          /* --- FIX RECESSO: delegazione click, funziona a prescindere dall'ordine script/HTML --- */
+          /* --- FIX RECESSO: delegazione click --- */
           document.addEventListener('click', (ev)=>{
             const btn = ev.target.closest('#calcRecesso');
             if(!btn) return;
@@ -641,7 +685,11 @@
           /* Dataset dialog */
           const datasetDlg=qs('#datasetDlg')
           qs('#listinoBtn').addEventListener('click', ()=>{
-            const DATA={PACCHETTI:LISTINO.base.pacchetti, NETFLIX:LISTINO.base.netflix, PROMO};
+            const DATA={
+              PACCHETTI:LISTINO.base.pacchetti,
+              NETFLIX:{ prezzi:LISTINO.base.netflix, labels:NF_LABEL, note:NF_NOTE },
+              PROMO
+            };
             qs('#datasetPre').textContent = JSON.stringify(DATA,null,2); datasetDlg.showModal()
           })
         })();
@@ -698,7 +746,7 @@
       </div>
       <div style="padding:14px 18px 22px 18px;max-height:60vh;overflow:auto">
         <pre id="datasetPre" style="white-space:pre-wrap;font-size:12px;line-height:1.35;background:#fafcff;border:1px solid var(--border);padding:12px;border-radius:12px"></pre>
-        <div class="muted" style="margin-top:8px">Nota: i dati sono inseriti direttamente nel codice.</div>
+        <div class="muted" style="margin-top:8px">Nota: etichette Netflix aggiornate (Standard con pubblicità, Standard, Premium) con relative note di schermi/qualità.</div>
       </div>
     </dialog>
   </div>
