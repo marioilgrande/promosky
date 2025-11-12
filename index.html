@@ -16,29 +16,60 @@
     --softshadow:0 6px 18px rgba(17,24,39,.06);
     --radius:16px;
   }
-  body{background:linear-gradient(180deg,#f7f9ff,#f3f7ff 40%,#eef4ff 100%);color:var(--text);
-       font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;font-size:16px;line-height:1.25;padding-bottom:88px}
+  body{
+    background:linear-gradient(180deg,#f7f9ff,#f3f7ff 40%,#eef4ff 100%);
+    color:var(--text);
+    font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
+    font-size:16px; line-height:1.25;
+    padding-bottom:88px;
+  }
   .wrap{max-width:1100px;margin:20px auto;padding:0 12px}
   header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
   .brand{display:flex;align-items:center;gap:10px}
   .logo{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 8px 22px rgba(12,100,197,.25)}
   h1{font-size:18px;margin:0;font-weight:800;letter-spacing:.2px}
 
-  .form-card,.result-card,details.result-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px}
+  .form-card,.result-card,details.result-card{
+    background:var(--card); border:1px solid var(--border);
+    border-radius:var(--radius); box-shadow:var(--shadow); padding:14px;
+  }
   .form-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
   .form-title{display:flex;align-items:center;gap:8px}
   .step{width:24px;height:24px;display:grid;place-items:center;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:800;font-size:12px}
 
   .row{display:grid;grid-template-columns:1fr;gap:10px}
   label{display:block;font-size:13px;color:#344052;margin:0 0 6px 2px;font-weight:700}
-  select{width:100%;background:#fff;color:var(--text);border:1px solid var(--border);padding:12px 14px;border-radius:12px;outline:none;font-size:16px;transition:box-shadow .2s,border-color .2s}
+  select{
+    width:100%; background:#fff; color:var(--text);
+    border:1px solid var(--border); padding:12px 14px;
+    border-radius:12px; outline:none; font-size:16px;
+    transition:box-shadow .2s,border-color .2s;
+  }
   select:focus{box-shadow:var(--ring);border-color:#96b8ff}
 
-  .chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;padding:10px;background:var(--muted);border-radius:14px;border:1px solid var(--border)}
-  .chips .chip{appearance:none;width:100%;text-align:center;border:1px solid #dbe1f4;padding:10px 12px;border-radius:999px;font-size:14px;background:#fff;box-shadow:var(--softshadow);white-space:normal}
-  .chip[aria-pressed="true"]{background:linear-gradient(135deg,var(--accent),var(--accent2));border-color:transparent;color:#fff;font-weight:800}
+  /* CHIPS griglia responsiva (no overflow) */
+  .chips{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+    gap:8px; padding:10px; background:var(--muted);
+    border-radius:14px; border:1px solid var(--border);
+  }
+  .chips .chip{
+    appearance:none; width:100%; text-align:center;
+    border:1px solid #dbe1f4; padding:10px 12px; border-radius:999px;
+    font-size:14px; background:#fff; box-shadow:var(--softshadow);
+    white-space:normal;
+  }
+  .chip[aria-pressed="true"]{
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    border-color:transparent; color:#fff; font-weight:800;
+  }
 
-  .btn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:12px 16px;border-radius:12px;font-weight:800;cursor:pointer;box-shadow:0 6px 18px rgba(12,100,197,.25);font-size:16px}
+  .btn{
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:#fff; border:none; padding:12px 16px; border-radius:12px;
+    font-weight:800; cursor:pointer; box-shadow:0 6px 18px rgba(12,100,197,.25);
+    font-size:16px;
+  }
   .btn.secondary{background:#fff;color:#0c64c5;border:1px solid #cfe1ff}
 
   .results{margin-top:12px}
@@ -73,7 +104,12 @@
   .offerAlt .meta{display:flex;flex-wrap:wrap;gap:10px;color:#415079}
   .offerAlt .meta span{background:#fff;border:1px solid #e5e9f6;border-radius:10px;padding:6px 10px;font-size:12px}
 
-  .mobileBar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.88);backdrop-filter:blur(8px);border-top:1px solid var(--border);box-shadow:0 -10px 24px rgba(17,24,39,.06);padding:10px 12px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .mobileBar{
+    position:fixed;left:0;right:0;bottom:0;z-index:30;
+    background:rgba(255,255,255,.88);backdrop-filter:blur(8px);
+    border-top:1px solid var(--border);box-shadow:0 -10px 24px rgba(17,24,39,.06);
+    padding:10px 12px;display:grid;grid-template-columns:1fr 1fr;gap:10px
+  }
   .mobileBar .btn,.mobileBar .btn.secondary{width:100%}
 
   @media(min-width:760px){
@@ -95,6 +131,7 @@
       <button class="btn secondary" id="resetBtn" aria-label="Pulisci campi">RESET</button>
     </header>
 
+    <!-- ===== FORM ===== -->
     <section class="form-card" id="formCard" aria-labelledby="formTitle">
       <div class="form-header">
         <div class="form-title"><span class="step">1</span><b id="formTitle">Dati di richiesta</b></div>
@@ -158,6 +195,7 @@
         <div class="muted" style="margin-top:6px;font-size:13px;color:#55637f">Seleziona i pacchetti desiderati. Le promo TV/3P vengono proposte automaticamente.</div>
       </div>
 
+      <!-- Desktop buttons (su mobile si usa la sticky bar) -->
       <div class="row" style="margin-top:10px">
         <div></div>
         <div style="text-align:right;display:flex;gap:8px;justify-content:flex-end">
@@ -166,7 +204,7 @@
         </div>
       </div>
     </section>
-
+    <!-- ===== RESULTS ===== -->
     <section class="results" id="results">
       <div class="result-card" id="noResult">Nessun risultato ancora. Compila i campi sopra e premi <b>Calcola offerta</b>.</div>
 
@@ -211,6 +249,7 @@
         </div>
         <div class="notes" id="note"></div>
 
+        <!-- Alternativa WiFi (Open Fiber come card) -->
         <div id="wifiAlternatives" class="altContainer" style="display:none"></div>
       </div>
 
@@ -219,11 +258,13 @@
       </div>
     </section>
 
+    <!-- ===== STICKY MOBILE BAR ===== -->
     <div class="mobileBar" aria-hidden="false">
       <button class="btn secondary" id="listinoBtnMb">Dataset</button>
       <button class="btn" id="calcBtnMb">Calcola offerta</button>
     </div>
 
+    <!-- ===== RECESSO + DATASET ===== -->
     <details class="result-card" style="margin-top:12px">
       <summary class="btn" style="list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center">
         Calcolo costi di recesso (Privato) <span class="muted" style="font-size:13px;color:#5b6b8b">tocca per aprire</span>
@@ -284,20 +325,27 @@
   const qs = s => document.querySelector(s)
   const qsa = s => Array.from(document.querySelectorAll(s))
   const formatEUR = n => new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR'}).format(n)
-  const NF_LABEL = { base:'Standard con pubblicità', standard:'Standard', premium:'Premium' }
-  const NF_NOTE  = { base:'2 schermi in HD', standard:'2 schermi in HD', premium:'4 schermi in 4K' }
-  const nfLabel = k => NF_LABEL[k] || k
 
+  /* Netflix labels */
+  const NF_LABEL = { base:'Standard con pubblicità', standard:'Standard', premium:'Premium' }
+  const NF_NOTE  = { base:'2 schermi in HD',         standard:'2 schermi in HD', premium:'4 schermi in 4K' }
+  const nfLabel  = k => NF_LABEL[k] || k
+
+  /* Listino base (usato per TV-only e per i pack extra nelle 3P) */
   const LISTINO = {
     base:{
       sky_tv:14.90,
       netflix:{ base:14.90, standard:21.90, premium:27.90 },
-      pacchetti:{ cinema:10.00, sport:22.90, calcio:8.00, kids:5.00, hd:5.00, uhd:5.00 }
+      pacchetti:{ cinema:10.00, sport:22.90, calcio:8.00, kids:5.00, uhd:5.00 }
     }
   }
 
+  /* Tariffa speciale per Netflix quando la base è una PROMO 3P:
+     i valori sono "in più al mese" sul bundle promo, indipendenti dal listino. */
+  const THREEP_NF_UPCHARGE = { base:4.99, standard:11.99, premium:17.99 };
+
+  /* PROMO aggiornate (WiFi 25,90 main, OF 22,90 alt; 3P Calcio con codici voce 1300216/1300217) */
   const PROMO = {
-    /* TV-ONLY BF (invariato) */
     tvOnly:[
       { id:'BF_TV_NF', name:'BLACK FRIDAY · Sky TV + Netflix (Standard con pubblicità)',
         match:(_,nf)=> nf==='base' || nf==='none',
@@ -319,13 +367,14 @@
       }
     ],
 
-    /* 3P — con priorità Calcio incluso */
+    /* 3P – priorità CALCIO incluso */
     threeP:[
       { id:'3P_CALCIO', name:'3P + CALCIO (TV+WiFi+Calcio) · PRIORITÀ',
-        match:()=>true,                               /* proposta anche se non selezioni “Calcio” */
+        match:()=>true,
         price:'29,90€', priceValue:29.90, included:['calcio'],
-        attivazione:'Stream 19€ – WiFi Gratis', codice:'CODICE IN ARRIVO',
-        scadenza:'01/12/2025 (+2gg backlog)', durata:'18 mesi',
+        attivazione:'Stream 19€ – WiFi Gratis',
+        codiceVoce:{consumo:'1300216', unlimited:'1300217'},
+        scadenza:'SCADENZA IN ARRIVO', durata:'18 mesi',
         note:'Allo stesso prezzo della 3P base, include il pacchetto Calcio. Prioritaria rispetto alla 3P senza pacchetti.'
       },
       { id:'3P_CIN', name:'3P + CINEMA (TV+UHD+WiFi+Cinema)', match:(s)=> s.has('cinema'),
@@ -348,21 +397,26 @@
       }
     ],
 
-    /* GLASS invariato */
     glassThreeP:[
       { id:'GLASS_CINEMA', name:'3P GLASS: TV + Cinema + 4K + Netflix Base',
-        match:(s)=> s.has('cinema'), price:'40,89€', priceValue:40.89, included:['cinema','uhd'], includedNetflix:'base',
-        attivazione:'WiFi Gratis – Consegna GLASS gratuita', codice:'1300220', scadenza:'10/12/2025', durata:'18 mesi',
+        match:(s)=> s.has('cinema'),
+        price:'40,89€', priceValue:40.89, included:['cinema','uhd'], includedNetflix:'base',
+        attivazione:'WiFi Gratis – Consegna GLASS gratuita',
+        codice:'1300220', scadenza:'10/12/2025', durata:'18 mesi',
         note:'SKY GLASS 43" Nero incluso nel bundle · 199€ una tantum.'
       },
       { id:'GLASS_BASE4K', name:'3P GLASS: TV + 4K + Netflix Base',
-        match:(s)=> !s.has('sport') && !s.has('cinema'), price:'34,89€', priceValue:34.89, included:['uhd'], includedNetflix:'base',
-        attivazione:'WiFi Gratis – Consegna GLASS gratuita', codice:'1300222', scadenza:'10/12/2025', durata:'18 mesi',
+        match:(s)=> !s.has('sport') && !s.has('cinema'),
+        price:'34,89€', priceValue:34.89, included:['uhd'], includedNetflix:'base',
+        attivazione:'WiFi Gratis – Consegna GLASS gratuita',
+        codice:'1300222', scadenza:'10/12/2025', durata:'18 mesi',
         note:'SKY GLASS 43" Nero incluso nel bundle · 199€ una tantum.'
       },
       { id:'GLASS_SPORT', name:'3P GLASS: TV + Sport + 4K + Netflix Base',
-        match:(s)=> s.has('sport'), price:'40,89€', priceValue:40.89, included:['sport','uhd'], includedNetflix:'base',
-        attivazione:'WiFi Gratis – Consegna GLASS gratuita', codice:'1300221', scadenza:'10/12/2025', durata:'18 mesi',
+        match:(s)=> s.has('sport'),
+        price:'40,89€', priceValue:40.89, included:['sport','uhd'], includedNetflix:'base',
+        attivazione:'WiFi Gratis – Consegna GLASS gratuita',
+        codice:'1300221', scadenza:'10/12/2025', durata:'18 mesi',
         note:'SKY GLASS 43" Nero incluso nel bundle · 199€ una tantum.'
       }
     ],
@@ -381,24 +435,9 @@
         durata:'Senza vincoli', noCommitment:true,
         note:'Disponibile solo su copertura Open Fiber. Prezzo promozionale per 12 mesi. Nessun vincolo.'
       }
-    ],
-
-    /* Business WiFi (invariato) */
-    businessWifi:[
-      { id:'BIZ_WIFI_STD', name:'Sky WiFi Business', match:()=>true,
-        price:'24,50€ + IVA (12 mesi)', priceValue:24.50,
-        attivazione:'29,90€ + IVA', codiceVoce:{consumo:'1401041', unlimited:'1401061'},
-        scadenza:'—', note:'Listino business standard.'
-      },
-      { id:'BIZ_WIFI_OF', name:'Sky WiFi Business – Open Fiber Only', match:()=>true,
-        price:'21,50€ + IVA (12 mesi)', priceValue:21.50,
-        attivazione:'29,90€ + IVA', codiceVoce:{consumo:'1401195', unlimited:'1401196'},
-        scadenza:'28/12/2025 (+2gg backlog)',
-        note:'Promo OF Only. Dopo 12 mesi: 24,51€ + IVA / 28,61€ + IVA.'
-      }
     ]
   };
-
+  /* ================== STATE & UI ================== */
   const state = { tipo:null, off:null, voce:null, tv:new Set(), nf:'none' }
 
   function syncBlocks(){
@@ -415,21 +454,70 @@
   document.addEventListener('click',(e)=>{
     const btn = e.target.closest('.chip'); if(!btn) return
     const group = btn.dataset.group, value = btn.dataset.value
-    if(group==='voce'){ qsa('#chipsVoce .chip').forEach(b=>b.setAttribute('aria-pressed','false')); btn.setAttribute('aria-pressed','true'); state.voce=value }
-    else if(group==='nf'){ qsa('#chipsNF .chip').forEach(b=>b.setAttribute('aria-pressed','false')); btn.setAttribute('aria-pressed','true'); state.nf=value }
-    else if(group==='tv'){ const pressed = btn.getAttribute('aria-pressed')==='true'; btn.setAttribute('aria-pressed', String(!pressed)); if(pressed) state.tv.delete(value); else state.tv.add(value) }
+    if(group==='voce'){
+      qsa('#chipsVoce .chip').forEach(b=>b.setAttribute('aria-pressed','false'))
+      btn.setAttribute('aria-pressed','true'); state.voce=value
+    }else if(group==='nf'){
+      qsa('#chipsNF .chip').forEach(b=>b.setAttribute('aria-pressed','false'))
+      btn.setAttribute('aria-pressed','true'); state.nf=value
+    }else if(group==='tv'){
+      const pressed = btn.getAttribute('aria-pressed')==='true'
+      btn.setAttribute('aria-pressed', String(!pressed))
+      if(pressed) state.tv.delete(value); else state.tv.add(value)
+    }
   })
 
+  /* ================== HELPERS ================== */
   function composeTVListino(sel, nf){
     let subtotal = 0; const breakdown = []
-    if(nf && nf!=='none'){ const nfv = LISTINO.base.netflix[nf]||0; subtotal += nfv; breakdown.push(`Sky TV + Netflix ${nfLabel(nf)} ${nfv.toFixed(2)}€`) }
-    else { subtotal += LISTINO.base.sky_tv; breakdown.push(`Sky TV ${LISTINO.base.sky_tv.toFixed(2)}€`) }
+    if(nf && nf!=='none'){
+      const nfv = LISTINO.base.netflix[nf]||0;
+      subtotal += nfv; breakdown.push(`Sky TV + Netflix ${nfLabel(nf)} ${nfv.toFixed(2)}€`)
+    } else {
+      subtotal += LISTINO.base.sky_tv; breakdown.push(`Sky TV ${LISTINO.base.sky_tv.toFixed(2)}€`)
+    }
     const P = LISTINO.base.pacchetti; const L={sport:'Sport',cinema:'Cinema',calcio:'Calcio',kids:'Kids',uhd:'UHD/4K'}
-    ;['sport','cinema','calcio','kids','uhd'].forEach(p=>{ if(sel.has(p)){ const add=P[p]||0; subtotal+=add; if(add>0) breakdown.push(`${L[p]} ${add.toFixed(2)}€`) } })
-    if(sel.has('sport') && !sel.has('uhd')){ const add = P.uhd || 0; if(add>0){ subtotal += add; breakdown.push(`UHD/4K ${add.toFixed(2)}€ (con Sport)`) } }
+    ;['sport','cinema','calcio','kids','uhd'].forEach(p=>{
+      if(sel.has(p)){ const add=P[p]||0; subtotal+=add; if(add>0) breakdown.push(`${L[p]} ${add.toFixed(2)}€`) }
+    })
+    if(sel.has('sport') && !sel.has('uhd')){
+      const add = P.uhd || 0; if(add>0){ subtotal += add; breakdown.push(`UHD/4K ${add.toFixed(2)}€ (con Sport)`) }
+    }
     return {subtotal:Number(subtotal.toFixed(2)), breakdown}
   }
 
+  /* === EXTRA per PROMO 3P: prezzi fissi indicati da te === */
+  const THREEP_PACK_UPCHARGE = { calcio:8.00, sport:22.90, cinema:10.00, kids:5.00 };
+  function computeExtra3P(base, sel, nf){
+    const included = new Set(base.included||[]);
+    let extra = 0; const breakdown=[];
+
+    // Pacchetti mancanti ai prezzi fissi
+    (['calcio','sport','cinema','kids']).forEach(p=>{
+      if(sel.has(p) && !included.has(p)){
+        const add = THREEP_PACK_UPCHARGE[p] || 0;
+        if(add>0){ extra += add; breakdown.push(`${p[0].toUpperCase()+p.slice(1)} ${add.toFixed(2)}€`) }
+      }
+    });
+
+    // Regola UHD con Sport: se l'offerta base NON include UHD e l'utente sceglie Sport (o è incluso Sport nel base senza UHD)
+    const baseHasUhd   = included.has('uhd');
+    const userWantsSpt = sel.has('sport') || included.has('sport');
+    if(userWantsSpt && !baseHasUhd && !sel.has('uhd')){
+      const add = LISTINO.base.pacchetti.uhd || 0;
+      if(add>0){ extra += add; breakdown.push(`UHD/4K ${add.toFixed(2)}€ (con Sport)`) }
+    }
+
+    // Netflix: sovrapprezzi fissi per promo 3P
+    if(nf && nf!=='none'){
+      const delta = THREEP_NF_UPCHARGE[nf] || 0;
+      if(delta>0){ extra += delta; breakdown.push(`Netflix ${nfLabel(nf)} +${delta.toFixed(2)}€`) }
+    }
+
+    return { extra:Number(extra.toFixed(2)), breakdown };
+  }
+
+  /* Per PROMO non 3P (TV-only etc.) manteniamo la logica listino */
   function computeExtraAgainstIncluded(base, sel, nf){
     const P=LISTINO.base.pacchetti; const L={sport:'Sport',cinema:'Cinema',calcio:'Calcio',kids:'Kids',uhd:'UHD/4K'}
     const included = new Set(base.included||[]); let extra=0; const breakdown=[]
@@ -445,10 +533,13 @@
         if(delta>0){ extra+=delta; breakdown.push(`Netflix ${nfLabel(nf)} +${delta.toFixed(2)}€`) }
       }
     }
-    if(sel.has('sport') && !included.has('uhd') && !sel.has('uhd')){ const add = P.uhd || 0; if(add>0){ extra+=add; breakdown.push(`UHD/4K ${add.toFixed(2)}€ (con Sport)`) } }
+    if(sel.has('sport') && !included.has('uhd') && !sel.has('uhd')){
+      const add = P.uhd || 0; if(add>0){ extra+=add; breakdown.push(`UHD/4K ${add.toFixed(2)}€ (con Sport)`) }
+    }
     return {extra:Number(extra.toFixed(2)), breakdown}
   }
 
+  /* ================== CORE: COMPUTE BEST ================== */
   function computeBest(){
     if(!state.tipo || !state.off) return {error:'Seleziona tipologia cliente e offerta richiesta.'}
     const off = state.off, sel=new Set(state.tv), voce=state.voce, nf=state.nf
@@ -457,7 +548,7 @@
     if(state.tipo==='business' && off==='wifi'){
       candidates = PROMO.businessWifi.map(p=>({base:p,total:p.priceValue,breakdown:[],extra:0}))
     }
-    else if(off==='wifi_tv'){ /* 3P: inseriamo SEMPRE la CALCIO (prioritaria) */
+    else if(off==='wifi_tv'){ /* 3P – CALCIO prioritaria, extra ai prezzi fissi */
       if(!voce) return {error:'Seleziona l\'opzione Voce (a consumo/unlimited).'}
       const calcio   = PROMO.threeP.find(p => p.id === '3P_CALCIO')
       const base3P   = PROMO.threeP.find(p => p.id === '3P_BASE')
@@ -465,11 +556,11 @@
       const list     = [calcio, base3P].filter(Boolean).concat(others)
 
       candidates = list.map(p => {
-        const { extra, breakdown } = computeExtraAgainstIncluded(p, sel, nf)
-        return { base: p, total: Number((p.priceValue + extra).toFixed(2)), breakdown, extra }
+        const { extra, breakdown } = computeExtra3P(p, sel, nf)
+        return { base:p, total: Number((p.priceValue + extra).toFixed(2)), breakdown, extra }
       })
 
-      /* Ordinamento: prezzo asc, poi priorità CALCIO se pari prezzo */
+      // Ordinamento: prezzo asc, poi priorità CALCIO, poi "quanti pacchetti inclusi"
       candidates.sort((a,b)=>{
         if (a.total !== b.total) return a.total - b.total
         const aPri = a.base.id==='3P_CALCIO'?1:0, bPri = b.base.id==='3P_CALCIO'?1:0
@@ -479,8 +570,13 @@
       })
     }
     else if(off==='wifi_tv_glass'){
-      const list = PROMO.glassThreeP.filter(p => p.match(sel, nf)).concat(PROMO.glassThreeP.filter(p => !p.match(sel, nf)))
-      candidates = list.map(p=>{ const { extra, breakdown } = computeExtraAgainstIncluded(p, sel, nf); return { base:p, total:Number((p.priceValue+extra).toFixed(2)), breakdown, extra } })
+      const list = PROMO.glassThreeP
+        .filter(p => p.match(sel, nf))
+        .concat(PROMO.glassThreeP.filter(p => !p.match(sel, nf)))
+      candidates = list.map(p=>{
+        const { extra, breakdown } = computeExtraAgainstIncluded(p, sel, nf)
+        return { base:p, total:Number((p.priceValue+extra).toFixed(2)), breakdown, extra }
+      })
     }
     else if(off==='wifi'){
       if(!voce) return {error:'Seleziona l\'opzione Voce (a consumo/unlimited).'}
@@ -488,11 +584,13 @@
       const of   = PROMO.wifi.find(x=>x.id==='WIFI_OF')
       const voceKey = voce || 'consumo'
       const best = {
-        ...main, totalValue: main.priceValue, isPromo:true, codice: main.codiceVoce ? (main.codiceVoce[voceKey] || Object.values(main.codiceVoce)[0]) : '—',
+        ...main, totalValue: main.priceValue, isPromo:true,
+        codice: main.codiceVoce ? (main.codiceVoce[voceKey] || Object.values(main.codiceVoce)[0]) : '—',
         durata:'Senza vincoli', noCommitment:true
       }
       const alt = {
-        ...of, totalValue: of.priceValue, isPromo:true, codice: of.codiceVoce ? (of.codiceVoce[voceKey] || Object.values(of.codiceVoce)[0]) : '—',
+        ...of, totalValue: of.priceValue, isPromo:true,
+        codice: of.codiceVoce ? (of.codiceVoce[voceKey] || Object.values(of.codiceVoce)[0]) : '—',
         durata:'Senza vincoli', noCommitment:true
       }
       return {best, context:'wifi', alt}
@@ -502,12 +600,23 @@
       const main = PROMO.wifi.find(x=>x.id==='WIFI_MAIN')
       const of   = PROMO.wifi.find(x=>x.id==='WIFI_OF')
       const voceKey = voce || 'consumo'
-      const best = { ...main, id:'UPSELL_WIFI', name:'Upsell WiFi (già cliente TV) · Senza vincoli', totalValue: main.priceValue, isPromo:true, durata:'Senza vincoli', noCommitment:true, codice: main.codiceVoce ? (main.codiceVoce[voceKey] || Object.values(main.codiceVoce)[0]) : '—', note: 'Solo per già clienti TV.' }
-      const alt  = { ...of,   totalValue: of.priceValue,   isPromo:true, durata:'Senza vincoli', noCommitment:true, codice: of.codiceVoce ? (of.codiceVoce[voceKey] || Object.values(of.codiceVoce)[0]) : '—' }
+      const best = {
+        ...main, id:'UPSELL_WIFI', name:'Upsell WiFi (già cliente TV) · Senza vincoli',
+        totalValue: main.priceValue, isPromo:true, durata:'Senza vincoli', noCommitment:true,
+        codice: main.codiceVoce ? (main.codiceVoce[voceKey] || Object.values(main.codiceVoce)[0]) : '—',
+        note: 'Solo per già clienti TV.'
+      }
+      const alt  = {
+        ...of, totalValue: of.priceValue, isPromo:true, durata:'Senza vincoli', noCommitment:true,
+        codice: of.codiceVoce ? (of.codiceVoce[voceKey] || Object.values(of.codiceVoce)[0]) : '—'
+      }
       return {best, context:'upsell_wifi', alt}
     }
     else if(off==='only_tv'){
-      candidates = PROMO.tvOnly.filter(p=>p.match(sel,nf)).map(p=>{ const { extra, breakdown } = computeExtraAgainstIncluded(p, sel, nf); return {base:p,total:Number((p.priceValue+extra).toFixed(2)), breakdown, extra} })
+      candidates = PROMO.tvOnly.filter(p=>p.match(sel,nf)).map(p=>{
+        const { extra, breakdown } = computeExtraAgainstIncluded(p, sel, nf)
+        return {base:p,total:Number((p.priceValue+extra).toFixed(2)), breakdown, extra}
+      })
       candidates.sort((a,b)=> a.total - b.total)
     }
 
@@ -519,14 +628,7 @@
       return {best}
     }
 
-    if(off==='only_tv'){
-      const tv=composeTVListino(sel,nf);
-      const best={ id:'LIST_TV', name:(nf!=='none'?`Composizione listino: Sky TV + Netflix ${nfLabel(nf)}`:'Composizione listino: Sky TV'),
-        priceValue:tv.subtotal, totalValue:tv.subtotal, attivazione:'Stream 19€', codice:'—', scadenza:'—', durata:'—',
-        note:'Combinazione da listino (Sky TV + pacchetti + Netflix).', breakdown:tv.breakdown, extraMonthly:0 };
-      return {best}
-    }
-
+    // fallback listino composito se 3P non matcha (usa WiFi MAIN + TV listino)
     if(off==='wifi_tv'){
       const wifiBest = PROMO.wifi.find(x=>x.id==='WIFI_MAIN');
       const tv=composeTVListino(sel,nf);
@@ -540,12 +642,35 @@
       return {best}
     }
 
+    if(off==='only_tv'){
+      const tv=composeTVListino(sel,nf);
+      const best={ id:'LIST_TV', name:(nf!=='none'?`Composizione listino: Sky TV + Netflix ${nfLabel(nf)}`:'Composizione listino: Sky TV'),
+        priceValue:tv.subtotal, totalValue:tv.subtotal, attivazione:'Stream 19€', codice:'—', scadenza:'—', durata:'—',
+        note:'Combinazione da listino (Sky TV + pacchetti + Netflix).', breakdown:tv.breakdown, extraMonthly:0 };
+      return {best}
+    }
+
     return {error:'Nessuna combinazione disponibile.'}
   }
 
+  /* ================== RENDER ================== */
   function extractMonths(str){ if(!str) return null; const m = String(str).match(/(\d+)\s*mesi/i); return m ? parseInt(m[1],10) : null }
-  function sumExtrasFromBreakdown(breakdown){ if(!breakdown || !breakdown.length) return 0; return breakdown.reduce((acc, item)=>{ const m = String(item).replace(',','.').match(/([\d.]+)\s*€/); return acc + (m ? parseFloat(m[1]) : 0); },0); }
-  function buildCompositionText(best){ let base = best.includedNetflix ? `Sky TV + Netflix ${nfLabel(best.includedNetflix)}` : 'Sky TV'; const inc = new Set(best.included||[]); const order = ['sport','cinema','calcio','kids','uhd']; const map = {sport:'Sport',cinema:'Cinema',calcio:'Calcio',kids:'Kids',uhd:'UHD/4K'}; order.forEach(p=>{ if(inc.has(p)) base += ` + ${map[p]}` }); return base; }
+  function sumExtrasFromBreakdown(breakdown){
+    if(!breakdown || !breakdown.length) return 0;
+    return breakdown.reduce((acc, item)=>{
+      const m = String(item).replace(',','.').match(/([\d.]+)\s*€/);
+      return acc + (m ? parseFloat(m[1]) : 0);
+    },0);
+  }
+  function nfIncludedText(best){ return best.includedNetflix ? `Sky TV + Netflix ${nfLabel(best.includedNetflix)}` : 'Sky TV' }
+  function buildCompositionText(best){
+    let base = nfIncludedText(best);
+    const inc = new Set(best.included||[]);
+    const order = ['sport','cinema','calcio','kids','uhd'];
+    const map = {sport:'Sport',cinema:'Cinema',calcio:'Calcio',kids:'Kids',uhd:'UHD/4K'};
+    order.forEach(p=>{ if(inc.has(p)) base += ` + ${map[p]}` });
+    return base;
+  }
 
   function renderWiFiAlternative(alt){
     const box = qs('#wifiAlternatives'); if(!alt){ box.style.display='none'; box.innerHTML=''; return }
@@ -587,13 +712,20 @@
     qs('#glassKpi').style.display = isGlass ? 'block' : 'none'
 
     const fBox = qs('#formulaBox');
-    if(r.best.breakdown && r.best.breakdown.length){ fBox.style.display='inline-block'; fBox.innerHTML = `<b>Formula:</b> ${r.best.breakdown.join(' + ')} = <b>${formatEUR(total)}</b>` } else { fBox.style.display='none' }
+    if(r.best.breakdown && r.best.breakdown.length){
+      fBox.style.display='inline-block';
+      fBox.innerHTML = `<b>Formula:</b> ${r.best.breakdown.join(' + ')} = <b>${formatEUR(total)}</b>`
+    } else { fBox.style.display='none' }
 
     const priceDet = qs('#priceDetail');
     let baseSentence = '';
-    if (r.best.noCommitment || /senza\s*vincoli/i.test(String(r.best.durata||''))) baseSentence = `Canone: ${r.best.price || formatEUR(r.best.totalValue)} · Senza vincoli`;
-    else if(r.best.isPromo && r.best.price) baseSentence = `Promo base: ${r.best.price}${r.best.durata?` per ${r.best.durata}`:''}`;
-    else if(String(r.best.id).startsWith('LIST_')) baseSentence = 'Prezzo di listino (Smart)';
+    if (r.best.noCommitment || /senza\s*vincoli/i.test(String(r.best.durata||''))) {
+      baseSentence = `Canone: ${r.best.price || formatEUR(r.best.totalValue)} · Senza vincoli`;
+    } else if(r.best.isPromo && r.best.price) {
+      baseSentence = `Promo base: ${r.best.price}${r.best.durata?` per ${r.best.durata}`:''}`
+    } else if(String(r.best.id).startsWith('LIST_')){
+      baseSentence = 'Prezzo di listino (Smart)'
+    }
     const addSentence = (r.best.breakdown && r.best.breakdown.length) ? `Aggiunte: ${r.best.breakdown.join(' + ')} al mese` : ''
     const glassSentence = isGlass ? 'DISPOSITIVO INCLUSO: SKY GLASS 43" Nero – costo una tantum 199€ (consegna gratuita).' : ''
     priceDet.textContent = [baseSentence, glassSentence, addSentence].filter(Boolean).join(' · ')
@@ -629,24 +761,26 @@
       </div>`;
     recap.style.display='block';
 
-    /* Alternativa WiFi: mostra l’Open Fiber come card sotto al risultato */
     renderWiFiAlternative(r.alt);
-
     qs('#contractCta').style.display = 'block';
     scrollToResult();
   }
 
+  /* ================== EVENTS ================== */
   function runCalc(){ renderResult(computeBest()) }
   qs('#calcBtn')?.addEventListener('click', runCalc)
   qs('#calcBtnMb')?.addEventListener('click', runCalc)
   qs('#resetBtn').addEventListener('click', ()=> location.reload())
-  qs('#copyCode').addEventListener('click', ()=>{ const code=qs('#codice').textContent.trim(); if(!code||code==='-') return; navigator.clipboard.writeText(code) })
+  qs('#copyCode').addEventListener('click', ()=>{
+    const code=qs('#codice').textContent.trim(); if(!code||code==='-') return; navigator.clipboard.writeText(code)
+  })
 
+  /* ================== RECESSO ================== */
   const COSTI_RECESSO = {
-    tv:[10.10,20.20,30.30,40.40,50.50,50.50,50.50,50.50,50.50,50.50,50.50,50.50,50.50,40.40,30.30,20.20,10.10,0.00],
-    tv1:[14.10,28.20,42.30,56.40,70.50,70.50,70.50,70.50,70.50,70.50,70.50,70.50,70.50,56.40,42.30,28.20,14.10,0.00],
-    tv2:[18.10,36.20,54.30,72.40,90.50,90.50,90.50,90.50,90.50,90.50,90.50,90.50,90.50,72.40,54.30,36.20,18.10,0.00],
-    tv3:[22.10,44.20,66.30,88.40,110.50,110.50,110.50,110.50,110.50,110.50,110.50,110.50,110.50,88.40,66.30,44.20,22.10,0.00],
+    tv:  [10.10,20.20,30.30,40.40,50.50,50.50,50.50,50.50,50.50,50.50,50.50,50.50,50.50,40.40,30.30,20.20,10.10,0.00],
+    tv1: [14.10,28.20,42.30,56.40,70.50,70.50,70.50,70.50,70.50,70.50,70.50,70.50,70.50,56.40,42.30,28.20,14.10,0.00],
+    tv2: [18.10,36.20,54.30,72.40,90.50,90.50,90.50,90.50,90.50,90.50,90.50,90.50,90.50,72.40,54.30,36.20,18.10,0.00],
+    tv3: [22.10,44.20,66.30,88.40,110.50,110.50,110.50,110.50,110.50,110.50,110.50,110.50,110.50,88.40,66.30,44.20,22.10,0.00],
   };
   document.addEventListener('click',(ev)=>{
     const btn = ev.target.closest('#calcRecesso'); if(!btn) return;
@@ -664,10 +798,12 @@
     qs('#detailRecesso').textContent = `Mese ${meseSel}° · Configurazione: ${labelPack} · Valore tabellare: ${formatEUR(valore)}.`;
   });
 
+  /* ================== DATASET DIALOG ================== */
   const datasetDlg=qs('#datasetDlg')
   function openDataset(){
-    const DATA={ PACCHETTI:LISTINO.base.pacchetti, NETFLIX:{prezzi:LISTINO.base.netflix, labels:NF_LABEL, note:NF_NOTE}, PROMO }
-    qs('#datasetPre').textContent = JSON.stringify(DATA,null,2); datasetDlg.showModal()
+    const DATA={ PACCHETTI:LISTINO.base.pacchetti, NETFLIX:{prezzi:LISTINO.base.netflix, labels:NF_LABEL, note:NF_NOTE}, THREEP_UPCHARGE:{packs:THREEP_PACK_UPCHARGE, netflix:THREEP_NF_UPCHARGE}, PROMO }
+    qs('#datasetPre').textContent = JSON.stringify(DATA,null,2);
+    datasetDlg.showModal()
   }
   qs('#listinoBtn')?.addEventListener('click', openDataset)
   qs('#listinoBtnMb')?.addEventListener('click', openDataset)
