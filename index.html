@@ -508,7 +508,7 @@
     box-shadow:0 -8px 20px rgba(148,163,184,.7);
     padding:10px 12px 12px;
     display:grid;
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:1fr;
     gap:10px;
   }
   .mobileBar .btn,
@@ -587,6 +587,11 @@ details.result-card > summary .muted {
   background:linear-gradient(135deg, rgba(77,137,255,0.06), rgba(227,28,121,0.03));
   border-style:dashed;
 }
+/* Nasconde il pulsante Dataset ovunque */
+#listinoBtn,
+#listinoBtnMb{
+  display:none !important;
+}
 
 </style>
 
@@ -640,7 +645,6 @@ details.result-card > summary .muted {
       </div>
     </section>
     
-
     <!-- ===== FORM ===== -->
     <section class="form-card" id="formCard" aria-labelledby="formTitle">
       <div class="form-header">
