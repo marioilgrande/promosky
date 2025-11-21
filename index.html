@@ -7,129 +7,639 @@
 <style>
   *{box-sizing:border-box}
   html,body{margin:0}
+
   :root{
-    --bg:#f7f9ff; --card:#fff; --text:#111827; --sub:#5b6b8b;
-    --muted:#eef2ff; --border:#e6e9f5;
-    --accent:#e31c79; --accent2:#0c64c5;
-    --ring:0 0 0 3px rgba(12,100,197,.25);
-    --shadow:0 10px 26px rgba(17,24,39,.08);
-    --softshadow:0 6px 18px rgba(17,24,39,.06);
-    --radius:16px;
+    /* Palette chiara ispirata a Sky */
+    --bg:#f5f7ff;
+    --bg-soft:#ffffff;
+    --card:#ffffff;
+    --text:#111827;
+    --sub:#5b6b8b;
+
+    --muted:#eef2ff;
+    --border:#dde3f7;
+
+    --accent:#e6007e;      /* magenta Sky */
+    --accent2:#0072ff;     /* blu Sky */
+    --accent-soft:#eef3ff;
+
+    --ring:0 0 0 2px rgba(0,114,255,.25);
+    --shadow:0 10px 26px rgba(15,23,42,.10);
+    --softshadow:0 6px 18px rgba(15,23,42,.08);
+    --radius:18px;
   }
+
   body{
-    background:linear-gradient(180deg,#f7f9ff,#f3f7ff 40%,#eef4ff 100%);
+    background:
+      radial-gradient(circle at 0% 0%, #f0f4ff 0, transparent 55%),
+      radial-gradient(circle at 100% 0%, #ffe4f4 0, transparent 55%),
+      linear-gradient(180deg,#f7f9ff,#f5f7ff 55%,#f0f4ff 100%);
     color:var(--text);
     font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
-    font-size:16px; line-height:1.25;
+    font-size:16px;
+    line-height:1.3;
     padding-bottom:88px;
   }
-  .wrap{max-width:1100px;margin:20px auto;padding:0 12px}
-  header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
-  .brand{display:flex;align-items:center;gap:10px}
-  .logo{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 8px 22px rgba(12,100,197,.25)}
-  h1{font-size:18px;margin:0;font-weight:800;letter-spacing:.2px}
 
-  .form-card,.result-card,details.result-card{
-    background:var(--card); border:1px solid var(--border);
-    border-radius:var(--radius); box-shadow:var(--shadow); padding:14px;
+  .wrap{
+    max-width:1100px;
+    margin:20px auto 40px;
+    padding:0 14px;
   }
-  .form-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-  .form-title{display:flex;align-items:center;gap:8px}
-  .step{width:24px;height:24px;display:grid;place-items:center;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:800;font-size:12px}
 
-  .row{display:grid;grid-template-columns:1fr;gap:10px}
-  label{display:block;font-size:13px;color:#344052;margin:0 0 6px 2px;font-weight:700}
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:16px;
+  }
+
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+
+  .logo{
+    width:88px;
+    height:44px;
+    border-radius:16px;
+    background:
+      linear-gradient(135deg,var(--accent),var(--accent2));
+    box-shadow:0 10px 24px rgba(148,163,184,.45);
+    position:relative;
+  }
+
+  .logo::after{
+    content:"sky";
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+    font-size:16px;
+    color:#fff;
+    text-transform:lowercase;
+    letter-spacing:.04em;
+  }
+
+  h1{
+    font-size:20px;
+    margin:0;
+    font-weight:800;
+    letter-spacing:.03em;
+    text-transform:uppercase;
+    color:#111827;
+  }
+
+  header .btn.secondary{
+    font-size:13px;
+    padding:9px 14px;
+    border-radius:999px;
+    background:#ffffff;
+    color:#1d4ed8;
+    border:1px solid #c7d2fe;
+    box-shadow:0 2px 8px rgba(15,23,42,.06);
+  }
+  header .btn.secondary:hover{
+    background:#eef2ff;
+  }
+
+  /* CARD GENERALI */
+  .form-card,
+  .result-card,
+  details.result-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:16px 16px 14px;
+  }
+
+  .form-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:10px;
+  }
+
+  .form-title{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+
+  .step{
+    width:26px;
+    height:26px;
+    display:grid;
+    place-items:center;
+    border-radius:10px;
+    background:radial-gradient(circle at 0% 0%,#ffffff 0,#ffe4f5 40%,#e6007e 100%);
+    color:#111827;
+    font-weight:900;
+    font-size:12px;
+    box-shadow:0 8px 18px rgba(148,163,184,.7);
+  }
+
+  .form-header .muted{
+    font-size:13px;
+    color:#6b7280;
+  }
+
+  .row{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+
+  label{
+    display:block;
+    font-size:13px;
+    color:#374151;
+    margin:0 0 6px 2px;
+    font-weight:600;
+  }
+
   select{
-    width:100%; background:#fff; color:var(--text);
-    border:1px solid var(--border); padding:12px 14px;
-    border-radius:12px; outline:none; font-size:16px;
-    transition:box-shadow .2s,border-color .2s;
+    width:100%;
+    background:#ffffff;
+    color:var(--text);
+    border:1px solid var(--border);
+    padding:11px 14px;
+    border-radius:12px;
+    outline:none;
+    font-size:15px;
+    transition:box-shadow .18s ease,border-color .18s ease,background .18s ease,transform .08s ease;
+    appearance:none;
+    box-shadow:0 0 0 rgba(0,0,0,0);
   }
-  select:focus{box-shadow:var(--ring);border-color:#96b8ff}
+
+  select:focus{
+    box-shadow:var(--ring);
+    border-color:#93c5fd;
+    background:#ffffff;
+    transform:translateY(-1px);
+  }
+
+  select option{
+    background:#ffffff;
+    color:#111827;
+  }
 
   /* CHIPS griglia responsiva (no overflow) */
   .chips{
-    display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
-    gap:8px; padding:10px; background:var(--muted);
-    border-radius:14px; border:1px solid var(--border);
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+    gap:8px;
+    padding:10px;
+    background:var(--muted);
+    border-radius:14px;
+    border:1px solid var(--border);
   }
+
   .chips .chip{
-    appearance:none; width:100%; text-align:center;
-    border:1px solid #dbe1f4; padding:10px 12px; border-radius:999px;
-    font-size:14px; background:#fff; box-shadow:var(--softshadow);
+    appearance:none;
+    width:100%;
+    text-align:center;
+    border:1px solid #c7d2fe;
+    padding:9px 10px;
+    border-radius:999px;
+    font-size:13px;
+    background:#ffffff;
+    box-shadow:0 4px 10px rgba(148,163,184,.4);
     white-space:normal;
+    color:#1f2937;
+    font-weight:500;
+    cursor:pointer;
+    transition:background .16s ease,transform .08s ease,border-color .16s ease,box-shadow .16s ease,color .16s ease;
   }
+
+  .chips .chip:hover{
+    border-color:#6366f1;
+    box-shadow:0 6px 14px rgba(148,163,184,.55);
+    transform:translateY(-1px);
+  }
+
   .chip[aria-pressed="true"]{
     background:linear-gradient(135deg,var(--accent),var(--accent2));
-    border-color:transparent; color:#fff; font-weight:800;
+    border-color:transparent;
+    color:#ffffff;
+    font-weight:700;
+    box-shadow:0 8px 18px rgba(129,140,248,.7);
   }
 
   .btn{
-    background:linear-gradient(135deg,var(--accent),var(--accent2));
-    color:#fff; border:none; padding:12px 16px; border-radius:12px;
-    font-weight:800; cursor:pointer; box-shadow:0 6px 18px rgba(12,100,197,.25);
-    font-size:16px;
+    background:linear-gradient(135deg,var(--accent2),var(--accent));
+    color:#fff;
+    border:none;
+    padding:12px 16px;
+    border-radius:999px;
+    font-weight:800;
+    cursor:pointer;
+    box-shadow:0 10px 22px rgba(129,140,248,.6);
+    font-size:15px;
+    letter-spacing:.03em;
+    text-transform:uppercase;
+    transition:transform .08s ease,box-shadow .12s ease,filter .12s ease;
   }
-  .btn.secondary{background:#fff;color:#0c64c5;border:1px solid #cfe1ff}
 
-  .results{margin-top:12px}
-  .result-head{display:flex;flex-direction:column;gap:12px}
-  .result-name{font-size:18px;font-weight:900}
-  .kpis{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px}
-  .kpi{background:#f3f8ff;border:1px solid #d9e6ff;border-radius:12px;padding:12px}
-  .kpi b{font-size:18px}
-  .code{font-family:ui-monospace,monospace;background:#fff;border:1px solid #e5e9f6;padding:8px 10px;border-radius:10px}
+  .btn:hover{
+    transform:translateY(-1px);
+    filter:brightness(1.03);
+    box-shadow:0 12px 26px rgba(129,140,248,.7);
+  }
 
-  .priceCard{background:#f3f8ff;border:1px solid #d9e6ff;border-radius:12px;padding:12px;display:flex;flex-direction:column;align-items:center}
-  .priceValue{font-size:36px;line-height:1;font-weight:900}
-  .priceLabel{font-size:11px;color:#6a7aa0;letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
-  .priceDetail{margin-top:8px;font-size:13px;color:#2f3b57;text-align:center}
+  .btn:active{
+    transform:translateY(0);
+    box-shadow:0 8px 18px rgba(129,140,248,.5);
+  }
 
-  .badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#eaf2ff;border:1px solid #cfe1ff;color:#0c64c5;font-size:12px;font-weight:800}
-  .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;border:1px solid #ffd9a6;background:#fff5e6;color:#9a6b00;font-size:12px;font-weight:800}
-  .pill.glass{border-color:#b8e1ff;background:#eef7ff;color:#0c64c5}
-  .notes{margin-top:10px;padding-top:10px;border-top:1px dashed #e2e8f8;color:#4b5875;font-size:13px}
+  .btn.secondary{
+    background:#ffffff;
+    color:#1d4ed8;
+    border:1px solid #c7d2fe;
+    box-shadow:0 2px 8px rgba(148,163,184,.35);
+    text-transform:none;
+    letter-spacing:.01em;
+    font-weight:600;
+  }
 
-  .recap{margin-top:10px;border:1px dashed #e2e8f8;background:#f9fbff;border-radius:12px;padding:12px}
-  .recap h4{margin:0 0 8px;font-size:14px;color:#3b4a6b}
-  .recap-grid{display:grid;grid-template-columns:1fr auto;row-gap:8px;column-gap:10px;align-items:center}
-  .recap-label{color:#617094;font-size:13px}
-  .recap-value{font-weight:800}
+  .btn.secondary:hover{
+    background:#eef2ff;
+    box-shadow:0 4px 12px rgba(148,163,184,.55);
+  }
 
-  .altContainer{margin-top:14px}
-  .offerAlt{background:#f9fbff;border:1px solid #d9e6ff;border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
-  .offerAlt .head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
-  .offerAlt .title{font-weight:800;font-size:16px;color:#1c274c}
-  .offerAlt .price{font-size:28px;font-weight:900;letter-spacing:.2px}
-  .offerAlt .meta{display:flex;flex-wrap:wrap;gap:10px;color:#415079}
-  .offerAlt .meta span{background:#fff;border:1px solid #e5e9f6;border-radius:10px;padding:6px 10px;font-size:12px}
+  .results{
+    margin-top:14px;
+  }
+
+  .result-head{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+
+  .result-name{
+    font-size:19px;
+    font-weight:900;
+    color:#111827;
+  }
+
+  .kpis{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+    margin-top:12px;
+  }
+
+  .kpi{
+    background:#f3f4ff;
+    border:1px solid #d4ddff;
+    border-radius:14px;
+    padding:10px 12px;
+    box-shadow:0 6px 14px rgba(148,163,184,.45);
+  }
+  .kpi .muted{
+    color:#6b7280;
+    font-size:13px;
+  }
+  .kpi b{
+    font-size:18px;
+    color:#111827;
+  }
+
+  .code{
+    font-family:ui-monospace,monospace;
+    background:#111827;
+    border:1px solid #c7d2fe;
+    padding:7px 10px;
+    border-radius:10px;
+    color:#e5ebff;
+    font-size:13px;
+  }
+
+  .priceCard{
+    background:radial-gradient(circle at 0 0,#e0e7ff 0,#ffffff 55%,#e5e7eb 100%);
+    border:1px solid #c7d2fe;
+    border-radius:16px;
+    padding:12px 14px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    box-shadow:0 12px 26px rgba(148,163,184,.7);
+    min-width:190px;
+  }
+
+  .priceValue{
+    font-size:34px;
+    line-height:1;
+    font-weight:900;
+    color:#111827;
+  }
+
+  .priceLabel{
+    font-size:11px;
+    color:#4b5563;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    margin-top:4px;
+  }
+
+  .priceDetail{
+    margin-top:8px;
+    font-size:13px;
+    color:#374151;
+    text-align:center;
+  }
+
+  .badge{
+    display:inline-block;
+    padding:4px 9px;
+    border-radius:999px;
+    background:#e0f2fe;
+    border:1px solid #bfdbfe;
+    color:#1d4ed8;
+    font-size:11px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+  }
+
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:4px 10px;
+    border-radius:999px;
+    border:1px solid #fed7aa;
+    background:#fffbeb;
+    color:#9a3412;
+    font-size:11px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+  }
+
+  .pill.glass{
+    border-color:#bfdbfe;
+    background:#eff6ff;
+    color:#1d4ed8;
+  }
+
+  .notes{
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px dashed #d1d5db;
+    color:#4b5563;
+    font-size:13px;
+  }
+
+  .recap{
+    margin-top:10px;
+    border:1px dashed #cbd5f5;
+    background:#eef2ff;
+    border-radius:14px;
+    padding:12px 12px 10px;
+  }
+
+  .recap h4{
+    margin:0 0 8px;
+    font-size:14px;
+    color:#111827;
+    font-weight:700;
+  }
+
+  .recap-grid{
+    display:grid;
+    grid-template-columns:1fr auto;
+    row-gap:8px;
+    column-gap:10px;
+    align-items:center;
+  }
+
+  .recap-label{
+    color:#4b5563;
+    font-size:12px;
+  }
+
+  .recap-value{
+    font-weight:700;
+    font-size:13px;
+    color:#111827;
+  }
+
+  .recap-badges{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-top:10px;
+  }
+
+  .altContainer{
+    margin-top:14px;
+  }
+
+  .offerAlt{
+    background:#f9fafb;
+    border:1px solid #d1d5db;
+    border-radius:18px;
+    padding:14px 16px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    box-shadow:0 10px 22px rgba(148,163,184,.6);
+  }
+
+  .offerAlt .head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:12px;
+  }
+
+  .offerAlt .title{
+    font-weight:800;
+    font-size:15px;
+    color:#111827;
+  }
+
+  .offerAlt .price{
+    font-size:26px;
+    font-weight:900;
+    letter-spacing:.04em;
+    color:#111827;
+  }
+
+  .offerAlt .meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    color:#4b5563;
+    font-size:11px;
+  }
+
+  .offerAlt .meta span{
+    background:#e5e7eb;
+    border:1px solid #d1d5db;
+    border-radius:999px;
+    padding:5px 9px;
+  }
+
+  .offerAlt .notes{
+    border-top:1px dashed #d1d5db;
+    padding-top:8px;
+    margin-top:2px;
+    font-size:12px;
+    color:#374151;
+  }
 
   .mobileBar{
-    position:fixed;left:0;right:0;bottom:0;z-index:30;
-    background:rgba(255,255,255,.88);backdrop-filter:blur(8px);
-    border-top:1px solid var(--border);box-shadow:0 -10px 24px rgba(17,24,39,.06);
-    padding:10px 12px;display:grid;grid-template-columns:1fr 1fr;gap:10px
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index:30;
+    background:linear-gradient(180deg,#ffffff,#e5e7eb);
+    backdrop-filter:blur(10px);
+    border-top:1px solid #d1d5db;
+    box-shadow:0 -8px 20px rgba(148,163,184,.7);
+    padding:10px 12px 12px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
   }
-  .mobileBar .btn,.mobileBar .btn.secondary{width:100%}
+  .mobileBar .btn,
+  .mobileBar .btn.secondary{
+    width:100%;
+  }
+
+  /* Desktop-only elementi nascosti su mobile se usi questa classe */
+  .desktopOnly{display:none;}
 
   @media(min-width:760px){
-    h1{font-size:22px}
-    .row{grid-template-columns:1fr 1fr}
-    .result-head{flex-direction:row;justify-content:space-between;align-items:flex-start}
-    .kpis{grid-template-columns:repeat(3,1fr)}
-    .priceValue{font-size:52px}
-    .wrap{padding:0 16px}
-    body{padding-bottom:0}
-    .mobileBar{display:none}
+    h1{font-size:22px;}
+    .wrap{padding:0 18px;}
+    .row{grid-template-columns:1fr 1fr;}
+    .result-head{
+      flex-direction:row;
+      justify-content:space-between;
+      align-items:flex-start;
+    }
+    .kpis{grid-template-columns:repeat(3,1fr);}
+    .priceValue{font-size:40px;}
+    body{padding-bottom:0;}
+    .mobileBar{display:none;}
+    .desktopOnly{display:inline-flex;}
   }
+  /* --- CTA INSERISCI CONTRATTO: card separata e più “importante” --- */
+#contractCta{
+  margin-top: 28px;
+  padding: 18px 20px 22px;
+  border-radius: 28px;
+  border: 1px solid rgba(191, 204, 255, 0.9);
+  background: radial-gradient(circle at 0 0,
+              rgba(227,28,121,0.06),
+              rgba(12,100,197,0.03) 45%,
+              #ffffff 75%);
+  box-shadow: 0 18px 40px rgba(15,23,42,0.12);
+}
+
+/* bottone dentro alla card CTA */
+#contractCta .btn{
+  max-width: 420px;
+  margin: 0 auto;
+  display: block;
+  font-size: 15px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  padding: 14px 24px;
+}
+
+/* più spazio prima del blocco “Calcolo costi di recesso” */
+details.result-card{
+  margin-top: 28px !important;
+}
+/* --- TESTO "TOCCA PER APRIRE" IN BIANCO --- */
+details.result-card > summary .muted {
+  color: #ffffff !important;
+}
+
+/* --- CARD "TOTALE RECESSO" PIÙ GRANDE (circa x2) --- */
+#resRecesso{
+  padding: 28px 24px;          /* più spazio interno */
+}
+
+#resRecesso .result-head{
+  align-items: center;
+}
+
+#resRecesso .result-name{
+  font-size: 24px;             /* titolo più grande */
+}
+
+#resRecesso .kpi b{
+  font-size: 32px;             /* importo più grande */
+}
+.promo-card{
+  background:linear-gradient(135deg, rgba(77,137,255,0.06), rgba(227,28,121,0.03));
+  border-style:dashed;
+}
+
 </style>
+
 </head>
 <body>
   <div class="wrap">
     <header>
-      <div class="brand"><div class="logo"></div><div><h1>PROMO SKY IN CORSO - dal 10 Novembre</h1></div></div>
-      <button class="btn secondary" id="resetBtn" aria-label="Pulisci campi">RESET</button>
+      <div class="brand">
+        <div class="logo"></div>
+        <div><h1>PROMO IN CORSO</h1></div>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="btn secondary" id="promoBtn" type="button">
+          👁️ PROMO
+        </button>
+        <button class="btn secondary" id="resetBtn" aria-label="Pulisci campi" type="button">
+          RESET
+        </button>
+      </div>
     </header>
+    <section class="result-card promo-card" id="promoCard" style="display:none; margin-bottom:14px;">
+      <div style="font-size:14px; line-height:1.45;">
+        <p><strong>🛜 Triple Play con Calcio 29,90€</strong><br>
+        <em>Validità: 13 novembre - 23 novembre (2 giorni di backlog)‼️‼️‼️</em></p>
+    
+        <p>Dopo il 23/11 restano attivabili:</p>
+        <p>
+          🛜🎬🎾 Triple Play con Cinema o Sport e UHD 35,80€<br>
+          <em>Validità: 10 novembre - 1 dicembre (2 giorni di backlog)</em>
+        </p>
+    
+        <p>E le offerte TV only:</p>
+        <ul style="margin:4px 0 8px 18px; padding:0;">
+          <li>📺 Offerta speciale Sky TV &amp; Netflix 14,99€</li>
+          <li>📺 Offerta speciale Sky TV + Sport + UHD 24,99€</li>
+          <li>📺 Offerta speciale Sky TV &amp; Netflix + Cinema 19,99€</li>
+        </ul>
+    
+        <p>Attivabili fino al <strong>01/12</strong> (no backlog).</p>
+    
+        <p>Le offerte comprendono:</p>
+        <ul style="margin:4px 0 8px 18px; padding:0;">
+          <li>👉 <strong>Sky Stream</strong>: decoder facile, veloce e sempre con te.</li>
+          <li>👉 <strong>Sky Go</strong>: i contenuti che i tuoi clienti amano, disponibili subito.</li>
+          <li>👉 <strong>Paramount+</strong>: incluso con Sky Cinema.</li>
+        </ul>
+    
+        <p style="margin-top:4px;">
+          È sempre possibile aggiungere i pacchetti mancanti al prezzo del listino scontato Sky Smart.
+        </p>
+      </div>
+    </section>
+    
 
     <!-- ===== FORM ===== -->
     <section class="form-card" id="formCard" aria-labelledby="formTitle">
@@ -184,7 +694,7 @@
             <label>Netflix</label>
             <div class="chips" id="chipsNF" aria-label="Seleziona Netflix">
               <button class="chip" data-group="nf" data-value="none"     aria-pressed="true">Nessuno</button>
-              <button class="chip" data-group="nf" data-value="base"     aria-pressed="false" title="2 schermi in HD">Standard con pubblicità</button>
+              <button class="chip" data-group="nf" data-value="base"     aria-pressed="false" title="2 schermi in HD">Standard con</button>
               <button class="chip" data-group="nf" data-value="standard" aria-pressed="false" title="2 schermi in HD">Standard</button>
               <button class="chip" data-group="nf" data-value="premium"  aria-pressed="false" title="4 schermi in 4K">Premium</button>
             </div>
@@ -470,6 +980,19 @@ businessWifi:[
   }
   const scrollToResult = () => qs('#result').scrollIntoView({behavior:'smooth',block:'start'})
 
+  const promoCard = qs('#promoCard');
+  const promoBtn  = qs('#promoBtn');
+
+  if (promoBtn && promoCard) {
+    promoBtn.addEventListener('click', () => {
+      const show = promoCard.style.display !== 'block';
+      promoCard.style.display = show ? 'block' : 'none';
+      if (show) {
+        promoCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  }
+
   qs('#tipoCliente').addEventListener('change', e=>{ state.tipo=e.target.value })
   qs('#offerta').addEventListener('change', e=>{ state.off=e.target.value; syncBlocks() })
   ;(function(){ const t=qs('#tipoCliente'); const o=qs('#offerta'); if(t&&t.value) state.tipo=t.value; if(o&&o.value) state.off=o.value; syncBlocks() })()
@@ -579,27 +1102,71 @@ businessWifi:[
     return { extra:Number(extra.toFixed(2)), breakdown };
   }
 
-  /* Per PROMO non 3P (TV-only etc.) manteniamo la logica listino */
-  function computeExtraAgainstIncluded(base, sel, nf){
-    const P=LISTINO.base.pacchetti; const L={sport:'Sport',cinema:'Cinema',calcio:'Calcio',kids:'Kids',uhd:'UHD/4K'}
-    const included = new Set(base.included||[]); let extra=0; const breakdown=[]
-    ;['sport','cinema','calcio','kids','uhd'].forEach(p=>{
-      if(sel.has(p) && !included.has(p)){ const add=P[p]||0; if(add>0){ extra+=add; breakdown.push(`${L[p]} ${add.toFixed(2)}€`) } }
-    })
-    if(nf && nf!=='none'){
-      if(base.includedNetflix){
-        const current=LISTINO.base.netflix[base.includedNetflix]||0; const wanted=LISTINO.base.netflix[nf]||0;
-        const delta=Math.max(0,wanted-current); if(delta>0){ extra+=delta; breakdown.push(`Netflix ${nfLabel(nf)} +${delta.toFixed(2)}€`) }
+    /* Per PROMO non 3P (TV-only, GLASS, ecc.):
+     ora Netflix usa gli stessi sovrapprezzi fissi delle 3P
+     quando NON è già incluso nella promo. */
+     function computeExtraAgainstIncluded(base, sel, nf){
+    const P = LISTINO.base.pacchetti;
+    const L = { sport:'Sport', cinema:'Cinema', calcio:'Calcio', kids:'Kids', uhd:'UHD/4K' };
+    const included = new Set(base.included || []);
+    let extra = 0;
+    const breakdown = [];
+
+    // Pacchetti TV aggiuntivi rispetto a quelli già inclusi
+    ['sport','cinema','calcio','kids','uhd'].forEach(p => {
+      if (sel.has(p) && !included.has(p)) {
+        const add = P[p] || 0;
+        if (add > 0) {
+          extra += add;
+          breakdown.push(`${L[p]} ${add.toFixed(2)}€`);
+        }
+      }
+    });
+
+    // Netflix
+    if (nf && nf !== 'none') {
+      if (base.includedNetflix) {
+        // Se la promo include già un livello di Netflix (es. "base"),
+        // applico la differenza di listino tra il livello desiderato e quello incluso.
+        const current = LISTINO.base.netflix[base.includedNetflix] || 0;
+        const wanted  = LISTINO.base.netflix[nf] || 0;
+        const delta   = Math.max(0, wanted - current);
+        if (delta > 0) {
+          extra += delta;
+          breakdown.push(`Netflix ${nfLabel(nf)} +${delta.toFixed(2)}€`);
+        }
       } else {
-        const delta=Math.max(0,(LISTINO.base.netflix[nf]||0) - LISTINO.base.sky_tv);
-        if(delta>0){ extra+=delta; breakdown.push(`Netflix ${nfLabel(nf)} +${delta.toFixed(2)}€`) }
+        // Promo senza Netflix incluso: uso i sovrapprezzi fissi
+        // (4,99 / 11,99 / 17,99) come per le 3P.
+        let delta = THREEP_NF_UPCHARGE[nf] || 0;
+
+        // Fallback di sicurezza: se per qualche motivo non c'è l'upcharge,
+        // ritorno alla logica "listino - Sky TV".
+        if (!delta) {
+          const wanted = LISTINO.base.netflix[nf] || 0;
+          const current = LISTINO.base.sky_tv;
+          delta = Math.max(0, wanted - current);
+        }
+
+        if (delta > 0) {
+          extra += delta;
+          breakdown.push(`Netflix ${nfLabel(nf)} +${delta.toFixed(2)}€`);
+        }
       }
     }
-    if(sel.has('sport') && !included.has('uhd') && !sel.has('uhd')){
-      const add = P.uhd || 0; if(add>0){ extra+=add; breakdown.push(`UHD/4K ${add.toFixed(2)}€ (con Sport)`) }
+
+    // UHD auto con Sport se non già incluso
+    if (sel.has('sport') && !included.has('uhd') && !sel.has('uhd')) {
+      const add = P.uhd || 0;
+      if (add > 0) {
+        extra += add;
+        breakdown.push(`UHD/4K ${add.toFixed(2)}€ (con Sport)`);
+      }
     }
-    return {extra:Number(extra.toFixed(2)), breakdown}
+
+    return { extra: Number(extra.toFixed(2)), breakdown };
   }
+
 
   /* ================== CORE: COMPUTE BEST ================== */
   function computeBest(){
