@@ -144,6 +144,7 @@
           <select id="tipoCliente">
             <option value="" selected disabled>Seleziona…</option>
             <option value="privato">Privato</option>
+            <option value="business">Business</option>
           </select>
         </div>
         <div>
@@ -199,7 +200,6 @@
       <div class="row" style="margin-top:10px">
         <div></div>
         <div style="text-align:right;display:flex;gap:8px;justify-content:flex-end">
-          <button class="btn secondary desktopOnly" id="listinoBtn" title="Visualizza dataset interno">Dataset</button>
           <button class="btn desktopOnly" id="calcBtn">Calcola offerta</button>
         </div>
       </div>
@@ -435,7 +435,30 @@
         durata:'Senza vincoli', noCommitment:true,
         note:'Disponibile solo su copertura Open Fiber. Prezzo promozionale per 12 mesi. Nessun vincolo.'
       }
+    ],
+
+/* WiFi Business – SKY WIFI BB */
+businessWifi:[
+      {
+        id:'BIZ_WIFI_BB',
+        name:'Sky WiFi BB Business',
+        match:()=>true,
+        // Canone: 24,50€ + IVA = 29,89€ ivato
+        price:'29,89€ (24,50€ + IVA)',
+        priceValue:29.89,
+        // Attivazione: 29€ + IVA = 35,38€ ivato
+        attivazione:'35,38€ (29€ + IVA)',
+        // Codici voce business
+        codiceVoce:{
+          consumo:'1401041',    // chiamate a consumo
+          unlimited:'1401056'   // chiamate unlimited incluse 12 mesi
+        },
+        scadenza:'—',
+        durata:'12 mesi',
+        note:'Offerta business SKY WIFI BB: canone 24,50€ + IVA (29,89€ ivato) per 12 mesi; attivazione 29€ + IVA (35,38€ ivato).'
+      }
     ]
+  
   };
   /* ================== STATE & UI ================== */
   const state = { tipo:null, off:null, voce:null, tv:new Set(), nf:'none' }
@@ -450,6 +473,45 @@
   qs('#tipoCliente').addEventListener('change', e=>{ state.tipo=e.target.value })
   qs('#offerta').addEventListener('change', e=>{ state.off=e.target.value; syncBlocks() })
   ;(function(){ const t=qs('#tipoCliente'); const o=qs('#offerta'); if(t&&t.value) state.tipo=t.value; if(o&&o.value) state.off=o.value; syncBlocks() })()
+
+  // Limitazione opzioni offerta per cliente BUSINESS
+  qs('#tipoCliente').addEventListener('change', e=>{
+    const tipo = e.target.value;
+    const selOff = qs('#offerta');
+    const opts = qsa('#offerta option');
+
+    if (tipo === 'business') {
+      // Mostra SOLO SKY WIFI (BB Business) nel menu offerta
+      opts.forEach(opt=>{
+        if (!opt.value) return; // lascia il placeholder
+        if (opt.value !== 'wifi') {
+          opt.disabled = true;
+          opt.hidden   = true;
+        } else {
+          opt.disabled = false;
+          opt.hidden   = false;
+        }
+      });
+
+      // Imposta automaticamente l’offerta su SKY WIFI BB
+      if (selOff.value !== 'wifi') {
+        selOff.value = 'wifi';
+        state.off = 'wifi';
+        syncBlocks();
+      }
+    } else {
+      // Ritorno a PRIVATO: riabilita tutte le offerte
+      opts.forEach(opt=>{
+        if (!opt.value) return;
+        opt.disabled = false;
+        opt.hidden   = false;
+      });
+      selOff.value = '';
+      state.off = null;
+      syncBlocks();
+    }
+  });
+
 
   document.addEventListener('click',(e)=>{
     const btn = e.target.closest('.chip'); if(!btn) return
