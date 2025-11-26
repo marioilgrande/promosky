@@ -614,16 +614,10 @@ details.result-card > summary .muted {
     </header>
     <section class="result-card promo-card" id="promoCard" style="display:none; margin-bottom:14px;">
       <div style="font-size:14px; line-height:1.45;">
-        <p><strong>🛜 Triple Play con Calcio 29,90€</strong><br>
-        <em>Validità: 13 novembre - 23 novembre (2 giorni di backlog)‼️‼️‼️</em></p>
+        <p><strong>🛜 Triple Play con Cinema o Sport e UHD 35,80€</strong><br>
+        <em>Validità: 10 novembre - 1 dicembre (2 giorni di backlog)</em></p>
     
-        <p>Dopo il 23/11 restano attivabili:</p>
-        <p>
-          🛜🎬🎾 Triple Play con Cinema o Sport e UHD 35,80€<br>
-          <em>Validità: 10 novembre - 1 dicembre (2 giorni di backlog)</em>
-        </p>
-    
-        <p>E le offerte TV only:</p>
+        <p>Restano inoltre attivabili le offerte TV only:</p>
         <ul style="margin:4px 0 8px 18px; padding:0;">
           <li>📺 Offerta speciale Sky TV &amp; Netflix 14,99€</li>
           <li>📺 Offerta speciale Sky TV + Sport + UHD 24,99€</li>
@@ -644,6 +638,7 @@ details.result-card > summary .muted {
         </p>
       </div>
     </section>
+    
     
     <!-- ===== FORM ===== -->
     <section class="form-card" id="formCard" aria-labelledby="formTitle">
@@ -881,16 +876,8 @@ details.result-card > summary .muted {
       }
     ],
 
-    /* 3P – priorità CALCIO incluso */
+    /* 3P – senza promo Calcio 29,90 (scaduta) */
     threeP:[
-      { id:'3P_CALCIO', name:'3P + CALCIO (TV+WiFi+Calcio) · PRIORITÀ',
-        match:()=>true,
-        price:'29,90€', priceValue:29.90, included:['calcio'],
-        attivazione:'Stream 19€ – WiFi Gratis',
-        codiceVoce:{consumo:'1300216', unlimited:'1300217'},
-        scadenza:'SCADENZA IN ARRIVO', durata:'18 mesi',
-        note:'Allo stesso prezzo della 3P base, include il pacchetto Calcio. Prioritaria rispetto alla 3P senza pacchetti.'
-      },
       { id:'3P_CIN', name:'3P + CINEMA (TV+UHD+WiFi+Cinema)', match:(s)=> s.has('cinema'),
         price:'35,80€', priceValue:35.80, included:['cinema','uhd'],
         attivazione:'Stream 19€ – WiFi Gratis', codiceVoce:{consumo:'1300199',unlimited:'1300200'},
@@ -1181,27 +1168,26 @@ businessWifi:[
     if(state.tipo==='business' && off==='wifi'){
       candidates = PROMO.businessWifi.map(p=>({base:p,total:p.priceValue,breakdown:[],extra:0}))
     }
-    else if(off==='wifi_tv'){ /* 3P – CALCIO prioritaria, extra ai prezzi fissi */
+    else if(off==='wifi_tv'){ /* 3P – senza promo Calcio 29,90 */
       if(!voce) return {error:'Seleziona l\'opzione Voce (a consumo/unlimited).'}
-      const calcio   = PROMO.threeP.find(p => p.id === '3P_CALCIO')
-      const base3P   = PROMO.threeP.find(p => p.id === '3P_BASE')
-      const others   = PROMO.threeP.filter(p => !['3P_CALCIO','3P_BASE'].includes(p.id) && p.match(sel, nf))
-      const list     = [calcio, base3P].filter(Boolean).concat(others)
+
+      const base3P = PROMO.threeP.find(p => p.id === '3P_BASE')
+      const others = PROMO.threeP.filter(p => p.id !== '3P_BASE' && p.match(sel, nf))
+      const list   = [base3P].filter(Boolean).concat(others)
 
       candidates = list.map(p => {
         const { extra, breakdown } = computeExtra3P(p, sel, nf)
         return { base:p, total: Number((p.priceValue + extra).toFixed(2)), breakdown, extra }
       })
 
-      // Ordinamento: prezzo asc, poi priorità CALCIO, poi "quanti pacchetti inclusi"
+      // Ordinamento: prezzo asc, poi numero di pacchetti inclusi (discendente)
       candidates.sort((a,b)=>{
         if (a.total !== b.total) return a.total - b.total
-        const aPri = a.base.id==='3P_CALCIO'?1:0, bPri = b.base.id==='3P_CALCIO'?1:0
-        if (aPri !== bPri) return bPri - aPri
         const aInc = (a.base.included||[]).length, bInc = (b.base.included||[]).length
         return bInc - aInc
       })
     }
+
     else if(off==='wifi_tv_glass'){
       const list = PROMO.glassThreeP
         .filter(p => p.match(sel, nf))
