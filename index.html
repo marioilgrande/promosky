@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
 <meta charset="UTF-8" />
@@ -623,7 +623,7 @@
           <li>3P + <strong>Sport</strong> a <strong>35,90€</strong>/mese.</li>
         </ul>
 
-        <p><strong>📺 Only TV / Glass</strong></p>
+        <p><strong>📺 Only TV</strong></p>
         <ul style="margin:4px 0 8px 18px; padding:0;">
           <li>
             <strong>NEW</strong> – Sky TV + Netflix
@@ -725,7 +725,7 @@
             </div>
             <div style="margin-top:6px;font-size:12px;color:#55637f">
               Netflix:
-              <b>Standard con pubblicità</b> = 4.99€/mese · 2 schermi in HD ·
+              <b>Standard con pubblicità</b> = 4,99€/mese · 2 schermi in HD ·
               <b>Standard</b> = 11,99€/mese · 2 schermi in HD ·
               <b>Premium</b> = 17,99€/mese · 4 schermi in 4K.
             </div>
@@ -782,8 +782,8 @@
             </div>
           </div>
           <div class="kpi" id="glassKpi" style="display:none">
-            <div class="muted">Dispositivo incluso</div>
-            <b>SKY GLASS 43" Nero · 199€ una tantum</b>
+            <div class="muted">Sky Glass – opzioni di acquisto</div>
+            <b id="glassKpiText">—</b>
           </div>
           <div class="kpi">
             <div class="muted">Scadenza promo</div>
@@ -817,6 +817,48 @@
 
           <div style="margin-top:12px;">
             <span class="badge">PROMO DEL MOMENTO</span>
+          </div>
+        </section>
+
+        <!-- CTA per Sky Glass -->
+        <div id="glassCtaWrapper" style="display:none; margin-top:12px; text-align:right;">
+          <button class="btn secondary" id="toggleGlassBtn" type="button">Aggiungi Sky Glass</button>
+        </div>
+
+        <!-- Sezione Sky Glass -->
+        <section class="recap" id="glassBox" style="display:none; margin-top:10px;">
+          <h4>Sky Glass – opzioni di acquisto</h4>
+          <div class="recap-grid" style="row-gap:10px;">
+            <div class="recap-label">Taglia dispositivo</div>
+            <div class="recap-value">
+              <div class="chips" id="chipsGlassSize" aria-label="Seleziona taglia Sky Glass">
+                <button class="chip" data-group="glass_size" data-value="43" aria-pressed="true">Sky Glass 43"</button>
+                <button class="chip" data-group="glass_size" data-value="55" aria-pressed="false">Sky Glass 55"</button>
+              </div>
+            </div>
+            <div class="recap-label">Modalità di pagamento</div>
+            <div class="recap-value">
+              <div class="chips" id="chipsGlassPlan" aria-label="Seleziona modalità pagamento Sky Glass">
+                <button class="chip" data-group="glass_plan" data-value="unico" aria-pressed="true">Pagamento unico</button>
+                <button class="chip" data-group="glass_plan" data-value="rate48" aria-pressed="false">Rate 48 mesi</button>
+                <button class="chip" data-group="glass_plan" data-value="rate12" aria-pressed="false">Rate 12 mesi</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="recap-grid" style="row-gap:8px; margin-top:10px;">
+            <div class="recap-label">Canone offerta</div>
+            <div class="recap-value" id="glassPromoMonthly">—</div>
+
+            <div class="recap-label">Rata Sky Glass</div>
+            <div class="recap-value" id="glassRateMonthly">—</div>
+
+            <div class="recap-label">Totale mensile (promo + Glass)</div>
+            <div class="recap-value" id="glassTotalMonthly">—</div>
+          </div>
+
+          <div class="notes" id="glassNote">
+            Sky Glass 43" · pagamento unico 399€ (scontato da 651€).
           </div>
         </section>
 
@@ -938,6 +980,50 @@
       /* Upcharge Netflix per TV / 3P / 4P (da brief) */
       const THREEP_NF_UPCHARGE   = { base:4.99, standard:11.99, premium:17.99 };
       const THREEP_PACK_UPCHARGE = { calcio:8.00, sport:22.90, cinema:10.00, kids:5.00, uhd:5.00 };
+
+      /* === Sky Glass – configurazioni acquisto === */
+      const GLASS = {
+        '43': {
+          unico:{
+            title:'Sky Glass 43" – pagamento unico',
+            desc:'399€ (scontato da 651€)',
+            summary:'Sky Glass 43" · pagamento unico 399€ (scontato da 651€)',
+            monthly:0
+          },
+          rate48:{
+            title:'Sky Glass 43" – rate 48 mesi',
+            desc:'anticipo 15€ + 48 rate da 8€',
+            summary:'Sky Glass 43" · anticipo 15€ + 48 rate da 8€',
+            monthly:8
+          },
+          rate12:{
+            title:'Sky Glass 43" – rate 12 mesi',
+            desc:'anticipo 15€ + 12 rate da 32€',
+            summary:'Sky Glass 43" · anticipo 15€ + 12 rate da 32€',
+            monthly:32
+          }
+        },
+        '55': {
+          unico:{
+            title:'Sky Glass 55" – pagamento unico',
+            desc:'599€ (scontato da 987€)',
+            summary:'Sky Glass 55" · pagamento unico 599€ (scontato da 987€)',
+            monthly:0
+          },
+          rate48:{
+            title:'Sky Glass 55" – rate 48 mesi',
+            desc:'anticipo 23€ + 48 rate da 12€',
+            summary:'Sky Glass 55" · anticipo 23€ + 48 rate da 12€',
+            monthly:12
+          },
+          rate12:{
+            title:'Sky Glass 55" – rate 12 mesi',
+            desc:'anticipo 23€ + 12 rate da 48€',
+            summary:'Sky Glass 55" · anticipo 23€ + 12 rate da 48€',
+            monthly:48
+          }
+        }
+      };
     
       /* === PROMO AGGIORNATE === */
       const PROMO = {
@@ -947,8 +1033,6 @@
           {
             id:'TV_NF_BASE',
             name:'Sky TV + Netflix (Standard con pubblicità)',
-            // valida sia se l’utente sceglie Netflix "Standard con",
-            // sia se lascia "Nessuno" (in quel caso proponiamo comunque la promo 14,99€)
             match:(s,nf)=> (nf === 'base' || nf === 'none'),
             price:'14,99€',
             priceValue:14.99,
@@ -1065,7 +1149,18 @@
       };
     
       /* === Stato === */
-      const state = { tipo:null, off:null, voce:null, tv:new Set(), nf:'none' };
+      const state = {
+        tipo:null,
+        off:null,
+        voce:null,
+        tv:new Set(),
+        nf:'none',
+        glassEnabled:false,
+        glassSize:'43',
+        glassPlan:'unico'
+      };
+
+      let lastBest = null;
     
       /* === UI === */
       const syncBlocks = ()=>{
@@ -1155,6 +1250,18 @@
           const pressed = btn.getAttribute('aria-pressed')==='true';
           btn.setAttribute('aria-pressed', String(!pressed));
           if(pressed) state.tv.delete(rawValue); else state.tv.add(rawValue);
+
+        }else if(group==='glass_size'){
+          qsa('#chipsGlassSize .chip').forEach(b=>b.setAttribute('aria-pressed','false'));
+          btn.setAttribute('aria-pressed','true');
+          state.glassSize = rawValue;
+          if(lastBest && state.glassEnabled) updateGlassDetails(lastBest);
+
+        }else if(group==='glass_plan'){
+          qsa('#chipsGlassPlan .chip').forEach(b=>b.setAttribute('aria-pressed','false'));
+          btn.setAttribute('aria-pressed','true');
+          state.glassPlan = rawValue;
+          if(lastBest && state.glassEnabled) updateGlassDetails(lastBest);
         }
       });
     
@@ -1334,6 +1441,98 @@
           default:    return config;
         }
       }
+
+      /* === SKY GLASS HELPERS === */
+      function getGlassConfig(){
+        const size = state.glassSize || '43';
+        const plan = state.glassPlan || 'unico';
+        const sizeCfg = GLASS[size] || GLASS['43'];
+        return sizeCfg[plan] || sizeCfg.unico;
+      }
+
+      function updateGlassDetails(best){
+        const glassBox   = qs('#glassBox');
+        const glassNote  = qs('#glassNote');
+        const glassKpi   = qs('#glassKpi');
+        const glassKpiTx = qs('#glassKpiText');
+        const compDevice = qs('#compDevice');
+        const promoEl    = qs('#glassPromoMonthly');
+        const rateEl     = qs('#glassRateMonthly');
+        const totalEl    = qs('#glassTotalMonthly');
+
+        if(!best){
+          return;
+        }
+
+        if(!state.glassEnabled){
+          if(glassBox) glassBox.style.display = 'none';
+          if(glassKpi) glassKpi.style.display = 'none';
+          if(compDevice) compDevice.textContent = best.compDevice || '—';
+          if(promoEl) promoEl.textContent = '—';
+          if(rateEl)  rateEl.textContent  = '—';
+          if(totalEl) totalEl.textContent = '—';
+          return;
+        }
+
+        const cfg      = getGlassConfig();
+        const summary  = cfg.summary;
+        const promoVal = best.totalValue || best.priceValue || 0;
+        const rata     = cfg.monthly || 0;
+
+        if(glassBox) glassBox.style.display = 'block';
+        if(glassNote) glassNote.textContent = summary;
+        if(glassKpi){
+          glassKpi.style.display = 'block';
+          if(glassKpiTx) glassKpiTx.textContent = summary;
+        }
+        if(compDevice) compDevice.textContent = summary;
+
+        if(promoEl){
+          promoEl.textContent = promoVal ? formatEUR(promoVal) : '—';
+        }
+        if(rateEl){
+          rateEl.textContent = rata ? formatEUR(rata) : '— (solo pagamento unico)';
+        }
+        if(totalEl){
+          totalEl.textContent = promoVal ? formatEUR(promoVal + rata) : '—';
+        }
+      }
+
+      function setupGlassVisibility(best){
+        const glassCta   = qs('#glassCtaWrapper');
+        const toggleBtn  = qs('#toggleGlassBtn');
+        const glassBox   = qs('#glassBox');
+        const glassKpi   = qs('#glassKpi');
+
+        if(!glassCta || !toggleBtn) return;
+
+        const canGlass =
+          (state.off === 'wifi_tv_glass') ||
+          (state.off === 'only_tv' && best && best.hasNetflix);
+
+        if(!canGlass){
+          state.glassEnabled = false;
+          glassCta.style.display = 'none';
+          if(glassBox) glassBox.style.display = 'none';
+          if(glassKpi) glassKpi.style.display = 'none';
+          updateGlassDetails(best);
+          return;
+        }
+
+        glassCta.style.display = 'block';
+
+        if(state.off === 'wifi_tv_glass'){
+          state.glassEnabled = true;
+        }
+
+        if(state.glassEnabled){
+          toggleBtn.textContent = state.off === 'wifi_tv_glass' ? 'Configura Sky Glass' : 'Rimuovi Sky Glass';
+        } else {
+          toggleBtn.textContent = 'Aggiungi Sky Glass';
+        }
+
+        updateGlassDetails(best);
+      }
     
       /* === COMPOSIZIONE OFFERTA === */
       function fillComposition(best){
@@ -1381,7 +1580,7 @@
     
         let device = '—';
         if (off === 'wifi_tv_glass') {
-          device = 'Sky Glass 43" Nero';
+          device = 'Sky Glass (configurabile)';
         } else if (off === 'wifi_tv' || off === 'only_tv') {
           device = 'Decoder / Stream Sky';
         }
@@ -1446,11 +1645,13 @@
         if(off==='only_tv'){
           const promoCandidates = buildTvOnlyCandidates(sel,nf);
           let best;
+          let fromPromo = false;
     
           if(promoCandidates.length){
             promoCandidates.sort((a,b)=>a.total-b.total);
             const ch = promoCandidates[0];
             best={...ch.base,totalValue:ch.total,breakdown:ch.breakdown,isPromo:true,includedSelected:ch.includedSelected,extraPackIds:ch.extraPackIds};
+            fromPromo = true;
           } else {
             const list = composeTVListino(sel,nf);
             best = {
@@ -1467,6 +1668,11 @@
               extraPackIds:Array.from(sel)
             };
           }
+
+          const promoIdsWithNetflix = ['TV_NF_BASE','TV_NF_CINEMA'];
+          best.hasNetflix = fromPromo ? promoIdsWithNetflix.includes(best.id) 
+                                      : (nf && nf !== 'none');
+
           return {best};
         }
     
@@ -1508,11 +1714,6 @@
           formulaBox.style.display = 'none';
         }
     
-        const glassKpi = qs('#glassKpi');
-        if (glassKpi){
-          glassKpi.style.display = best.isGlass ? 'block' : 'none';
-        }
-    
         fillComposition(best);
         const compBox = qs('#compositionBox');
         if (compBox){
@@ -1524,6 +1725,9 @@
           qs('#compVincolo').textContent    = best.compVincolo    || '—';
           qs('#compDurata').textContent     = best.compDurata     || '—';
         }
+
+        lastBest = best;
+        setupGlassVisibility(best);
     
         scrollToResult();
       }
@@ -1568,8 +1772,21 @@
         const code=qs('#codice').textContent.trim();
         if(code&&code!=='-')navigator.clipboard.writeText(code);
       });
+
+      const toggleGlassBtn = qs('#toggleGlassBtn');
+      if (toggleGlassBtn){
+        toggleGlassBtn.addEventListener('click', ()=>{
+          if(!lastBest) return;
+          if(state.off === 'wifi_tv_glass'){
+            state.glassEnabled = true; // sul 4P il Glass è sempre incluso, qui solo apro/riconfiguro
+          } else {
+            state.glassEnabled = !state.glassEnabled;
+          }
+          setupGlassVisibility(lastBest);
+        });
+      }
     
     })();
     </script>
-    </body>
+</body>
 </html>
