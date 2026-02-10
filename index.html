@@ -948,6 +948,13 @@
                 <div class="helpMini">Controllo unico: deve essere <b>esattamente 27 caratteri</b> (senza spazi).</div>
               </div>
 
+              <!-- ✅ NUOVO: CODICE FISCALE (sempre obbligatorio) -->
+              <div style="grid-column:1/-1">
+                <label for="c_cf">CODICE FISCALE</label>
+                <input id="c_cf" type="text" required placeholder="Inserisci codice fiscale" autocomplete="off" />
+                <div class="helpMini">Inserisci il CF <b>senza spazi</b> (verrà riportato nel testo di invio).</div>
+              </div>
+
               <div style="grid-column:1/-1">
                 <label for="c_spedizione">SPEDIZIONE APPARATI</label>
                 <select id="c_spedizione" required>
@@ -960,40 +967,6 @@
                 <label for="c_indirizzo_spedizione">INDIRIZZO SPEDIZIONE</label>
                 <input id="c_indirizzo_spedizione" type="text" placeholder="Indirizzo completo per spedizione apparati" />
               </div>
-
-              <!-- ===== NUOVA SEZIONE: SKY WIFI (solo se la promo include WiFi) ===== -->
-              <div id="wifiWrap" style="display:none; grid-column:1/-1; margin-top:6px;">
-                <div class="dlgSection" style="padding:12px; margin:0; background:#ffffff; border:1px dashed #cbd5f5;">
-                  <h3 style="margin:0 0 10px;">Sky WiFi</h3>
-
-                  <div class="grid2">
-                    <div style="grid-column:1/-1">
-                      <label for="w_linea">Richiedo</label>
-                      <select id="w_linea">
-                        <option value="" selected disabled>Seleziona…</option>
-                        <option value="nuova">Nuova linea</option>
-                        <option value="mantengo">Migrazione numero</option>
-                      </select>
-                    </div>
-
-                    <div id="wifiKeepWrap" style="display:none;">
-                      <label for="w_numero">NUMERO DI TELEFONO</label>
-                      <input id="w_numero" type="tel" placeholder="Es. 0111234567 / 02..." />
-                    </div>
-
-                    <div id="wifiKeepWrap2" style="display:none;">
-                      <label for="w_migrazione">CODICE DI MIGRAZIONE</label>
-                      <input id="w_migrazione" type="text" placeholder="Inserisci codice di migrazione" />
-                    </div>
-
-                    <div class="helpMini" style="grid-column:1/-1; margin-top:2px;">
-                      Se scegli <b>Mantengo numero</b>, inserisci obbligatoriamente <b>Numero</b> e <b>Codice di migrazione</b>.
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- ===== /SKY WIFI ===== -->
-
             </div>
           </div>
 
@@ -1032,6 +1005,35 @@
 
             <div id="contractMsg" style="margin-top:12px"></div>
           </div>
+
+          <!-- ✅ NUOVO: SEZIONE SKY WIFI (solo se promo prevede WiFi: WiFi / 3P / 4P) -->
+          <div class="dlgSection" id="wifiSection" style="display:none">
+            <h3>Sky WiFi</h3>
+            <div class="grid2">
+              <div style="grid-column:1/-1">
+                <label for="w_linea">SKY WIFI</label>
+                <select id="w_linea">
+                  <option value="nuova" selected>NUOVA LINEA</option>
+                  <option value="mantengo">MANTENGO NUMERO</option>
+                </select>
+                <div class="helpMini">Se selezioni <b>MANTENGO NUMERO</b>, inserisci anche Numero e Codice di Migrazione.</div>
+              </div>
+
+              <div id="wifiKeepWrap" style="display:none; grid-column:1/-1">
+                <div class="grid2" style="margin-top:10px">
+                  <div>
+                    <label for="w_numero">NUMERO DI TELEFONO</label>
+                    <input id="w_numero" type="tel" placeholder="Es. 0111234567 / 02..." />
+                  </div>
+                  <div>
+                    <label for="w_migrazione">CODICE DI MIGRAZIONE</label>
+                    <input id="w_migrazione" type="text" placeholder="Inserisci codice di migrazione" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -1155,12 +1157,14 @@
     qs('#tvBlock').style.display    = (off==='only_tv' || off==='wifi_tv' || off==='wifi_tv_glass') ? 'block' : 'none';
 
     if (off === 'wifi_tv_glass'){
+      // Netflix base forzato
       const nfChips = qsa('#chipsNF .chip');
       nfChips.forEach(b => b.setAttribute('aria-pressed','false'));
       const baseChip = nfChips.find(b => b.dataset.value === 'base');
       if (baseChip) baseChip.setAttribute('aria-pressed','true');
       state.nf = 'base';
 
+      // Voce unlimited forzata
       const voceChips = qsa('#chipsVoce .chip');
       voceChips.forEach(b => b.setAttribute('aria-pressed','false'));
       const unlim = voceChips.find(b => b.dataset.value === 'unlimited');
@@ -1193,6 +1197,7 @@
 
   const scrollToResult = () => qs('#result').scrollIntoView({behavior:'smooth',block:'start'});
 
+  // promo toggle
   const promoCard = qs('#promoCard');
   const promoBtn  = qs('#promoBtn');
   promoBtn.addEventListener('click', () => {
@@ -1675,7 +1680,6 @@
         best.codice=best.codiceVoce[voceKey];
       }
       best.hasNetflix = false;
-      best.hasWifi = true;
       return {best};
     }
 
@@ -1703,7 +1707,6 @@
       best.codice = ch.base.codice;
       best.isGlass = true;
       best.hasNetflix = true;
-      best.hasWifi = true;
       return {best};
     }
 
@@ -1719,7 +1722,6 @@
         best.codice=best.codiceVoce[voceKey];
       }
       best.hasNetflix = (nf && nf !== 'none');
-      best.hasWifi = true;
       return {best};
     }
 
@@ -1731,7 +1733,6 @@
       const best={...main,totalMonthly:main.priceValue,totalValue:main.priceValue,isPromo:true,codice:main.codiceVoce[voceKey],includedSelected:[],extraPackIds:[]};
       const alt ={...of,  totalMonthly:of.priceValue,  totalValue:of.priceValue,  isPromo:true,codice:of.codiceVoce[voceKey],  includedSelected:[],extraPackIds:[]};
       best.hasNetflix = false;
-      best.hasWifi = true;
       return {best,context:'wifi',alt};
     }
 
@@ -1777,7 +1778,6 @@
       }
 
       best.hasNetflix = !!best.includesNetflixBase || (nf && nf !== 'none');
-      best.hasWifi = false;
       return {best};
     }
 
@@ -1863,9 +1863,10 @@
     lastBest = best;
     setupGlassVisibility(best);
 
-    res.scrollIntoView({behavior:'smooth', block:'start'});
+    scrollToResult();
   }
 
+  // Buttons
   const runCalc=()=>renderResult(computeBest());
   qs('#calcBtn').addEventListener('click',runCalc);
   qs('#calcBtnMb').addEventListener('click',runCalc);
@@ -1883,6 +1884,7 @@
     setupGlassVisibility(lastBest);
   });
 
+  // Recesso
   qs('#calcRecesso').addEventListener('click', ()=>{
     const meseStr = qs('#mesiTrascorsi').value;
     const conf    = qs('#nPacchetti').value;
@@ -1928,13 +1930,12 @@
   const shipWrap = qs('#shipWrap');
   const shipAddress = qs('#c_indirizzo_spedizione');
 
-  // SKY WIFI fields
-  const wifiWrap = qs('#wifiWrap');
-  const wLinea = qs('#w_linea');
+  // ✅ WiFi section elements
+  const wifiSection = qs('#wifiSection');
+  const wifiLinea   = qs('#w_linea');
   const wifiKeepWrap = qs('#wifiKeepWrap');
-  const wifiKeepWrap2 = qs('#wifiKeepWrap2');
-  const wNumero = qs('#w_numero');
-  const wMigrazione = qs('#w_migrazione');
+  const wifiNumero   = qs('#w_numero');
+  const wifiMig      = qs('#w_migrazione');
 
   const resetContractMsg = ()=>{ if(contractMsg) contractMsg.innerHTML=''; };
   const showMsg = (type, txt)=>{
@@ -1951,52 +1952,46 @@
   };
   shipSelect.addEventListener('change', syncShipping);
 
-  const needsWifiSection = ()=>{
-    // include wifi when offer is wifi / 3P / 4P (business is forced wifi)
-    return !!lastBest && (lastBest.hasWifi === true || ['wifi','wifi_tv','wifi_tv_glass'].includes(state.off));
-  };
+  const isWifiOfferSelected = ()=> ['wifi','wifi_tv','wifi_tv_glass'].includes(state.off);
 
-  const syncWifi = ()=>{
-    const show = needsWifiSection();
-    wifiWrap.style.display = show ? 'block' : 'none';
+  const syncWifiLine = ()=>{
+    // show/hide section based on selected offer
+    const show = isWifiOfferSelected();
+    wifiSection.style.display = show ? 'block' : 'none';
 
     if(!show){
-      // reset + remove required
-      if(wLinea) wLinea.required = false;
-      if(wLinea) wLinea.value = '';
-      if(wNumero) { wNumero.required = false; wNumero.value=''; }
-      if(wMigrazione){ wMigrazione.required = false; wMigrazione.value=''; }
-      if(wifiKeepWrap) wifiKeepWrap.style.display = 'none';
-      if(wifiKeepWrap2) wifiKeepWrap2.style.display = 'none';
+      // reset fields when not applicable
+      wifiKeepWrap.style.display = 'none';
+      wifiLinea.value = 'nuova';
+      wifiLinea.required = false;
+      wifiNumero.required = false;
+      wifiMig.required = false;
+      wifiNumero.value = '';
+      wifiMig.value = '';
       return;
     }
 
-    // show => selection required
-    wLinea.required = true;
+    // required when section visible
+    wifiLinea.required = true;
 
-    const mode = wLinea.value;
-    const keep = (mode === 'mantengo');
-    wifiKeepWrap.style.display  = keep ? 'block' : 'none';
-    wifiKeepWrap2.style.display = keep ? 'block' : 'none';
-
-    wNumero.required = keep;
-    wMigrazione.required = keep;
+    const keep = (wifiLinea.value === 'mantengo');
+    wifiKeepWrap.style.display = keep ? 'block' : 'none';
+    wifiNumero.required = keep;
+    wifiMig.required = keep;
 
     if(!keep){
-      wNumero.value = '';
-      wMigrazione.value = '';
+      wifiNumero.value = '';
+      wifiMig.value = '';
     }
   };
-
-  if(wLinea){
-    wLinea.addEventListener('change', syncWifi);
-  }
+  wifiLinea.addEventListener('change', syncWifiLine);
 
   const clearInvalids = ()=> qsa('#contractDlg .invalid').forEach(el=>el.classList.remove('invalid'));
 
   const baseRequiredIds = [
     'c_nome','c_cognome','c_data_nascita','c_luogo_nascita',
     'c_indirizzo','c_citta','c_cap','c_telefono','c_mail','c_iban',
+    'c_cf', /* ✅ Codice Fiscale obbligatorio */
     'c_spedizione',
     'd_tipo','d_numero','d_emissione','d_scadenza','d_rilasciato'
   ];
@@ -2005,8 +2000,16 @@
     clearInvalids();
     resetContractMsg();
 
+    // Normalizza IBAN + CF (no spazi + maiuscolo)
     const ibanEl = qs('#c_iban');
     ibanEl.value = toUpperNoSpaces(ibanEl.value);
+
+    const cfEl = qs('#c_cf');
+    cfEl.value = toUpperNoSpaces(cfEl.value);
+
+    // sync dynamic required flags
+    syncShipping();
+    syncWifiLine();
 
     const missing = [];
     const markMissing = (id, label)=>{
@@ -2015,7 +2018,6 @@
       missing.push(label);
     };
 
-    // base required
     baseRequiredIds.forEach(id=>{
       const el = qs('#'+id);
       if(!el) return;
@@ -2029,24 +2031,22 @@
     });
 
     // shipping conditional
-    syncShipping();
     if(shipSelect.value === 'other'){
       const v = clean(shipAddress.value);
       if(!v) markMissing('c_indirizzo_spedizione','INDIRIZZO SPEDIZIONE');
     }
 
-    // wifi conditional
-    syncWifi();
-    if(needsWifiSection()){
-      const v = clean(wLinea.value);
-      if(!v) markMissing('w_linea','SKY WIFI (Nuova linea / Mantengo numero)');
-      if(wLinea.value === 'mantengo'){
-        if(!clean(wNumero.value)) markMissing('w_numero','NUMERO DI TELEFONO (portabilità)');
-        if(!clean(wMigrazione.value)) markMissing('w_migrazione','CODICE DI MIGRAZIONE');
+    // WiFi section conditional (only if WiFi offer)
+    if(isWifiOfferSelected()){
+      const vLinea = clean(wifiLinea.value);
+      if(!vLinea) markMissing('w_linea','SKY WIFI');
+      if(vLinea === 'mantengo'){
+        if(!clean(wifiNumero.value)) markMissing('w_numero','NUMERO DI TELEFONO (MANTENGO NUMERO)');
+        if(!clean(wifiMig.value)) markMissing('w_migrazione','CODICE DI MIGRAZIONE');
       }
     }
 
-    // IBAN unique control -> 27 chars
+    // IBAN: unico controllo richiesto -> 27 caratteri (senza spazi)
     const iban = toUpperNoSpaces(ibanEl.value);
     if(iban.length !== 27){
       ibanEl.classList.add('invalid');
@@ -2087,6 +2087,7 @@
     const tel = clean(qs('#c_telefono').value);
     const mail = clean(qs('#c_mail').value);
     const iban = toUpperNoSpaces(qs('#c_iban').value);
+    const cf   = toUpperNoSpaces(qs('#c_cf').value);
 
     const spedizione = qs('#c_spedizione').value;
     const indirizzoSped = clean(qs('#c_indirizzo_spedizione').value);
@@ -2096,12 +2097,6 @@
     const emDoc = formatDateITFromInput(qs('#d_emissione').value);
     const scDoc = formatDateITFromInput(qs('#d_scadenza').value);
     const rilDoc = clean(qs('#d_rilasciato').value);
-
-    // wifi
-    const hasWifi = needsWifiSection();
-    const wifiMode = hasWifi ? clean(wLinea.value) : '';
-    const wifiNumero = hasWifi ? clean(wNumero.value) : '';
-    const wifiMig = hasWifi ? clean(wMigrazione.value) : '';
 
     const monthly = (best.totalMonthly ?? best.totalValue ?? best.priceValue);
     const codice = best.codice || '-';
@@ -2124,6 +2119,12 @@
       totalWithGlass = Number((promoVal + (cfg.monthly || 0)).toFixed(2));
     }
 
+    // WiFi line data (only if offer includes WiFi)
+    const wifiActive = isWifiOfferSelected();
+    const wifiType = wifiLinea.value; // 'nuova' or 'mantengo'
+    const wifiNumeroTxt = clean(wifiNumero.value);
+    const wifiMigTxt    = clean(wifiMig.value);
+
     const lines = [];
 
     lines.push(`*RICHIESTA INSERIMENTO CONTRATTO SKY*`);
@@ -2140,17 +2141,8 @@
     lines.push(`TELEFONO: ${tel}`);
     lines.push(`MAIL: ${mail}`);
     lines.push(`IBAN: ${iban}`);
+    lines.push(`CODICE FISCALE: ${cf}`);
     lines.push(``);
-
-    if(hasWifi){
-      lines.push(`*SKY WIFI*`);
-      lines.push(`TIPO LINEA: ${wifiMode === 'mantengo' ? 'Mantengo numero' : 'Nuova linea'}`);
-      if(wifiMode === 'mantengo'){
-        lines.push(`NUMERO DA MANTENERE: ${wifiNumero}`);
-        lines.push(`CODICE DI MIGRAZIONE: ${wifiMig}`);
-      }
-      lines.push(``);
-    }
 
     lines.push(`*DOCUMENTO*`);
     lines.push(`TIPO DOCUMENTO: ${tipoDoc}`);
@@ -2166,6 +2158,16 @@
       lines.push(`INDIRIZZO SPEDIZIONE: ${indirizzoSped}`);
     }
     lines.push(``);
+
+    if(wifiActive){
+      lines.push(`*SKY WIFI*`);
+      lines.push(`LINEA: ${wifiType === 'mantengo' ? 'Mantengo numero' : 'Nuova linea'}`);
+      if(wifiType === 'mantengo'){
+        lines.push(`NUMERO DI TELEFONO: ${wifiNumeroTxt}`);
+        lines.push(`CODICE DI MIGRAZIONE: ${wifiMigTxt}`);
+      }
+      lines.push(``);
+    }
 
     lines.push(`*OFFERTA CONFERMATA*`);
     lines.push(`OFFERTA: ${best.name}`);
@@ -2211,6 +2213,7 @@
     return lines.join('\n');
   };
 
+  // Fix WhatsApp: open in new tab; fallback su redirect se popup bloccato
   const openWhatsApp = (text)=>{
     const url = 'https://wa.me/?text=' + encodeURIComponent(text);
     const w = window.open(url, '_blank', 'noopener,noreferrer');
@@ -2228,8 +2231,7 @@
     clearInvalids();
     setPromoRecap(lastBest);
     syncShipping();
-    // init wifi section every open
-    syncWifi();
+    syncWifiLine(); // ✅ show/hide WiFi section based on selected offer
     contractDlg.showModal();
   };
 
