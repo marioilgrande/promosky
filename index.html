@@ -911,6 +911,14 @@
                 <input id="c_cognome" type="text" required placeholder="Es. Rossi" autocomplete="family-name" />
               </div>
 
+              <!-- ✅ PATCH: CODICE FISCALE (obbligatorio) -->
+              <div style="grid-column:1/-1">
+                <label for="c_cf">CODICE FISCALE</label>
+                <input id="c_cf" type="text" required placeholder="16 caratteri (es. RSSMRA...)" autocomplete="off" />
+                <div class="helpMini">Verrà normalizzato in MAIUSCOLO senza spazi. Controllo: <b>16 caratteri</b>.</div>
+              </div>
+              <!-- ✅ /PATCH -->
+
               <div>
                 <label for="c_data_nascita">DATA DI NASCITA</label>
                 <input id="c_data_nascita" type="date" required />
@@ -1190,8 +1198,6 @@
       syncBlocks();
     }
   };
-
-  const scrollToResult = () => qs('#result').scrollIntoView({behavior:'smooth',block:'start'});
 
   const promoCard = qs('#promoCard');
   const promoBtn  = qs('#promoBtn');
@@ -1995,7 +2001,7 @@
   const clearInvalids = ()=> qsa('#contractDlg .invalid').forEach(el=>el.classList.remove('invalid'));
 
   const baseRequiredIds = [
-    'c_nome','c_cognome','c_data_nascita','c_luogo_nascita',
+    'c_nome','c_cognome','c_cf','c_data_nascita','c_luogo_nascita',
     'c_indirizzo','c_citta','c_cap','c_telefono','c_mail','c_iban',
     'c_spedizione',
     'd_tipo','d_numero','d_emissione','d_scadenza','d_rilasciato'
@@ -2007,6 +2013,11 @@
 
     const ibanEl = qs('#c_iban');
     ibanEl.value = toUpperNoSpaces(ibanEl.value);
+
+    // ✅ PATCH: normalizza CF (maiuscolo senza spazi)
+    const cfEl = qs('#c_cf');
+    if(cfEl) cfEl.value = toUpperNoSpaces(cfEl.value);
+    // ✅ /PATCH
 
     const missing = [];
     const markMissing = (id, label)=>{
@@ -2046,6 +2057,14 @@
       }
     }
 
+    // ✅ PATCH: CF check (16 chars)
+    const cf = toUpperNoSpaces(cfEl ? cfEl.value : '');
+    if(!cf || cf.length !== 16){
+      if(cfEl) cfEl.classList.add('invalid');
+      missing.push('CODICE FISCALE (16 caratteri)');
+    }
+    // ✅ /PATCH
+
     // IBAN unique control -> 27 chars
     const iban = toUpperNoSpaces(ibanEl.value);
     if(iban.length !== 27){
@@ -2078,6 +2097,11 @@
 
     const nome = clean(qs('#c_nome').value);
     const cognome = clean(qs('#c_cognome').value);
+
+    // ✅ PATCH: CF nel testo WhatsApp
+    const cf = toUpperNoSpaces(qs('#c_cf').value);
+    // ✅ /PATCH
+
     const dataNascita = formatDateITFromInput(qs('#c_data_nascita').value);
     const luogoNascita = clean(qs('#c_luogo_nascita').value);
 
@@ -2132,6 +2156,7 @@
     lines.push(`*DATI CLIENTE*`);
     lines.push(`NOME: ${nome}`);
     lines.push(`COGNOME: ${cognome}`);
+    lines.push(`CODICE FISCALE: ${cf}`);  // ✅ PATCH
     lines.push(`DATA DI NASCITA: ${dataNascita}`);
     lines.push(`LUOGO DI NASCITA: ${luogoNascita}`);
     lines.push(`INDIRIZZO: ${indirizzo}`);
