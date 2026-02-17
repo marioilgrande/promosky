@@ -585,11 +585,8 @@
 
         <p><strong>📺 Only TV – FEBBRAIO</strong></p>
         <ul style="margin:4px 0 8px 18px; padding:0;">
-          <li>🎥 <strong>Sky TV + Netflix</strong> a <strong>14,99€</strong>/mese per <strong>18 mesi</strong> · validità <strong>08/01 – 15/02/2026</strong> (no backlog) · Cod. promo <strong>1100731</strong>.</li>
           <li>🏟️ <strong>Sky TV + Sky Sport</strong> a <strong>24,99€</strong>/mese per <strong>18 mesi</strong> · validità <strong>08/01 – 22/02/2026</strong> (no backlog) · Cod. promo <strong>1100733</strong>.</li>
           <li>🏟️📺 <strong>Sky TV + Sky Sport + UHD</strong> a <strong>24,99€</strong>/mese per i <strong>primi 6 mesi</strong>, poi <strong>29,99€</strong>/mese per i <strong>restanti 12 mesi</strong> · validità <strong>13/01 – 22/02/2026</strong> (no backlog) · Cod. promo <strong>1100759</strong>. <em>Con Sky Glass: +4,99€ Netflix Standard con Pubblicità</em>.</li>
-          <li>🎥🍿 <strong>Sky TV + Netflix + Sky Cinema + UHD</strong> a <strong>14,99€</strong>/mese per i <strong>primi 6 mesi</strong>, poi <strong>24,99€</strong>/mese per i <strong>restanti 12 mesi</strong> · validità <strong>08/01 – 15/02/2026</strong> (no backlog) · Cod. promo <strong>1100771</strong>.</li>
-          <li>🍿⚽️ <strong>Sky TV + Sky Cinema + Sky Calcio</strong> a <strong>19,99€</strong>/mese per <strong>18 mesi</strong> · validità <strong>16/12/2025 – 15/02/2026</strong> (no backlog) · Cod. promo <strong>1100739</strong>.</li>
         </ul>
       </div>
     </section>
@@ -1092,8 +1089,7 @@
 
   const PROMO = {
     tvOnly:[
-      { id:'TV_NF_1499', name:'Sky TV + Netflix', match:(s,nf)=> true, priceValue:14.99, includesNetflixBase:true, attivazione:'Stream 19€', codice:'1100731', scadenza:'15/02/2026 (no backlog)', durata:'18 mesi',
-        note:'Promo Sky TV + Netflix a 14,99€/mese per 18 mesi. Validità 08/01/2026 – 15/02/2026 (no backlog). Codice promo 1100731.' },
+
       { id:'TV_SPORT_2499', name:'Sky TV + Sky Sport', match:(s,nf)=> s.has('sport'), priceValue:24.99, included:['sport'], includesNetflixBase:false, attivazione:'Stream 19€', codice:'1100733', scadenza:'22/02/2026 (no backlog)', durata:'18 mesi',
         note:'Promo Sky TV + Sky Sport a 24,99€/mese per 18 mesi. Validità 08/01/2026 – 22/02/2026 (no backlog). Codice promo 1100733.' },
       { id:'TV_SPORT_UHD_STEP', name:'Sky TV + Sky Sport + UHD', match:(s,nf)=> s.has('sport') && s.has('uhd'),
@@ -1101,14 +1097,6 @@
         priceDetail:'24,99€/mese per i primi 6 mesi, poi 29,99€/mese per i restanti 12 mesi (totale 18 mesi).',
         included:['sport','uhd'], includesNetflixBase:false, requiresNetflixBaseIfGlass:true, attivazione:'Stream 19€', codice:'1100759', scadenza:'22/02/2026 (no backlog)', durata:'18 mesi (6 + 12)',
         note:'Promo Sky TV + Sky Sport + UHD: 24,99€/mese per i primi 6 mesi, poi 29,99€/mese per i restanti 12 mesi. Validità 13/01/2026 – 22/02/2026. Codice promo 1100759. Con Sky Glass: +4,99€ Netflix Standard con pubblicità.' },
-      { id:'TV_NF_CINEMA_UHD_STEP', name:'Sky TV + Netflix + Cinema + UHD', match:(s,nf)=> s.has('cinema'),
-        priceValue:14.99, phases:[{months:6,price:14.99},{months:12,price:24.99}],
-        priceDetail:'14,99€/mese per i primi 6 mesi, poi 24,99€/mese per i restanti 12 mesi (totale 18 mesi).',
-        included:['cinema','uhd'], includesNetflixBase:true, attivazione:'Stream 19€', codice:'1100771', scadenza:'15/02/2026 (no backlog)', durata:'18 mesi (6 + 12)',
-        note:'Promo Sky TV + Netflix + Sky Cinema + UHD: 14,99€/mese per i primi 6 mesi, poi 24,99€/mese per i restanti 12 mesi. Validità 08/01/2026 – 15/02/2026. Codice promo 1100771.' },
-      { id:'TV_CINEMA_CALCIO', name:'Sky TV + Cinema + Calcio', match:(s,nf)=> s.has('cinema') && s.has('calcio'),
-        priceValue:19.99, included:['cinema','calcio'], includesNetflixBase:false, attivazione:'Stream 19€', codice:'1100739', scadenza:'15/02/2026 (no backlog)', durata:'18 mesi',
-        note:'Promo Sky TV + Sky Cinema + Sky Calcio a 19,99€/mese per 18 mesi. Validità 16/12/2025 – 15/02/2026. Codice promo 1100739.' }
     ],
     threeP:[
       { id:'3P_BASE', name:'Sky WiFi + Sky TV (3P)', priceValue:29.90, attivazione:'Attivazione Sky WiFi 0€, Stream 19€',
