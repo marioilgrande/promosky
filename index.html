@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Offerte SKY – Maggio</title>
+<title>Offerte SKY – Aprile</title>
 <style>
   *{box-sizing:border-box}
   html,body{margin:0}
@@ -1076,6 +1076,21 @@
         </div>
 
         <div class="dlgGrid">
+          <div class="dlgSection" id="businessSection" style="display:none">
+            <h3>Dati azienda (Business)</h3>
+            <div class="grid2">
+              <div>
+                <label for="c_ragione_sociale">RAGIONE SOCIALE</label>
+                <input id="c_ragione_sociale" type="text" placeholder="Es. Rossi S.r.l." autocomplete="organization" />
+              </div>
+              <div>
+                <label for="c_partita_iva">PARTITA IVA</label>
+                <input id="c_partita_iva" type="text" inputmode="numeric" placeholder="11 cifre" maxlength="11" />
+                <div class="helpMini">Solo numeri, <b>11 cifre</b>.</div>
+              </div>
+            </div>
+          </div>
+
           <div class="dlgSection">
             <h3>Dati cliente</h3>
             <div class="grid2">
@@ -2697,6 +2712,22 @@
       missing.push('CODICE FISCALE (deve essere 16 caratteri)');
     }
 
+    syncBusinessFields();
+    if(state.tipo === 'business'){
+      const rsEl = qs('#c_ragione_sociale');
+      const piEl = qs('#c_partita_iva');
+      if(rsEl && !clean(rsEl.value)) markMissing('c_ragione_sociale','RAGIONE SOCIALE');
+      if(piEl){
+        const piVal = (piEl.value || '').replace(/\s+/g,'');
+        if(!piVal){
+          markMissing('c_partita_iva','PARTITA IVA');
+        } else if(!/^\d{11}$/.test(piVal)){
+          piEl.classList.add('invalid');
+          missing.push('PARTITA IVA (deve essere 11 cifre numeriche)');
+        }
+      }
+    }
+
     syncShipping();
     if(shipSelect.value === 'other'){
       const v = clean(shipAddress.value);
@@ -2785,10 +2816,23 @@
     const copertura3P = (state.off === 'wifi_tv' && best.coverage3P) ? best.coverage3P : '';
     const coperturaWifi = (state.off === 'wifi' && best.coverageWifi) ? best.coverageWifi : '';
 
+    const isBusiness = (state.tipo === 'business');
+    const ragioneSociale = isBusiness ? clean(qs('#c_ragione_sociale')?.value || '') : '';
+    const partitaIva = isBusiness ? (qs('#c_partita_iva')?.value || '').replace(/\s+/g,'') : '';
+
     const lines = [];
     lines.push(`*RICHIESTA INSERIMENTO CONTRATTO SKY*`);
+    lines.push(`TIPOLOGIA CLIENTE: ${isBusiness ? 'Business (Partita IVA)' : 'Privato'}`);
     lines.push(``);
-    lines.push(`*DATI CLIENTE*`);
+
+    if(isBusiness){
+      lines.push(`*DATI AZIENDA*`);
+      lines.push(`RAGIONE SOCIALE: ${ragioneSociale}`);
+      lines.push(`PARTITA IVA: ${partitaIva}`);
+      lines.push(``);
+    }
+
+    lines.push(`*DATI CLIENTE${isBusiness ? ' (Legale rappresentante)' : ''}*`);
     lines.push(`NOME: ${nome}`);
     lines.push(`COGNOME: ${cognome}`);
     lines.push(`CODICE FISCALE: ${cf}`);
@@ -2878,6 +2922,16 @@
     if(!w) window.location.href = url;
   };
 
+  const syncBusinessFields = ()=>{
+    const sec = qs('#businessSection');
+    const rs  = qs('#c_ragione_sociale');
+    const pi  = qs('#c_partita_iva');
+    const isBiz = (state.tipo === 'business');
+    if(sec) sec.style.display = isBiz ? 'block' : 'none';
+    if(rs){ rs.required = isBiz; if(!isBiz) rs.value = ''; }
+    if(pi){ pi.required = isBiz; if(!isBiz) pi.value = ''; }
+  };
+
   function openContractModal(){
     if(!lastBest){
       alert('Calcola prima un’offerta oppure seleziona una delle offerte WiFi e premi "CONFERMA E INVIA".');
@@ -2886,6 +2940,7 @@
     resetContractMsg();
     clearInvalids();
     setPromoRecap(lastBest);
+    syncBusinessFields();
     syncShipping();
     syncWifi();
     syncPayment(false);
