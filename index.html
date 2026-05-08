@@ -523,6 +523,10 @@
     border-color:#ef4444 !important;
     box-shadow:0 0 0 2px rgba(239,68,68,.18) !important;
   }
+  .chips.invalid{
+    border-color:#ef4444 !important;
+    box-shadow:0 0 0 2px rgba(239,68,68,.18) !important;
+  }
 
   #cdcInfoDlg{ max-width:760px; }
   .infoBox{ padding:16px 16px 14px; }
@@ -1079,6 +1083,13 @@
           <div class="dlgSection" id="businessSection" style="display:none">
             <h3>Dati azienda (Business)</h3>
             <div class="grid2">
+              <div style="grid-column:1/-1">
+                <label>FORMA GIURIDICA</label>
+                <div class="chips" id="chipsBusinessTipo" aria-label="Forma giuridica" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));">
+                  <button class="chip" type="button" data-group="biz_tipo" data-value="ditta" aria-pressed="false">Ditta individuale</button>
+                  <button class="chip" type="button" data-group="biz_tipo" data-value="societa" aria-pressed="false">Società</button>
+                </div>
+              </div>
               <div>
                 <label for="c_ragione_sociale">RAGIONE SOCIALE</label>
                 <input id="c_ragione_sociale" type="text" placeholder="Es. Rossi S.r.l." autocomplete="organization" />
@@ -1464,7 +1475,8 @@
     glassSize:'43',
     glassPlan:'unico',
     coverage3P:'standard',
-    coverageWifi:'standard'
+    coverageWifi:'standard',
+    businessForma:null
   };
 
   let lastBest = null;
@@ -1578,6 +1590,13 @@
         b.setAttribute('aria-pressed', b.dataset.value === value ? 'true' : 'false');
       });
       state.nf = value;
+
+    }else if(group==='biz_tipo'){
+      qsa('#chipsBusinessTipo .chip').forEach(b=>b.setAttribute('aria-pressed','false'));
+      btn.setAttribute('aria-pressed','true');
+      state.businessForma = rawValue;
+      const wrap = qs('#chipsBusinessTipo');
+      if(wrap) wrap.classList.remove('invalid');
 
     }else if(group==='tv'){
       const pressed = btn.getAttribute('aria-pressed')==='true';
@@ -2716,6 +2735,7 @@
     if(state.tipo === 'business'){
       const rsEl = qs('#c_ragione_sociale');
       const piEl = qs('#c_partita_iva');
+      const formaWrap = qs('#chipsBusinessTipo');
       if(rsEl && !clean(rsEl.value)) markMissing('c_ragione_sociale','RAGIONE SOCIALE');
       if(piEl){
         const piVal = (piEl.value || '').replace(/\s+/g,'');
@@ -2725,6 +2745,10 @@
           piEl.classList.add('invalid');
           missing.push('PARTITA IVA (deve essere 11 cifre numeriche)');
         }
+      }
+      if(!state.businessForma){
+        if(formaWrap) formaWrap.classList.add('invalid');
+        missing.push('FORMA GIURIDICA (Ditta individuale / Società)');
       }
     }
 
@@ -2819,6 +2843,10 @@
     const isBusiness = (state.tipo === 'business');
     const ragioneSociale = isBusiness ? clean(qs('#c_ragione_sociale')?.value || '') : '';
     const partitaIva = isBusiness ? (qs('#c_partita_iva')?.value || '').replace(/\s+/g,'') : '';
+    const formaGiuridicaLabel = (() => {
+      if(!isBusiness || !state.businessForma) return '';
+      return state.businessForma === 'ditta' ? 'Ditta individuale' : 'Società';
+    })();
 
     const lines = [];
     lines.push(`*RICHIESTA INSERIMENTO CONTRATTO SKY*`);
@@ -2827,6 +2855,7 @@
 
     if(isBusiness){
       lines.push(`*DATI AZIENDA*`);
+      lines.push(`FORMA GIURIDICA: ${formaGiuridicaLabel || '-'}`);
       lines.push(`RAGIONE SOCIALE: ${ragioneSociale}`);
       lines.push(`PARTITA IVA: ${partitaIva}`);
       lines.push(``);
@@ -2926,10 +2955,22 @@
     const sec = qs('#businessSection');
     const rs  = qs('#c_ragione_sociale');
     const pi  = qs('#c_partita_iva');
+    const wrap = qs('#chipsBusinessTipo');
     const isBiz = (state.tipo === 'business');
     if(sec) sec.style.display = isBiz ? 'block' : 'none';
     if(rs){ rs.required = isBiz; if(!isBiz) rs.value = ''; }
     if(pi){ pi.required = isBiz; if(!isBiz) pi.value = ''; }
+    if(!isBiz){
+      state.businessForma = null;
+      if(wrap){
+        wrap.classList.remove('invalid');
+        qsa('#chipsBusinessTipo .chip').forEach(b=>b.setAttribute('aria-pressed','false'));
+      }
+    } else if(state.businessForma){
+      qsa('#chipsBusinessTipo .chip').forEach(b=>{
+        b.setAttribute('aria-pressed', b.dataset.value === state.businessForma ? 'true' : 'false');
+      });
+    }
   };
 
   function openContractModal(){
