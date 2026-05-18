@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Offerte SKY – Maggio</title>
+<title>Offerte SKY – Aprile</title>
 <style>
   *{box-sizing:border-box}
   html,body{margin:0}
@@ -629,6 +629,25 @@
 
     <!-- CARD PROMO -->
     <section class="result-card promo-card" id="promoCard" style="display:none; margin-bottom:14px;">
+      <div id="promoPosterBox" style="margin:-2px 0 14px; display:flex; flex-direction:column; gap:10px; align-items:center; text-align:center;">
+        <div style="font-size:13px; color:#374151; line-height:1.4;">
+          <b>📷 Locandina</b><br>
+          <span style="color:#5b6b8b">Tocca l'immagine per ingrandirla o scaricala in alta risoluzione.</span>
+        </div>
+        <button type="button" id="promoPosterBtn"
+          style="border:1px solid var(--border); background:#fff; padding:8px; border-radius:14px; box-shadow:var(--shadow); cursor:pointer; max-width:100%;">
+          <img id="promoPosterImg" src="promo-locandina.png" alt="Locandina promo Sky"
+            style="max-width:100%; height:auto; max-height:280px; display:block; border-radius:8px;"
+            onerror="this.closest('#promoPosterBox').querySelector('#promoPosterMissing').style.display='block'; this.style.display='none'; this.closest('button').style.display='none';" />
+        </button>
+        <div id="promoPosterMissing" style="display:none; padding:10px 12px; border-radius:12px; border:1px dashed #f59e0b; background:#fffbeb; color:#92400e; font-size:12px; max-width:520px;">
+          Locandina non trovata: salva il file <b>promo-locandina.png</b> nella stessa cartella dell'HTML.
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center;">
+          <a id="promoPosterDownload" class="btn secondary" href="promo-locandina.png" download="promo-locandina.png" type="button">⬇️ Scarica locandina</a>
+        </div>
+      </div>
+
       <div style="font-size:14px; line-height:1.45;">
         <p>
           <strong>🛜 Sky WiFi (Only)</strong><br>
@@ -702,7 +721,7 @@
 
         <p>
           <strong>💼 Sky WiFi Business</strong><br>
-          <em>Partita IVA · Durata 12 mesi</em>
+          <em>Partita IVA · Prezzo bloccato 12 mesi · Senza vincoli contrattuali</em>
         </p>
         <ul style="margin:4px 0 8px 18px; padding:0;">
           <li><strong>Sky WiFi BB Business (Standard)</strong> a <strong>24,50€ + IVA</strong>/mese (≈29,89€ IVA incl.) · Attivazione <strong>29€ + IVA</strong> · Voce consumo <strong>1401041</strong> · Voce Unlimited <strong>1401056</strong></li>
@@ -1018,6 +1037,25 @@
     </dialog>
 
     <!-- DIALOG INFO: CDC -->
+    <!-- DIALOG: LOCANDINA PROMO -->
+    <dialog id="promoPosterDlg" style="max-width:96vw; width:auto;">
+      <div class="dlgHead">
+        <div class="dlgTitle">
+          <b>Locandina Promo Sky</b>
+          <div class="muted">Tocca fuori l'immagine o premi Chiudi per uscire</div>
+        </div>
+        <button class="btn secondary" id="promoPosterCloseTop" type="button">Chiudi</button>
+      </div>
+      <div style="padding:12px; display:flex; justify-content:center; align-items:center; background:#0b1220;">
+        <img id="promoPosterFull" src="promo-locandina.png" alt="Locandina promo Sky"
+          style="max-width:100%; max-height:80vh; height:auto; display:block; border-radius:10px;" />
+      </div>
+      <div class="dlgActions">
+        <a class="btn secondary" id="promoPosterDownload2" href="promo-locandina.png" download="promo-locandina.png">⬇️ Scarica</a>
+        <button class="btn" id="promoPosterCloseBtn" type="button">Chiudi</button>
+      </div>
+    </dialog>
+
     <dialog id="cdcInfoDlg">
       <div class="dlgHead">
         <div class="dlgTitle">
@@ -1441,13 +1479,13 @@
     ],
     businessWifi:[
       { id:'BIZ_WIFI_BB', name:'Sky WiFi BB Business (Copertura Standard)', priceValue:29.89, attivazione:'35,38€ (29€ + IVA)',
-        codiceVoce:{consumo:'1401041', unlimited:'1401056'}, scadenza:'30/04/2026', durata:'12 mesi',
-        coverage:'standard',
-        note:'Offerta business Sky WiFi BB copertura Standard: canone 24,50€ + IVA per 12 mesi.' },
+        codiceVoce:{consumo:'1401041', unlimited:'1401056'}, scadenza:'30/04/2026', durata:'Prezzo bloccato 12 mesi · senza vincoli',
+        coverage:'standard', noCommitment:true,
+        note:'Offerta business Sky WiFi BB copertura Standard: canone 24,50€ + IVA per 12 mesi a prezzo bloccato, senza vincoli contrattuali.' },
       { id:'BIZ_WIFI_OF_FC', name:'Sky WiFi Business (Copertura Open Fiber / FiberCop)', priceValue:26.23, attivazione:'35,38€ (29€ + IVA)',
-        codiceVoce:{consumo:'1401208', unlimited:'1401209'}, scadenza:'30/04/2026 (Backlog 2 giorni)', durata:'12 mesi',
-        coverage:'of_fc',
-        note:'Offerta business Sky WiFi su copertura Open Fiber / FiberCop: canone 21,50€ + IVA al mese per 12 mesi (26,23€ IVA inclusa). Attivazione 29€ (Partita IVA). Validità dal 30 marzo al 30 aprile 2026. Backlog 2 giorni.' }
+        codiceVoce:{consumo:'1401208', unlimited:'1401209'}, scadenza:'30/04/2026 (Backlog 2 giorni)', durata:'Prezzo bloccato 12 mesi · senza vincoli',
+        coverage:'of_fc', noCommitment:true,
+        note:'Offerta business Sky WiFi su copertura Open Fiber / FiberCop: canone 21,50€ + IVA al mese per 12 mesi (26,23€ IVA inclusa) a prezzo bloccato, senza vincoli contrattuali. Attivazione 29€ (Partita IVA). Validità dal 30 marzo al 30 aprile 2026. Backlog 2 giorni.' }
     ]
   };
 
@@ -1524,6 +1562,51 @@
       syncBlocks();
     }
   };
+
+  // === LOCANDINA PROMO viewer ===
+  const promoPosterDlg = qs('#promoPosterDlg');
+  const openPromoPoster = ()=>{
+    if(!promoPosterDlg) return;
+    if(typeof promoPosterDlg.showModal === 'function') promoPosterDlg.showModal();
+    else promoPosterDlg.setAttribute('open','');
+  };
+  const closePromoPoster = ()=>{
+    if(!promoPosterDlg) return;
+    if(promoPosterDlg.open) promoPosterDlg.close();
+    else promoPosterDlg.removeAttribute('open');
+  };
+  const posterBtn = qs('#promoPosterBtn');
+  if(posterBtn) posterBtn.addEventListener('click', openPromoPoster);
+  const posterCloseTop = qs('#promoPosterCloseTop');
+  if(posterCloseTop) posterCloseTop.addEventListener('click', closePromoPoster);
+  const posterCloseBtn = qs('#promoPosterCloseBtn');
+  if(posterCloseBtn) posterCloseBtn.addEventListener('click', closePromoPoster);
+  if(promoPosterDlg){
+    promoPosterDlg.addEventListener('click', (e)=>{
+      if(e.target === promoPosterDlg) closePromoPoster();
+    });
+  }
+  // Fallback download: se il file non si scarica via attributo (es. cross-origin),
+  // proviamo via fetch+blob. Funziona quando il file è locale o stesso origine.
+  const handlePosterDownload = async (e, href)=>{
+    try{
+      const res = await fetch(href);
+      if(!res.ok) throw new Error('not found');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'locandina-promo-sky.png';
+      document.body.appendChild(a); a.click();
+      setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 0);
+      e.preventDefault();
+    }catch(err){
+      // lasciamo procedere il comportamento di default del link
+    }
+  };
+  ['#promoPosterDownload','#promoPosterDownload2'].forEach(sel=>{
+    const el = qs(sel);
+    if(el) el.addEventListener('click', (e)=> handlePosterDownload(e, el.getAttribute('href')));
+  });
 
   const promoCard = qs('#promoCard');
   qs('#promoBtn').addEventListener('click', () => {
