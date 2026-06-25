@@ -1361,7 +1361,8 @@
       </div>
 
       <div class="dlgActions">
-        <button class="btn secondary" id="salvaBozza" type="button">💾 Salva bozza</button>
+        <button class="btn secondary" id="pulisciCampi" type="button">🧹 Pulisci campi</button>
+          <button class="btn secondary" id="salvaBozza" type="button">💾 Salva bozza</button>
           <button class="btn secondary" id="stampaContratto" type="button">🖨️ STAMPA CONTRATTO</button>
           <button class="btn" id="contractWhatsApp" type="button">INVIA WHATSAPP</button>
       </div>
@@ -3672,6 +3673,42 @@
       el.addEventListener('blur',   scheduleAutosave);
     }
   });
+
+  // === 🧹 Pulisci campi del modulo (non tocca le bozze salvate) ===
+  const pulisciBtn = qs('#pulisciCampi');
+  if(pulisciBtn){
+    pulisciBtn.addEventListener('click', () => {
+      if(!confirm('Pulire tutti i campi del modulo?\n\nL\'autosave verrà cancellato.\nLe bozze salvate NON verranno toccate.')) return;
+
+      FORM_FIELDS.forEach(id => {
+        const el = qs('#' + id);
+        if(!el) return;
+        if(el.tagName === 'SELECT'){
+          el.selectedIndex = 0;
+        } else if(el.type === 'checkbox' || el.type === 'radio'){
+          el.checked = false;
+        } else {
+          el.value = '';
+        }
+        el.classList.remove('invalid');
+      });
+
+      state.businessForma = null;
+      qsa('#chipsBusinessTipo .chip').forEach(b => b.setAttribute('aria-pressed','false'));
+      const _bw = qs('#chipsBusinessTipo'); if(_bw) _bw.classList.remove('invalid');
+
+      try { localStorage.removeItem(LS_AUTOSAVE); } catch(e){}
+
+      try { syncShipping && syncShipping(); } catch(e){}
+      try { syncWifi     && syncWifi();     } catch(e){}
+      try { syncPayment  && syncPayment(false); } catch(e){}
+      try { syncBusinessFields && syncBusinessFields(); } catch(e){}
+
+      try { resetContractMsg && resetContractMsg(); } catch(e){}
+      try { showMsg && showMsg('ok','Campi puliti. Le bozze salvate restano disponibili da 📂 Bozze.'); } catch(e){}
+    });
+  }
+
   // Reset → cancella autosave per non riproporlo
   const resetBtn = qs('#resetBtn');
   if(resetBtn){
