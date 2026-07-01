@@ -3552,6 +3552,19 @@
     chk('1');
     chk('sky stream');
 
+    // Riduco font size dei campi testo per evitare tagli su valori lunghi
+    try {
+      const helv = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+      form.getFields().forEach(fld => {
+        // PDFTextField: riduco a 8pt
+        if(fld && typeof fld.setFontSize === 'function'){
+          try { fld.setFontSize(8); } catch(e){}
+        }
+      });
+      // Rigenero le appearance con il font embedded per applicare la size
+      form.updateFieldAppearances(helv);
+    } catch(e) { console.warn('[PDF] font resize skipped:', e); }
+
     const pdfBytes = await pdfDoc.save();
     return pdfBytes;
   }
