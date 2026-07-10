@@ -2359,13 +2359,39 @@
     });
   }
 
-  // === Web Share API: invia poster (singolo o tutti) via WhatsApp ===
+  // === Invio poster via WhatsApp ===
+  // Mobile: Web Share API con files → WhatsApp compare tra i target nativi
+  // Desktop: copia immagine negli appunti come PNG + apre WhatsApp Web (Cmd/Ctrl+V per incollare)
   async function dataUrlToFile(dataUrl, filename){
     const res = await fetch(dataUrl);
     const blob = await res.blob();
     return new File([blob], filename, { type: blob.type || 'image/jpeg' });
   }
+  async function _dataUrlToPngBlob(dataUrl){
+    // ClipboardItem in Chrome/Edge/Safari accetta solo image/png → converto via canvas
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    await new Promise((resolve, reject) => {
+      img.onload = resolve;
+      img.onerror = () => reject(new Error('load image failed'));
+      img.src = dataUrl;
+    });
+    const canvas = document.createElement('canvas');
+    canvas.width  = img.naturalWidth  || img.width;
+    canvas.height = img.naturalHeight || img.height;
+    canvas.getContext('2d').drawImage(img, 0, 0);
+    return await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+  }
+  async function _copyImageToClipboard(dataUrl){
+    if(!navigator.clipboard || typeof ClipboardItem === 'undefined') throw new Error('Clipboard API non disponibile');
+    const pngBlob = await _dataUrlToPngBlob(dataUrl);
+    await navigator.clipboard.write([ new ClipboardItem({ 'image/png': pngBlob }) ]);
+  }
+  function _openWhatsAppWeb(){
+    return window.open('https://web.whatsapp.com/', '_blank', 'noopener,noreferrer');
+  }
   async function shareViaWhatsApp(poster){
+    // Tento prima la Web Share API (mobile-first)
     try {
       const file = await dataUrlToFile(poster.data, poster.filename);
       if(navigator.canShare && navigator.canShare({ files:[file] })){
@@ -2374,17 +2400,27 @@
           title: poster.title,
           text: 'Promo Sky · ' + poster.title
         });
-      } else {
-        alert('Il tuo dispositivo non supporta la condivisione diretta dei file (funzione disponibile su mobile e alcuni browser desktop).\n\nSuggerimento: scarica l\'immagine con "⬇️ Scarica" e inviala manualmente su WhatsApp.');
+        return;
       }
     } catch(e){
-      if(e.name !== 'AbortError'){
-        console.error('[Share]', e);
-        alert('Errore condivisione: ' + (e && e.message ? e.message : e));
-      }
+      if(e.name === 'AbortError') return; // utente ha annullato lo share
+      // continuo con fallback desktop
+      console.warn('[Share] Web Share fallito, uso fallback:', e);
+    }
+    // Fallback desktop: clipboard + WhatsApp Web
+    try {
+      await _copyImageToClipboard(poster.data);
+      _openWhatsAppWeb();
+      alert('✅ Immagine copiata negli appunti + WhatsApp Web aperto in una nuova scheda.\n\nSeleziona il contatto e premi Cmd+V (Mac) o Ctrl+V (Windows) nella chat per incollare la locandina.');
+    } catch(err){
+      console.warn('[Share] clipboard fallito, ultimo fallback download:', err);
+      triggerDownload(poster.data, poster.filename);
+      _openWhatsAppWeb();
+      alert('⚠️ Il tuo browser non permette la copia diretta.\n\nHo scaricato l\'immagine e aperto WhatsApp Web: trascina il file scaricato nella chat.');
     }
   }
   async function shareAllViaWhatsApp(btn){
+    // Tento Web Share con files (mobile)
     try {
       if(btn){ btn.disabled = true; btn.textContent = 'Preparo file…'; }
       const files = [];
@@ -2394,13 +2430,20 @@
       }
       if(navigator.canShare && navigator.canShare({ files })){
         await navigator.share({ files, title:'Promo Sky', text:'Locandine promo Sky' });
-      } else {
-        alert('Il tuo dispositivo non supporta la condivisione multipla di file.\n\nUsa "📦 Scarica tutte" e invia i file manualmente su WhatsApp.');
+        return;
       }
+      // Fallback desktop: scarico tutte + WhatsApp Web + drag&drop
+      if(btn) btn.textContent = 'Scarico tutte…';
+      for(let i=0; i<POSTERS.length; i++){
+        triggerDownload(POSTERS[i].data, POSTERS[i].filename);
+        await new Promise(r=>setTimeout(r, 300));
+      }
+      _openWhatsAppWeb();
+      alert('✅ Scaricate ' + POSTERS.length + ' locandine + WhatsApp Web aperto in nuova scheda.\n\nSeleziona il contatto e trascina i file dalla cartella Download nella chat (o selezionali insieme e trascinali tutti in un colpo).');
     } catch(e){
       if(e.name !== 'AbortError'){
         console.error('[ShareAll]', e);
-        alert('Errore condivisione multipla: ' + (e && e.message ? e.message : e));
+        alert('Errore condivisione: ' + (e && e.message ? e.message : e));
       }
     } finally {
       if(btn){ btn.disabled = false; btn.textContent = '📤 Invia tutte WhatsApp'; }
