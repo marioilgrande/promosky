@@ -1265,35 +1265,89 @@
           </div>
           <div class="notes" id="detailRecesso"></div>
         </div>
+      </div>
+    </details>
 
-        <!-- COMPILA DISDETTA -->
-        <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
-          <div style="font-weight:700;font-size:15px;margin-bottom:8px;">📄 Compila modulo disdetta (PDF)</div>
-          <div class="muted" style="font-size:12px;color:#5b6b8b;margin-bottom:10px;">
-            Genera il modulo di recesso Sky residenziale pre-compilato con i dati cliente della sezione <b>CONFERMA E INVIA</b>. Compila i dati cliente lì prima di generare il PDF.
+    <!-- COMPILA DISDETTA (card dedicata, indipendente dal contratto) -->
+    <details class="result-card" style="margin-top:12px">
+      <summary class="btn" style="list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center">
+        Compila modulo disdetta Sky (Residenziale)
+        <span class="muted" style="font-size:13px;color:#5b6b8b">tocca per aprire</span>
+      </summary>
+      <div style="padding-top:10px">
+        <div class="muted" style="font-size:12px;color:#5b6b8b;margin-bottom:12px;line-height:1.45;">
+          Genera il <b>Modulo di recesso Sky residenziale</b> pre-compilato in PDF.
+          I dati inseriti qui sono <b>indipendenti</b> dal modulo contratto: compila solo i campi qui sotto.<br>
+          Dopo il download <b>stampa e firma</b> il modulo, poi invia via PEC a
+          <code>servizioclientisky@pec.skytv.it</code> o via raccomandata a <code>SKY ITALIA - CASELLA POSTALE 13057 - 20141 MILANO</code>.
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="dis_nome">NOME *</label>
+            <input id="dis_nome" type="text" placeholder="Es. Mario" style="text-transform:uppercase;" autocomplete="off" />
           </div>
-          <div class="row">
-            <div>
-              <label for="c_codice_cliente">CODICE CLIENTE SKY *</label>
-              <input id="c_codice_cliente" type="text" placeholder="Es. 12345678" style="text-transform:uppercase;" />
-            </div>
-            <div>
-              <label for="r_motivo">MOTIVO DEL RECESSO *</label>
-              <select id="r_motivo">
-                <option value="" selected disabled>Seleziona motivo…</option>
-                <option value="non_dichiaro">Non voglio dichiararlo</option>
-                <option value="disservizi">Disservizi tecnici</option>
-                <option value="fatture">Problemi con fatture e pagamenti</option>
-                <option value="trasloco">Trasloco</option>
-                <option value="costo">Costo</option>
-                <option value="cliente_no_vantaggi">Sono cliente Sky da molto tempo ma non ho alcun vantaggio</option>
-                <option value="altro">Altro (scarso utilizzo, qualità contenuti, decesso intestatario...)</option>
-              </select>
-            </div>
+          <div>
+            <label for="dis_cognome">COGNOME *</label>
+            <input id="dis_cognome" type="text" placeholder="Es. Rossi" style="text-transform:uppercase;" autocomplete="off" />
           </div>
-          <div style="text-align:right;margin-top:10px;">
-            <button class="btn" id="stampaDisdetta" type="button">🖨️ COMPILA DISDETTA (PDF)</button>
+        </div>
+
+        <div class="row" style="margin-top:8px;">
+          <div>
+            <label for="dis_codice_cliente">CODICE CLIENTE SKY *</label>
+            <input id="dis_codice_cliente" type="text" placeholder="Es. 12345678" style="text-transform:uppercase;" autocomplete="off" />
           </div>
+          <div>
+            <label for="dis_cf">CODICE FISCALE *</label>
+            <input id="dis_cf" type="text" placeholder="RSSMRA80A01H501U" maxlength="16" style="text-transform:uppercase;" autocomplete="off" />
+          </div>
+        </div>
+
+        <div style="margin-top:8px;">
+          <label for="dis_indirizzo">INDIRIZZO *</label>
+          <input id="dis_indirizzo" type="text" placeholder="Es. Via Roma 12" style="text-transform:uppercase;" autocomplete="off" />
+        </div>
+
+        <div class="row" style="margin-top:8px;">
+          <div>
+            <label for="dis_citta">CITTÀ *</label>
+            <input id="dis_citta" type="text" placeholder="Es. Roma" style="text-transform:uppercase;" autocomplete="off" />
+          </div>
+          <div>
+            <label for="dis_email">EMAIL</label>
+            <input id="dis_email" type="email" placeholder="mario.rossi@example.com" autocomplete="off" />
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:8px;">
+          <div>
+            <label for="dis_telefono">TELEFONO</label>
+            <input id="dis_telefono" type="tel" placeholder="Es. 0612345678" autocomplete="off" />
+          </div>
+          <div>
+            <label for="dis_cellulare">CELLULARE</label>
+            <input id="dis_cellulare" type="tel" placeholder="Es. 3331234567" autocomplete="off" />
+          </div>
+        </div>
+
+        <div style="margin-top:12px;">
+          <label for="dis_motivo">MOTIVO DEL RECESSO *</label>
+          <select id="dis_motivo">
+            <option value="" selected disabled>Seleziona motivo…</option>
+            <option value="non_dichiaro">Non voglio dichiararlo</option>
+            <option value="disservizi">Disservizi tecnici</option>
+            <option value="fatture">Problemi con fatture e pagamenti</option>
+            <option value="trasloco">Trasloco</option>
+            <option value="costo">Costo</option>
+            <option value="cliente_no_vantaggi">Sono cliente Sky da molto tempo ma non ho alcun vantaggio</option>
+            <option value="altro">Altro (scarso utilizzo, qualità contenuti, decesso intestatario...)</option>
+          </select>
+        </div>
+
+        <div style="text-align:right;margin-top:14px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
+          <button class="btn secondary" id="pulisciDisdetta" type="button">🧹 Pulisci</button>
+          <button class="btn" id="stampaDisdetta" type="button">🖨️ COMPILA DISDETTA (PDF)</button>
         </div>
       </div>
     </details>
@@ -3813,7 +3867,9 @@
     'w_linea','w_numero','w_migrazione',
     'c_ragione_sociale','c_partita_iva',
     'c_tipologia_locale',
-    'c_codice_cliente','r_motivo'
+    'dis_nome','dis_cognome','dis_cf','dis_codice_cliente',
+    'dis_indirizzo','dis_citta','dis_email','dis_telefono','dis_cellulare',
+    'dis_motivo'
   ];
 
   function _safeStateSnapshot(){
@@ -4462,16 +4518,16 @@
       page.drawText(String(text), { x, y, size, font: helv });
     }
 
-    // Anagrafica (dai campi della modale contratto)
-    drawCentered('nome',           (f.c_nome || '').toUpperCase());
-    drawCentered('cognome',        (f.c_cognome || '').toUpperCase());
-    drawCentered('codice_cliente', (f.c_codice_cliente || '').toUpperCase());
-    drawCentered('codice_fiscale', (f.c_cf || '').toUpperCase());
-    drawCentered('indirizzo',      (f.c_indirizzo || '').toUpperCase());
-    drawCentered('citta',          (f.c_citta || '').toUpperCase());
-    drawCentered('email',          (f.c_mail || '').toLowerCase());
-    drawCentered('telefono',       f.c_telefono || '');
-    drawCentered('cellulare',      f.c_telefono || ''); // stesso numero se non abbiamo distinzione
+    // Anagrafica (dai campi INDIPENDENTI della card disdetta, prefix dis_*)
+    drawCentered('nome',           (f.dis_nome || '').toUpperCase());
+    drawCentered('cognome',        (f.dis_cognome || '').toUpperCase());
+    drawCentered('codice_cliente', (f.dis_codice_cliente || '').toUpperCase());
+    drawCentered('codice_fiscale', (f.dis_cf || '').toUpperCase());
+    drawCentered('indirizzo',      (f.dis_indirizzo || '').toUpperCase());
+    drawCentered('citta',          (f.dis_citta || '').toUpperCase());
+    drawCentered('email',          (f.dis_email || '').toLowerCase());
+    drawCentered('telefono',       f.dis_telefono || '');
+    drawCentered('cellulare',      f.dis_cellulare || '');
 
     // Data odierna
     const _tdy = new Date();
@@ -4483,20 +4539,20 @@
     // Firma lasciata vuota (firma manuale)
 
     // Motivo del recesso: X nella casella corretta
-    const motivo = f.r_motivo || 'non_dichiaro';
+    const motivo = f.dis_motivo || 'non_dichiaro';
     const radio = RECESSO_RADIO[motivo] || RECESSO_RADIO.non_dichiaro;
     const x_radio = (radio.col === 'L') ? RECESSO_RADIO_X_LEFT : RECESSO_RADIO_X_RIGHT;
     const y_radio = RECESSO_PH - radio.y_top - 8;
     page.drawText('X', { x: x_radio, y: y_radio, size: 12, font: helvBold });
 
-    console.log('[Disdetta PDF] Compilato:', {motivo, data:_dataStr, cliente:f.c_nome + ' ' + f.c_cognome});
+    console.log('[Disdetta PDF] Compilato:', {motivo, data:_dataStr, cliente:(f.dis_nome||'') + ' ' + (f.dis_cognome||'')});
     return await pdfDoc.save();
   }
 
   function _filenameForRecesso(data){
     const f = data.fields || {};
-    const cognome = (f.c_cognome || '').trim();
-    const nome    = (f.c_nome || '').trim();
+    const cognome = (f.dis_cognome || '').trim();
+    const nome    = (f.dis_nome || '').trim();
     const cliente = ((cognome + '_' + nome).trim() || 'Cliente').replace(/\s+/g,'_').replace(/[^\w_-]/g,'');
     const date = new Date().toISOString().slice(0,10);
     return 'Disdetta_Sky_' + cliente + '_' + date + '.pdf';
@@ -4567,24 +4623,21 @@
     finally { stampaBtn.disabled = false; stampaBtn.textContent = orig; }
   });
 
-  // Bottone COMPILA DISDETTA (nella card Recesso)
+  // Bottone COMPILA DISDETTA (card indipendente con campi dis_*)
   const stampaDisdettaBtn = qs('#stampaDisdetta');
   if(stampaDisdettaBtn) stampaDisdettaBtn.addEventListener('click', async () => {
-    // Raccolgo i dati dal form (comprese le nuove fields c_codice_cliente e r_motivo)
     const data = collectFormData();
     const f = data.fields || {};
-    // Validazioni minime
     const missing = [];
-    if(!f.c_nome)     missing.push('Nome');
-    if(!f.c_cognome)  missing.push('Cognome');
-    if(!f.c_cf)       missing.push('Codice Fiscale');
-    if(!f.c_indirizzo)missing.push('Indirizzo');
-    if(!f.c_citta)    missing.push('Città');
-    if(!f.c_codice_cliente) missing.push('Codice Cliente Sky');
-    if(!f.r_motivo)   missing.push('Motivo del recesso');
+    if(!f.dis_nome)            missing.push('Nome');
+    if(!f.dis_cognome)         missing.push('Cognome');
+    if(!f.dis_cf)              missing.push('Codice Fiscale');
+    if(!f.dis_codice_cliente)  missing.push('Codice Cliente Sky');
+    if(!f.dis_indirizzo)       missing.push('Indirizzo');
+    if(!f.dis_citta)           missing.push('Città');
+    if(!f.dis_motivo)          missing.push('Motivo del recesso');
     if(missing.length){
-      alert('Per generare la disdetta compila prima:\n\n• ' + missing.join('\n• ') +
-            '\n\nSe mancano dati anagrafici apri la sezione CONFERMA E INVIA e compilali; per Codice Cliente e Motivo usa i campi qui sotto.');
+      alert('Compila i campi obbligatori del modulo disdetta:\n\n• ' + missing.join('\n• '));
       return;
     }
     stampaDisdettaBtn.disabled = true;
@@ -4592,6 +4645,19 @@
     stampaDisdettaBtn.textContent = 'Generazione PDF…';
     try { await downloadRecessoPdf(data); }
     finally { stampaDisdettaBtn.disabled = false; stampaDisdettaBtn.textContent = orig; }
+  });
+
+  // Bottone Pulisci disdetta
+  const pulisciDisdettaBtn = qs('#pulisciDisdetta');
+  if(pulisciDisdettaBtn) pulisciDisdettaBtn.addEventListener('click', () => {
+    if(!confirm('Pulire tutti i campi della disdetta?')) return;
+    ['dis_nome','dis_cognome','dis_cf','dis_codice_cliente','dis_indirizzo','dis_citta','dis_email','dis_telefono','dis_cellulare','dis_motivo'].forEach(id => {
+      const el = qs('#' + id);
+      if(!el) return;
+      if(el.tagName === 'SELECT') el.selectedIndex = 0;
+      else el.value = '';
+    });
+    scheduleAutosave && scheduleAutosave();
   });
 
   // Bottone STAMPA CONTRATTO UFFICIO (secondo bottone, visibile solo per 3P Ufficio)
