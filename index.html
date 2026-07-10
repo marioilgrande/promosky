@@ -991,6 +991,21 @@
             Include: Serie A, Sport, News, Intrattenimento · Consegna via ODS (autoinstallante).
           </div>
         </div>
+        <div style="background:#fff2d9;border:1px solid #f3d194;border-radius:10px;padding:10px 12px;font-size:13px;color:#7a3b00;margin-bottom:10px;">
+          ⚠️ <b>Verifica ATECO cliente</b> (obbligatoria per Sky Ufficio):
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px;">
+            <input id="officeAtecoInput" type="text" placeholder="Es. 47.11.10" maxlength="10" style="max-width:200px;flex:0 0 auto;" autocomplete="off" />
+            <div id="officeAtecoFeedback" style="font-size:13px;font-weight:600;line-height:1.4;flex:1 1 auto;min-width:200px;"></div>
+          </div>
+          <details style="margin-top:8px;">
+            <summary style="cursor:pointer;font-size:12px;font-weight:600;">📋 Vedi lista completa codici ATECO</summary>
+            <div style="margin-top:6px;font-size:12px;line-height:1.6;">
+              <div style="color:#1b5e20;"><b>✅ VERDI (OK — inseribile direttamente)</b>: 47 Commercio dettaglio · 64 Servizi finanziari · 66 Servizi finanziari/assicurativi · 68 Immobiliari · 69 Società legali/notarili · 71 Studi architettura/ingegneria · 75 Veterinari · 77 Noleggio · 79 Agenzie viaggio · 86.2 Studi medici/odontoiatrici · 96 Acconciatori/estetici</div>
+              <div style="color:#b71c1c;margin-top:4px;"><b>❌ ROSSI (KO — non eleggibile)</b>: 55 alloggio (55.1 alberghi, 55.2 alloggi vacanze, 55.3 campeggi, 55.9 altri) · 56 ristorazione (56.1 ristoranti, 56.2 catering, 56.3 bar)</div>
+              <div style="color:#7a3b00;margin-top:4px;"><b>⚠️ GRIGI (tutti gli altri)</b>: inseribile come Uffici ma <b>check call entro 7 giorni</b> con <b>Vocal Order</b> (dichiarazione uso in sala d'attesa pubblica). Se cliente non accetta VO → contratto annullato.</div>
+            </div>
+          </details>
+        </div>
         <div class="skybar-choose">
           <label for="officeTech">Tecnologia</label>
           <select id="officeTech">
@@ -1018,6 +1033,21 @@
             Sky Ufficio TV 34,90€/m + IVA × 12m (poi 39,90€/m) · Attivazione 19€ + IVA<br>
             <b>2 contratti PDF separati:</b> uno per la componente WiFi e uno per la componente TV Business.
           </div>
+        </div>
+        <div style="background:#fff2d9;border:1px solid #f3d194;border-radius:10px;padding:10px 12px;font-size:13px;color:#7a3b00;margin-bottom:10px;">
+          ⚠️ <b>Verifica ATECO cliente</b> (obbligatoria per Sky Ufficio):
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px;">
+            <input id="office3PAtecoInput" type="text" placeholder="Es. 47.11.10" maxlength="10" style="max-width:200px;flex:0 0 auto;" autocomplete="off" />
+            <div id="office3PAtecoFeedback" style="font-size:13px;font-weight:600;line-height:1.4;flex:1 1 auto;min-width:200px;"></div>
+          </div>
+          <details style="margin-top:8px;">
+            <summary style="cursor:pointer;font-size:12px;font-weight:600;">📋 Vedi lista completa codici ATECO</summary>
+            <div style="margin-top:6px;font-size:12px;line-height:1.6;">
+              <div style="color:#1b5e20;"><b>✅ VERDI (OK — inseribile direttamente)</b>: 47 Commercio dettaglio · 64 Servizi finanziari · 66 Servizi finanziari/assicurativi · 68 Immobiliari · 69 Società legali/notarili · 71 Studi architettura/ingegneria · 75 Veterinari · 77 Noleggio · 79 Agenzie viaggio · 86.2 Studi medici/odontoiatrici · 96 Acconciatori/estetici</div>
+              <div style="color:#b71c1c;margin-top:4px;"><b>❌ ROSSI (KO — non eleggibile)</b>: 55 alloggio (55.1 alberghi, 55.2 alloggi vacanze, 55.3 campeggi, 55.9 altri) · 56 ristorazione (56.1 ristoranti, 56.2 catering, 56.3 bar)</div>
+              <div style="color:#7a3b00;margin-top:4px;"><b>⚠️ GRIGI (tutti gli altri)</b>: inseribile come Uffici ma <b>check call entro 7 giorni</b> con <b>Vocal Order</b> (dichiarazione uso in sala d'attesa pubblica). Se cliente non accetta VO → contratto annullato.</div>
+            </div>
+          </details>
         </div>
         <div class="skybar-choose">
           <label for="office3PCoverage">Copertura Sky WiFi Business</label>
@@ -2043,9 +2073,11 @@
     businessForma:null,
     officeTech:null,
     officePV:1,
+    officeAteco:null,       // 'green' | 'red' | 'grey' | null
     office3PCoverage:'standard',
     office3PTech:null,
     office3PPV:1,
+    office3PAteco:null,     // 'green' | 'red' | 'grey' | null
     hotelType:null,
     hotelContract:'annuale',
     hotelTech:'stream',
@@ -2087,7 +2119,10 @@
     if(_officeBlock){ _officeBlock.style.display = (off==='sky_ufficio') ? 'block' : 'none'; }
     if(off !== 'sky_ufficio'){
       state.officeTech = null;
+      state.officeAteco = null;
       const _ot = qs('#officeTech'); if(_ot) _ot.value = '';
+      const _oai = qs('#officeAtecoInput'); if(_oai) _oai.value = '';
+      const _oaf = qs('#officeAtecoFeedback'); if(_oaf){ _oaf.textContent = ''; _oaf.style.color = ''; }
       const _opv = qs('#officePVBlock'); if(_opv) _opv.style.display = 'none';
       const _od = qs('#officeDetails'); if(_od) _od.innerHTML = '';
     }
@@ -2096,7 +2131,10 @@
     if(_office3PBlock){ _office3PBlock.style.display = (off==='3p_ufficio') ? 'block' : 'none'; }
     if(off !== '3p_ufficio'){
       state.office3PTech = null;
+      state.office3PAteco = null;
       const _o3t = qs('#office3PTech'); if(_o3t) _o3t.value = '';
+      const _o3ai = qs('#office3PAtecoInput'); if(_o3ai) _o3ai.value = '';
+      const _o3af = qs('#office3PAtecoFeedback'); if(_o3af){ _o3af.textContent = ''; _o3af.style.color = ''; }
       const _o3pv = qs('#office3PPVBlock'); if(_o3pv) _o3pv.style.display = 'none';
       const _o3d = qs('#office3PDetails'); if(_o3d) _o3d.innerHTML = '';
     }
@@ -2893,11 +2931,12 @@
 
     // ==== Sky Ufficio (Business · Solo TV) ====
     if(state.tipo==='business' && off==='sky_ufficio'){
+      if(state.officeAteco === 'red') return {error:'Codice ATECO ROSSO: cliente NON eleggibile Sky Ufficio (alloggio/ristorazione). Vedi verifica ATECO.'};
       if(!state.officeTech) return {error:'Seleziona la tecnologia (Sky Stream o Sky HD).'};
       const _off = OFFICE_OFFERS[state.officeTech];
       if(!_off) return {error:'Tecnologia non riconosciuta.'};
       const _pv = state.officeTech === 'hd' ? Math.max(1, Math.min(5, Number(state.officePV)||1)) : 1;
-      return { context:'sky_ufficio', office:_off, techKey:state.officeTech, pv:_pv };
+      return { context:'sky_ufficio', office:_off, techKey:state.officeTech, pv:_pv, ateco:state.officeAteco };
     }
 
     // ==== Sky Hotel & B&B (Business · Solo TV) ====
@@ -3007,6 +3046,7 @@
 
     // ==== 3P Ufficio (Business · Sky WiFi Business + Sky Ufficio TV) ====
     if(state.tipo==='business' && off==='3p_ufficio'){
+      if(state.office3PAteco === 'red') return {error:'Codice ATECO ROSSO: cliente NON eleggibile 3P Ufficio (alloggio/ristorazione). Vedi verifica ATECO.'};
       if(!state.office3PTech) return {error:'Seleziona la tecnologia Sky Ufficio (Stream o HD).'};
       const _officeTv = OFFICE_OFFERS[state.office3PTech];
       if(!_officeTv) return {error:'Tecnologia Sky Ufficio non riconosciuta.'};
@@ -3025,7 +3065,8 @@
         wifiCovKey:_cov,
         office:_officeTv,
         techKey:state.office3PTech,
-        pv:_pv
+        pv:_pv,
+        ateco:state.office3PAteco
       };
     }
 
@@ -3474,7 +3515,7 @@
         durata: '12 mesi',
         hasWifi:false, hasNetflix:false,
         ivaEsclusa:true,
-        note: _off.pack + ' · ' + (r.techKey==='hd' ? _pv + ' punti visione' : '1 punto visione') + ' · ' + _off.note,
+        note: _off.pack + ' · ' + (r.techKey==='hd' ? _pv + ' punti visione' : '1 punto visione') + ' · ' + _off.note + (r.ateco === 'grey' ? ' · ⚠️ ATECO GRIGIO: check call entro 7gg + Vocal Order richiesto.' : ''),
         isOffice:true,
         officeTech:r.techKey,
         officePV:_pv
@@ -3596,7 +3637,7 @@
       qs('#attivazione').textContent = 'WiFi 29€ + IVA · Ufficio 19€ + IVA (totale 48€ + IVA)';
       qs('#codice').textContent      = 'WiFi: ' + ((_w.codiceVoce && _w.codiceVoce.unlimited) || '-') + ' · Ufficio: ' + _off.codice;
       qs('#scadenza').textContent    = _w.scadenza || _off.scadenza || '—';
-      qs('#note').textContent        = 'Bundle 3P Ufficio: Sky WiFi Business (voce unlimited inclusa 12 mesi) + Sky Ufficio TV · 2 contratti separati.';
+      qs('#note').textContent        = 'Bundle 3P Ufficio: Sky WiFi Business (voce unlimited inclusa 12 mesi) + Sky Ufficio TV · 2 contratti separati.' + (r.ateco === 'grey' ? ' · ⚠️ ATECO GRIGIO: check call entro 7gg + Vocal Order richiesto.' : '');
 
       const _pd = qs('#priceDetail');
       if(_pd){ _pd.style.display = 'block'; _pd.textContent = 'WiFi: 21,50€/m × 12m (poi 4,10€/m) · Ufficio: 34,90€/m × 12m (poi 39,90€/m)'; }
@@ -5460,6 +5501,52 @@
       });
     });
   }
+  // === ATECO classifier per Sky Ufficio / 3P Ufficio ===
+  // Verdi (OK): 47, 64, 66, 68, 69, 71, 75, 77, 79, 86.2, 96 (+ sottocodici)
+  // Rossi (KO): 55, 56 (+ sottocodici come 55.1, 55.2, ..., 56.1, 56.2, 56.3)
+  // Grigi: tutti gli altri (inseribili con check call + VO)
+  const OFFICE_ATECO_GREEN = ['47','64','66','68','69','71','75','77','79','96','862'];
+  const OFFICE_ATECO_RED   = ['55','56'];
+  function classifyOfficeAteco(code){
+    const raw = String(code || '').trim();
+    if(!raw) return {tier:'empty'};
+    // Normalizzo: solo cifre
+    const norm = raw.replace(/[^\d]/g,'');
+    if(!norm) return {tier:'empty'};
+    for(const g of OFFICE_ATECO_GREEN){
+      if(norm === g || norm.startsWith(g)) return {tier:'green', matched:g};
+    }
+    for(const r of OFFICE_ATECO_RED){
+      if(norm === r || norm.startsWith(r)) return {tier:'red', matched:r};
+    }
+    return {tier:'grey'};
+  }
+  function _renderOfficeAtecoFeedback(inpId, fbId, stateKey){
+    const inp = qs('#'+inpId);
+    const fb  = qs('#'+fbId);
+    if(!inp || !fb) return;
+    const v = inp.value || '';
+    const res = classifyOfficeAteco(v);
+    state[stateKey] = res.tier === 'empty' ? null : res.tier;
+    if(res.tier === 'empty'){
+      fb.textContent = '';
+      fb.style.color = '';
+    } else if(res.tier === 'green'){
+      fb.innerHTML = '✅ <b>Codice VERDE</b> — inseribile direttamente come Sky Ufficio';
+      fb.style.color = '#1b5e20';
+    } else if(res.tier === 'red'){
+      fb.innerHTML = '❌ <b>Codice ROSSO</b> — NON eleggibile Sky Ufficio (cat. ' + res.matched + ' = alloggio/ristorazione)';
+      fb.style.color = '#b71c1c';
+    } else {
+      fb.innerHTML = '⚠️ <b>Codice GRIGIO</b> — inseribile ma <b>check call entro 7gg</b> + Vocal Order richiesto';
+      fb.style.color = '#7a3b00';
+    }
+  }
+  const officeAtecoInp = qs('#officeAtecoInput');
+  if(officeAtecoInp) officeAtecoInp.addEventListener('input', () => _renderOfficeAtecoFeedback('officeAtecoInput','officeAtecoFeedback','officeAteco'));
+  const office3PAtecoInp = qs('#office3PAtecoInput');
+  if(office3PAtecoInp) office3PAtecoInp.addEventListener('input', () => _renderOfficeAtecoFeedback('office3PAtecoInput','office3PAtecoFeedback','office3PAteco'));
+
   const officeTechSel = qs('#officeTech');
   if(officeTechSel){
     officeTechSel.addEventListener('change', e => {
