@@ -2390,64 +2390,86 @@
   function _openWhatsAppWeb(){
     return window.open('https://web.whatsapp.com/', '_blank', 'noopener,noreferrer');
   }
-  async function shareViaWhatsApp(poster){
-    // Tento prima la Web Share API (mobile-first)
-    try {
-      const file = await dataUrlToFile(poster.data, poster.filename);
-      if(navigator.canShare && navigator.canShare({ files:[file] })){
-        await navigator.share({
-          files: [file],
-          title: poster.title,
-          text: 'Promo Sky · ' + poster.title
-        });
-        return;
-      }
-    } catch(e){
-      if(e.name === 'AbortError') return; // utente ha annullato lo share
-      // continuo con fallback desktop
-      console.warn('[Share] Web Share fallito, uso fallback:', e);
+  function _isMobileDevice(){
+    // Preferisco userAgentData quando disponibile (Chromium)
+    if(navigator.userAgentData && typeof navigator.userAgentData.mobile === 'boolean'){
+      return navigator.userAgentData.mobile;
     }
-    // Fallback desktop: clipboard + WhatsApp Web
+    const ua = navigator.userAgent || '';
+    if(/Mobi|Android|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua)) return true;
+    // iPadOS moderno si maschera da Mac; identifico via touchpoints
+    if(/Macintosh/.test(ua) && (navigator.maxTouchPoints || 0) > 1) return true;
+    return false;
+  }
+  async function shareViaWhatsApp(poster){
+    // MOBILE: Web Share API nativa (picker contiene WhatsApp)
+    if(_isMobileDevice()){
+      try {
+        const file = await dataUrlToFile(poster.data, poster.filename);
+        if(navigator.canShare && navigator.canShare({ files:[file] })){
+          await navigator.share({
+            files: [file],
+            title: poster.title,
+            text: 'Promo Sky · ' + poster.title
+          });
+          return;
+        }
+      } catch(e){
+        if(e.name === 'AbortError') return;
+        console.warn('[Share] mobile Web Share fallito, uso fallback:', e);
+      }
+    }
+    // DESKTOP: apro subito WhatsApp Web (dentro user gesture, no popup block)
+    // poi copio l'immagine negli appunti
+    const waWin = _openWhatsAppWeb();
     try {
       await _copyImageToClipboard(poster.data);
-      _openWhatsAppWeb();
-      alert('✅ Immagine copiata negli appunti + WhatsApp Web aperto in una nuova scheda.\n\nSeleziona il contatto e premi Cmd+V (Mac) o Ctrl+V (Windows) nella chat per incollare la locandina.');
+      alert('✅ Immagine copiata negli appunti + WhatsApp Web aperto in nuova scheda.\n\nSeleziona il contatto e premi Cmd+V (Mac) o Ctrl+V (Windows) nella chat per incollare la locandina.');
     } catch(err){
-      console.warn('[Share] clipboard fallito, ultimo fallback download:', err);
+      console.warn('[Share] clipboard fallito, fallback download:', err);
       triggerDownload(poster.data, poster.filename);
-      _openWhatsAppWeb();
-      alert('⚠️ Il tuo browser non permette la copia diretta.\n\nHo scaricato l\'immagine e aperto WhatsApp Web: trascina il file scaricato nella chat.');
+      alert('⚠️ Il tuo browser non permette la copia diretta negli appunti.\n\nHo scaricato l\'immagine e aperto WhatsApp Web: trascina il file scaricato nella chat.');
     }
+    if(!waWin) alert('⚠️ Sembra che i popup siano bloccati. Abilita i popup per questo sito e riprova.');
   }
   async function shareAllViaWhatsApp(btn){
-    // Tento Web Share con files (mobile)
+    // MOBILE: Web Share con files multipli
+    if(_isMobileDevice()){
+      try {
+        if(btn){ btn.disabled = true; btn.textContent = 'Preparo file…'; }
+        const files = [];
+        for(let i=0; i<POSTERS.length; i++){
+          if(btn) btn.textContent = 'Preparo ' + (i+1) + '/' + POSTERS.length + '…';
+          files.push(await dataUrlToFile(POSTERS[i].data, POSTERS[i].filename));
+        }
+        if(navigator.canShare && navigator.canShare({ files })){
+          await navigator.share({ files, title:'Promo Sky', text:'Locandine promo Sky' });
+          return;
+        }
+      } catch(e){
+        if(e.name === 'AbortError'){ if(btn){ btn.disabled=false; btn.textContent='📤 Invia tutte WhatsApp'; } return; }
+        console.warn('[ShareAll] mobile Web Share fallito, uso fallback:', e);
+      } finally {
+        if(btn){ btn.disabled = false; btn.textContent = '📤 Invia tutte WhatsApp'; }
+      }
+    }
+    // DESKTOP: apro subito WA Web, poi scarico tutte le locandine
+    const waWin = _openWhatsAppWeb();
+    if(btn){ btn.disabled = true; }
     try {
-      if(btn){ btn.disabled = true; btn.textContent = 'Preparo file…'; }
-      const files = [];
       for(let i=0; i<POSTERS.length; i++){
-        if(btn) btn.textContent = 'Preparo ' + (i+1) + '/' + POSTERS.length + '…';
-        files.push(await dataUrlToFile(POSTERS[i].data, POSTERS[i].filename));
-      }
-      if(navigator.canShare && navigator.canShare({ files })){
-        await navigator.share({ files, title:'Promo Sky', text:'Locandine promo Sky' });
-        return;
-      }
-      // Fallback desktop: scarico tutte + WhatsApp Web + drag&drop
-      if(btn) btn.textContent = 'Scarico tutte…';
-      for(let i=0; i<POSTERS.length; i++){
+        if(btn) btn.textContent = 'Scarico ' + (i+1) + '/' + POSTERS.length + '…';
         triggerDownload(POSTERS[i].data, POSTERS[i].filename);
         await new Promise(r=>setTimeout(r, 300));
       }
-      _openWhatsAppWeb();
-      alert('✅ Scaricate ' + POSTERS.length + ' locandine + WhatsApp Web aperto in nuova scheda.\n\nSeleziona il contatto e trascina i file dalla cartella Download nella chat (o selezionali insieme e trascinali tutti in un colpo).');
+      alert('✅ Scaricate ' + POSTERS.length + ' locandine + WhatsApp Web aperto in nuova scheda.\n\nSeleziona il contatto e trascina i file dalla cartella Download nella chat (o selezionali tutti insieme e trascinali in un colpo).');
     } catch(e){
-      if(e.name !== 'AbortError'){
-        console.error('[ShareAll]', e);
-        alert('Errore condivisione: ' + (e && e.message ? e.message : e));
-      }
+      console.error('[ShareAll]', e);
+      alert('Errore durante il download: ' + (e && e.message ? e.message : e));
     } finally {
       if(btn){ btn.disabled = false; btn.textContent = '📤 Invia tutte WhatsApp'; }
     }
+    if(!waWin) alert('⚠️ Sembra che i popup siano bloccati. Abilita i popup per questo sito e riprova.');
   }
   const shareCurrentBtn = qs('#shareCurrentBtn');
   if(shareCurrentBtn){
