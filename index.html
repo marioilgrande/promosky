@@ -1091,16 +1091,7 @@
               </label>
             </div>
           </div>
-          <div id="hotelSalaOpts" class="row" style="display:none;margin-top:8px;">
-            <div>
-              <label for="hotelSalaFatturato">Fatturato camere >320€/mese?</label>
-              <select id="hotelSalaFatturato">
-                <option value="over320" selected>SÌ · fatturato &gt;320€/m (promo 9€ x 12m poi 199€/m)</option>
-                <option value="under320">NO · fatturato ≤320€/m (fisso 199€/m)</option>
-                <option value="no_camere">Hotel senza abbonamento camere (listino 499€/m · solo prospect)</option>
-              </select>
-            </div>
-          </div>
+          <div id="hotelSalaAutoInfo" style="display:none;margin-top:8px;padding:10px 12px;border-radius:8px;font-size:13px;line-height:1.45;"></div>
           <div class="row" style="margin-top:8px;">
             <div style="display:flex;align-items:center;">
               <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
@@ -2928,11 +2919,15 @@
           else if(rooms <= 5){ base = tier.from4to5.perStruttura; tierLabel = '4-5 subs · '+base+'€/struttura'; }
           else { base = tier.over6.perCamera * rooms; tierLabel = '≥6 subs · '+tier.over6.perCamera+'€/camera × '+rooms; }
         }
-        let salaLine = null, salaPrice = 0;
+        let salaLine = null, salaPrice = 0, salaFatturato = 0, salaKey = null;
         if(state.hotelSalaComune){
-          const sc = HOTEL_OFFERS.hotel.salaComune[state.hotelSalaFatturato || 'over320'];
+          salaFatturato = base; // fatturato camere = base hotel corrente
+          salaKey = (salaFatturato > 320) ? 'over320' : 'under320';
+          const sc = HOTEL_OFFERS.hotel.salaComune[salaKey];
           salaPrice = sc.promo;
-          salaLine  = sc.label;
+          salaLine  = (salaKey === 'over320')
+            ? 'Fatturato camere ' + salaFatturato + '€/m > 320€ → promo Sala Comune 9€/m × 12 mesi, poi 199€/m'
+            : 'Fatturato camere ' + salaFatturato + '€/m ≤ 320€ → Sala Comune 199€/m fisso (non eleggibile alla promo 9€)';
         }
         let plusLine = null, plusPrice = 0;
         if(state.hotelPlus){
@@ -2943,7 +2938,9 @@
         const total = base + salaPrice + plusPrice;
         return {
           context:'hotel_bb', subtype:'hotel',
-          tech, contract, rooms, base, tierLabel, salaLine, salaPrice, plusLine, plusPrice, total,
+          tech, contract, rooms, base, tierLabel,
+          salaLine, salaPrice, salaFatturato, salaKey,
+          plusLine, plusPrice, total,
           durata: tier.durata
         };
       }
@@ -3499,9 +3496,17 @@
         name = 'Sky Hotel · ' + (r.tech === 'stream' ? 'Sky Stream' : 'Decoder HD') + ' · ' + r.contract;
         priceStr = r.total.toFixed(2).replace('.',',') + '€/m + IVA';
         attivazione = 'Inclusa';
-        codice = r.tech === 'stream' ? '—' : '—';
+        codice = '—';
         vincolo = r.durata + ' mesi';
-        note = r.tierLabel + (r.salaLine ? ' · Sala Comune: '+r.salaLine : '') + (r.plusLine ? ' · '+r.plusLine : '');
+        const parts = [r.tierLabel];
+        if(r.salaLine){
+          const scLabel = (r.salaKey === 'over320')
+            ? 'Sala Comune 9€/m × 12m poi 199€/m (fatturato ' + r.salaFatturato + '€ > 320€ → sconto applicato)'
+            : 'Sala Comune 199€/m fisso (fatturato ' + r.salaFatturato + '€ ≤ 320€ → no sconto)';
+          parts.push(scLabel);
+        }
+        if(r.plusLine) parts.push(r.plusLine);
+        note = parts.join(' · ');
       } else if(r.subtype === 'bb_standard_tv'){
         name = 'Sky B&B (Solo TV Stream) · ' + r.contract;
         priceStr = r.total.toFixed(2).replace('.',',') + '€/m + IVA';
@@ -5556,14 +5561,47 @@
     });
   });
   // Hotel inputs
-  const _hc = qs('#hotelContract'); if(_hc) _hc.addEventListener('change', e => state.hotelContract = e.target.value || 'annuale');
-  const _ht = qs('#hotelTech');     if(_ht) _ht.addEventListener('change', e => state.hotelTech = e.target.value || 'stream');
-  const _hr = qs('#hotelRooms');    if(_hr) _hr.addEventListener('input',  e => state.hotelRooms = Math.max(1, Number(e.target.value)||1));
+  const _hc = qs('#hotelContract'); if(_hc) _hc.addEventListener('change', e => { state.hotelContract = e.target.value || 'annuale'; _renderHotelSalaAuto(); });
+  const _ht = qs('#hotelTech');     if(_ht) _ht.addEventListener('change', e => { state.hotelTech = e.target.value || 'stream'; _renderHotelSalaAuto(); });
+  const _hr = qs('#hotelRooms');    if(_hr) _hr.addEventListener('input',  e => { state.hotelRooms = Math.max(1, Number(e.target.value)||1); _renderHotelSalaAuto(); });
+  // Helper: calcola base hotel corrente (per auto-detection Sala Comune)
+  function _computeHotelBase(){
+    const rooms = Math.max(1, Number(state.hotelRooms)||1);
+    const tech  = state.hotelTech || 'stream';
+    const contract = state.hotelContract || 'annuale';
+    const tier = HOTEL_OFFERS.hotel[tech][contract];
+    if(tech === 'stream'){
+      return rooms <= 3 ? tier.fino3.perStruttura : tier.over4.perCamera * rooms;
+    } else {
+      if(rooms <= 3) return tier.fino3.perStruttura;
+      if(rooms <= 5) return tier.from4to5.perStruttura;
+      return tier.over6.perCamera * rooms;
+    }
+  }
+  function _renderHotelSalaAuto(){
+    const box = qs('#hotelSalaAutoInfo');
+    if(!box) return;
+    if(!state.hotelSalaComune){ box.style.display = 'none'; box.innerHTML = ''; return; }
+    const base = _computeHotelBase();
+    box.style.display = 'block';
+    if(base > 320){
+      box.style.background = '#e8f5e9';
+      box.style.border = '1px solid #a5d6a7';
+      box.style.color = '#1b5e20';
+      box.innerHTML = '✅ <b>Sala Comune 9€/m × 12 mesi</b> (poi 199€/m)<br>' +
+        'Fatturato camere calcolato: <b>' + base + '€/m</b> · Supera la soglia di 320€/m richiesta dalla promo. Sconto applicato automaticamente.';
+    } else {
+      box.style.background = '#fff3e0';
+      box.style.border = '1px solid #ffcc80';
+      box.style.color = '#7a3b00';
+      box.innerHTML = '⚠️ <b>Sala Comune 199€/m fisso</b> (nessuno sconto)<br>' +
+        'Fatturato camere calcolato: <b>' + base + '€/m</b> · Non raggiunge la soglia di 320€/m per la promo 9€. La sala comune si applica a listino ridotto 199€/m.';
+    }
+  }
   const _hsc = qs('#hotelSalaComune'); if(_hsc) _hsc.addEventListener('change', e => {
     state.hotelSalaComune = !!e.target.checked;
-    const opts = qs('#hotelSalaOpts'); if(opts) opts.style.display = e.target.checked ? 'flex' : 'none';
+    _renderHotelSalaAuto();
   });
-  const _hsf = qs('#hotelSalaFatturato'); if(_hsf) _hsf.addEventListener('change', e => state.hotelSalaFatturato = e.target.value || 'over320');
   const _hp = qs('#hotelPlus'); if(_hp) _hp.addEventListener('change', e => state.hotelPlus = !!e.target.checked);
   // B&B inputs
   // Input codice ATECO con validazione live
