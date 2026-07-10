@@ -1116,10 +1116,13 @@
           <div style="background:#fff2d9;border:1px solid #f3d194;border-radius:10px;padding:10px 12px;font-size:13px;color:#7a3b00;margin-bottom:10px;">
             ⚠️ Prima di procedere <b>verifica il codice ATECO</b> del cliente. Sono eleggibili:<br>
             <code style="font-size:12px;">55.20.10 Ostelli · 55.20.20 Rifugi/baite · 55.20.41 B&amp;B · 55.20.42 Alloggio in camere/case · 55.20.51 Alloggio agricole · 55.20.52 Alloggio ittiche</code>
-            <label style="display:flex;align-items:center;gap:8px;margin-top:8px;cursor:pointer;">
-              <input id="bbAtecoConf" type="checkbox" />
-              <span><b>Confermo</b> che il codice ATECO del cliente è tra quelli eleggibili</span>
-            </label>
+            <div style="margin-top:10px;">
+              <label for="bbAtecoInput" style="font-size:13px;color:#7a3b00;font-weight:600;">Codice ATECO del cliente:</label>
+              <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px;">
+                <input id="bbAtecoInput" type="text" placeholder="Es. 55.20.41" maxlength="8" style="max-width:180px;flex:0 0 auto;" autocomplete="off" />
+                <div id="bbAtecoFeedback" style="font-size:13px;font-weight:600;line-height:1.4;"></div>
+              </div>
+            </div>
           </div>
 
           <div class="skybar-choose">
@@ -5563,7 +5566,27 @@
   const _hsf = qs('#hotelSalaFatturato'); if(_hsf) _hsf.addEventListener('change', e => state.hotelSalaFatturato = e.target.value || 'over320');
   const _hp = qs('#hotelPlus'); if(_hp) _hp.addEventListener('change', e => state.hotelPlus = !!e.target.checked);
   // B&B inputs
-  const _bat = qs('#bbAtecoConf'); if(_bat) _bat.addEventListener('change', e => state.bbAteco = !!e.target.checked);
+  // Input codice ATECO con validazione live
+  const _bat = qs('#bbAtecoInput');
+  const _batFb = qs('#bbAtecoFeedback');
+  if(_bat){
+    _bat.addEventListener('input', e => {
+      const v = String(e.target.value || '').trim();
+      const eligible = HOTEL_OFFERS.bb.ateco.includes(v);
+      state.bbAteco = eligible;
+      if(!_batFb) return;
+      if(!v){
+        _batFb.textContent = '';
+        _batFb.style.color = '';
+      } else if(eligible){
+        _batFb.textContent = '✅ Codice ATECO eleggibile B&B';
+        _batFb.style.color = '#1b5e20';
+      } else {
+        _batFb.textContent = '❌ Non eleggibile — verifica la lista sopra';
+        _batFb.style.color = '#b71c1c';
+      }
+    });
+  }
   qsa('#chipsBbStruct .chip').forEach(btn => {
     btn.addEventListener('click', () => {
       qsa('#chipsBbStruct .chip').forEach(b => b.setAttribute('aria-pressed','false'));
