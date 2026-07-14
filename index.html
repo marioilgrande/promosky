@@ -2198,28 +2198,59 @@
     }
   };
 
-  const adjustOfferOptions = ()=>{
+  // Cache di TUTTE le opzioni al primo caricamento (Safari iOS ignora `hidden` sui <option> nativi,
+  // quindi devo ricostruire dinamicamente la lista invece di nascondere).
+  let _ALL_OFFER_OPTIONS = null;
+  function _cacheOfferOptions(){
+    if(_ALL_OFFER_OPTIONS) return;
     const offSel = qs('#offerta');
-    const opts   = Array.from(offSel.options || []);
-    if (state.tipo === 'business'){
-      // Business può vedere wifi + sky_bar
-      opts.forEach(opt=>{
-        if (!opt.value) return;
-        opt.hidden = !(opt.value === 'wifi' || opt.value === 'sky_bar' || opt.value === 'sky_ufficio' || opt.value === '3p_ufficio' || opt.value === 'hotel_bb');
-      });
+    if(!offSel) return;
+    _ALL_OFFER_OPTIONS = Array.from(offSel.options).map(opt => ({
+      value: opt.value,
+      label: opt.textContent,
+      disabled: opt.disabled,
+      isPlaceholder: !opt.value
+    }));
+  }
+  function _escHtmlAttr(s){
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  const adjustOfferOptions = ()=>{
+    _cacheOfferOptions();
+    const offSel = qs('#offerta');
+    if(!offSel || !_ALL_OFFER_OPTIONS) return;
+
+    // Filtro per tipologia cliente
+    let allowedNonEmpty;
+    if(state.tipo === 'business'){
+      allowedNonEmpty = new Set(['wifi','sky_bar','sky_ufficio','3p_ufficio','hotel_bb']);
+    } else if(state.tipo === 'privato'){
+      allowedNonEmpty = new Set(['only_tv','wifi','wifi_tv','wifi_tv_glass']);
+    } else {
+      allowedNonEmpty = new Set(_ALL_OFFER_OPTIONS.filter(o => o.value).map(o => o.value));
+    }
+
+    // Ricostruisco innerHTML (funziona su tutti i browser incluso Safari iOS)
+    const html = _ALL_OFFER_OPTIONS
+      .filter(o => o.isPlaceholder || allowedNonEmpty.has(o.value))
+      .map(o => {
+        const val = _escHtmlAttr(o.value);
+        const lbl = _escHtmlAttr(o.label);
+        const dis = o.disabled ? ' disabled' : '';
+        return `<option value="${val}"${dis}>${lbl}</option>`;
+      })
+      .join('');
+    offSel.innerHTML = html;
+
+    // Selezione predefinita
+    if(state.tipo === 'business'){
       offSel.value = 'wifi';
       state.off    = 'wifi';
-      syncBlocks();
     } else {
-      // Privato: mostra tutte MENO sky_bar
-      opts.forEach(opt=>{
-        if (!opt.value) return;
-        opt.hidden = (opt.value === 'sky_bar' || opt.value === 'sky_ufficio' || opt.value === '3p_ufficio' || opt.value === 'hotel_bb');
-      });
       offSel.value = '';
       state.off    = null;
-      syncBlocks();
     }
+    syncBlocks();
   };
 
   // === LOCANDINE PROMO · slider ===
