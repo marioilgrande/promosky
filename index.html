@@ -2491,6 +2491,43 @@
   buildDots();
   renderSlide();
 
+  // === Pruning offerte scadute nel PROMO info card ===
+  // Cerca in ogni <li>/<p> dentro #promoCard una data DD/MM/YYYY.
+  // Se contiene "backlog N giorni" aggiunge N giorni. Se scaduto: display:none.
+  // Se ≤5 giorni all'expiration: badge giallo inline.
+  function _prunePromoCardExpired(){
+    const card = qs('#promoCard');
+    if(!card) return;
+    const items = Array.from(card.querySelectorAll('li'));
+    items.forEach(li => {
+      const text = li.textContent || '';
+      const dates = text.match(/(\d{2})\/(\d{2})\/(\d{4})(?![\d\/])/g);
+      if(!dates || !dates.length) return;
+      const last = dates[dates.length - 1];
+      const p = last.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+      if(!p) return;
+      let d = new Date(+p[3], +p[2] - 1, +p[1]);
+      const bl = text.match(/backlog\s+(\d+)\s+giorni/i);
+      if(bl) d.setDate(d.getDate() + (+bl[1]));
+      d.setHours(23, 59, 59, 999);
+      const now = new Date();
+      if(now > d){
+        // Scaduta → nascondi
+        li.style.display = 'none';
+      } else {
+        const days = Math.ceil((d - now) / (86400000));
+        if(days <= 5){
+          // In scadenza → badge giallo
+          const badge = document.createElement('span');
+          badge.textContent = ' ⚠️ Scade tra ' + days + ' giorn' + (days === 1 ? 'o' : 'i');
+          badge.style.cssText = 'display:inline-block;margin-left:6px;padding:2px 8px;background:#fff3e0;color:#7a3b00;border:1px solid #ffcc80;border-radius:12px;font-size:11px;font-weight:600;vertical-align:middle;';
+          li.appendChild(badge);
+        }
+      }
+    });
+  }
+  _prunePromoCardExpired();
+
   const promoCard = qs('#promoCard');
   qs('#promoBtn').addEventListener('click', () => {
     const show = promoCard.style.display !== 'block';
@@ -2697,11 +2734,46 @@
     return { total:Number(total.toFixed(2)), avg:Number(avg.toFixed(2)), months:18 };
   }
 
+  // === Scadenza offerte ===
+  // Parse "26/07/2026" con eventuale "Backlog N giorni" → aggiunge N giorni.
+  function _parseScadenza(str){
+    if(!str) return null;
+    const s = String(str);
+    const m = s.match(/(\d{2})\/(\d{2})\/(\d{4})(?![\d\/])/g);
+    if(!m || !m.length) return null;
+    const last = m[m.length - 1]; // se ci sono più date prendo l'ultima (fine validità)
+    const parts = last.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+    if(!parts) return null;
+    let d = new Date(+parts[3], +parts[2] - 1, +parts[1]);
+    const bl = s.match(/backlog\s+(\d+)\s+giorni/i);
+    if(bl) d.setDate(d.getDate() + (+bl[1]));
+    d.setHours(23, 59, 59, 999); // scade a fine giornata
+    return d;
+  }
+  function _isExpired(offer){
+    const src = (offer && (offer.scadenza || offer.expires)) || null;
+    const d = _parseScadenza(src);
+    return d ? (new Date() > d) : false;
+  }
+  function _daysToExpire(offer){
+    const d = _parseScadenza(offer && offer.scadenza);
+    if(!d) return null;
+    const now = new Date();
+    const diffMs = d - now;
+    return Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  }
+
   function isPromoAvailable(p){
-    if(!p || !p.availableFrom) return true;
-    const today = new Date(); today.setHours(0,0,0,0);
-    const from  = new Date(p.availableFrom + 'T00:00:00');
-    return today >= from;
+    if(!p) return false;
+    // Availability window start (availableFrom)
+    if(p.availableFrom){
+      const today = new Date(); today.setHours(0,0,0,0);
+      const from  = new Date(p.availableFrom + 'T00:00:00');
+      if(today < from) return false;
+    }
+    // Scadenza: se passata → non disponibile
+    if(_isExpired(p)) return false;
+    return true;
   }
 
   function buildTvOnlyCandidates(sel,nf){
@@ -2792,10 +2864,11 @@
     const sport  = source.find(p=>p.id === `${idPrefix}_SPORT`);
     const cinema = source.find(p=>p.id === `${idPrefix}_CINEMA`);
 
-    const list = [];
+    let list = [];
     if(base) list.push(base);
     if(sport && sel.has('sport')) list.push(sport);
     if(cinema && sel.has('cinema')) list.push(cinema);
+    list = list.filter(isPromoAvailable);
 
     list.forEach(p=>{
       const {extra,breakdown,includedSelected,extraPackIds} = computeExtra3P(p, sel, nf);
@@ -2819,9 +2892,10 @@
     const sport = PROMO.fourP.find(p=>p.id==='4P_SPORT_NF');
     const cinema = PROMO.fourP.find(p=>p.id==='4P_CINEMA_NF');
 
-    const list = [];
+    let list = [];
     if(sport && sel.has('sport')) list.push(sport);
     if(cinema && sel.has('cinema')) list.push(cinema);
+    list = list.filter(isPromoAvailable);
 
     list.forEach(p=>{
       const {extra,breakdown,includedSelected,extraPackIds} = computeExtra4P(p, sel, nf);
@@ -3029,7 +3103,7 @@
     }
 
     const offers = [];
-    if(!chosen) return offers;
+    if(!chosen || !isPromoAvailable(chosen)) return offers;
 
     const code = chosen.codiceVoce?.[voce] || chosen.codiceVoce?.consumo || '-';
     const selectedVoce = chosen.codiceVoce?.[voce] ? voce : 'consumo';
@@ -3188,6 +3262,7 @@
       const _isOfFc = (_cov === 'of' || _cov === 'fc');
       const _covKey = _isOfFc ? 'of_fc' : 'standard';
       const _wifi = PROMO.businessWifi.find(p => p.coverage === _covKey) || PROMO.businessWifi[0];
+      if(!_wifi || !isPromoAvailable(_wifi)) return {error:'La promo Sky WiFi Business (componente 3P Ufficio) per questa copertura è scaduta.'};
       let _covLabel = 'Standard';
       if(_cov === 'of') _covLabel = 'Open Fiber';
       else if(_cov === 'fc') _covLabel = 'FiberCop';
@@ -3210,6 +3285,7 @@
       const isOfFc = (cov === 'of' || cov === 'fc' || cov === 'of_fc');
       const covKey = isOfFc ? 'of_fc' : 'standard';
       const ch = PROMO.businessWifi.find(p => p.coverage === covKey) || PROMO.businessWifi[0];
+      if(!ch || !isPromoAvailable(ch)) return {error:'La promo Sky WiFi Business per questa copertura è scaduta.'};
       let coverageLabel = 'Standard';
       if(cov === 'of') coverageLabel = 'Open Fiber';
       else if(cov === 'fc') coverageLabel = 'FiberCop';
