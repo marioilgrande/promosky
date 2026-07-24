@@ -832,14 +832,12 @@
 
         <p>
           <strong>📺 Only TV</strong><br>
-          <em>Only TV · Sport+Insider e Sport+UHD+Insider fino al 12/07 · Netflix e Cinema+Calcio dal 20 al 26/07 · Doppio sconto fino al 26/07</em>
+          <em>Validità fino al 26/07/2026 (no backlog) · Durata contratto 18 mesi</em>
         </p>
         <ul style="margin:4px 0 8px 18px; padding:0;">
-          <li><strong>Sky TV + Sky Sport + Sky Insider</strong> a <strong>24,99€</strong>/mese per <strong>18 mesi</strong> · cod. <strong>1100782</strong> · <strong>no backlog</strong> · validità <strong>14/04 – 12/07/2026</strong></li>
-          <li><strong>Sky TV + Sky Sport + UHD + Sky Insider</strong> a <strong>24,99€</strong>/mese per i primi <strong>6 mesi</strong>, poi <strong>29,99€</strong>/mese per i restanti <strong>12 mesi</strong> · cod. <strong>1100783</strong> · <strong>no backlog</strong> · validità <strong>14/04 – 12/07/2026</strong></li>
-          <li><strong>Sky TV + Netflix</strong> a <strong>14,99€</strong>/mese per <strong>18 mesi</strong> · cod. <strong>1100731</strong> · <strong>no backlog</strong> · <strong>visibile dal 20/07/2026</strong> · scadenza 26/07/2026</li>
-          <li><strong>Sky TV + Sky Cinema + Sky Calcio</strong> a <strong>19,99€</strong>/mese per <strong>18 mesi</strong> · cod. <strong>1100739</strong> · <strong>no backlog</strong> · <strong>visibile dal 20/07/2026</strong> · scadenza 26/07/2026</li>
-          <li><strong>Sky TV + Netflix + Sky Cinema + UHD (doppio sconto)</strong> a <strong>14,99€</strong>/mese per i primi <strong>6 mesi</strong>, poi <strong>24,99€</strong>/mese per i restanti <strong>12 mesi</strong> · cod. <strong>1100771</strong> · <strong>no backlog</strong> · validità <strong>20/04 – 26/07/2026</strong></li>
+          <li><strong>Sky TV + Netflix</strong> a <strong>14,99€</strong>/mese per <strong>18 mesi</strong> · cod. <strong>1100731</strong> · <strong>no backlog</strong> · validità <strong>fino al 26/07/2026</strong></li>
+          <li><strong>Sky TV + Sky Cinema + Sky Calcio</strong> a <strong>19,99€</strong>/mese per <strong>18 mesi</strong> · cod. <strong>1100739</strong> · <strong>no backlog</strong> · validità <strong>fino al 26/07/2026</strong></li>
+          <li><strong>Sky TV + Netflix + Sky Cinema + UHD (doppio sconto)</strong> a <strong>14,99€</strong>/mese per i primi <strong>6 mesi</strong>, poi <strong>24,99€</strong>/mese per i restanti <strong>12 mesi</strong> · cod. <strong>1100771</strong> · <strong>no backlog</strong> · validità <strong>fino al 26/07/2026</strong></li>
         </ul>
 
         <p>
@@ -1898,40 +1896,9 @@
   const PROMO = {
     tvOnly:[
       {
-        id:'TV_SPORT_INSIDER_2499',
-        name:'Sky TV + Sky Sport + Sky Insider',
-        match:(sel,nf)=> sel.has('sport'),
-        priceValue:24.99,
-        included:['sport'],
-        includesNetflixBase:false,
-        attivazione:'Stream 19€',
-        codice:'1100782',
-        scadenza:'12/07/2026 (no backlog)',
-        durata:'18 mesi',
-        note:'Promo: Sky TV + Sky Sport + Sky Insider 24,99€/mese per 18 mesi. Codice promo 1100782. No backlog. Validità dal 14 aprile al 12 luglio 2026.'
-      },
-      {
-        id:'TV_SPORT_UHD_INSIDER_PHASE',
-        name:'Sky TV + Sky Sport + UHD + Sky Insider',
-        match:(sel,nf)=> sel.has('sport') && sel.has('uhd'),
-        priceValue:24.99,
-        phases:[
-          { months:6, price:24.99 },
-          { months:12, price:29.99 }
-        ],
-        included:['sport','uhd'],
-        includesNetflixBase:false,
-        attivazione:'Stream 19€',
-        codice:'1100783',
-        scadenza:'12/07/2026 (no backlog)',
-        durata:'18 mesi',
-        note:'Promo: Sky TV + Sky Sport + UHD + Sky Insider 24,99€/mese per i primi 6 mesi, poi 29,99€/mese per i restanti 12 mesi. Codice promo 1100783. No backlog. Validità dal 14 aprile al 12 luglio 2026.'
-      },
-      {
         id:'TV_NETFLIX_1499',
         name:'Sky TV + Netflix',
         match:(sel,nf)=> true,
-        availableFrom:'2026-07-20',
         priceValue:14.99,
         included:[],
         includesNetflixBase:true,
@@ -1939,13 +1906,12 @@
         codice:'1100731',
         scadenza:'26/07/2026 (no backlog)',
         durata:'18 mesi',
-        note:'Promo: Sky TV + Netflix 14,99€/mese per 18 mesi. Validità dal 20 al 26 luglio 2026 (no backlog). Codice promo 1100731. Netflix Standard con pubblicità incluso; gli upgrade a Standard/Premium sono addebitati come delta.'
+        note:'Promo: Sky TV + Netflix 14,99€/mese per 18 mesi. Validità fino al 26 luglio 2026 (no backlog). Codice promo 1100731. Netflix Standard con pubblicità incluso; gli upgrade a Standard/Premium sono addebitati come delta.'
       },
       {
         id:'TV_CINEMA_CALCIO_1999',
         name:'Sky TV + Sky Cinema + Sky Calcio',
         match:(sel,nf)=> sel.has('cinema') && sel.has('calcio'),
-        availableFrom:'2026-07-20',
         priceValue:19.99,
         included:['cinema','calcio'],
         includesNetflixBase:false,
@@ -1953,7 +1919,7 @@
         codice:'1100739',
         scadenza:'26/07/2026 (no backlog)',
         durata:'18 mesi',
-        note:'Promo: Sky TV + Sky Cinema + Sky Calcio 19,99€/mese per 18 mesi. Validità dal 20 al 26 luglio 2026 (no backlog). Codice promo 1100739.'
+        note:'Promo: Sky TV + Sky Cinema + Sky Calcio 19,99€/mese per 18 mesi. Validità fino al 26 luglio 2026 (no backlog). Codice promo 1100739.'
       },
       {
         id:'TV_NETFLIX_CINEMA_UHD_DOPPIO',
@@ -1970,7 +1936,7 @@
         codice:'1100771',
         scadenza:'26/07/2026 (no backlog)',
         durata:'18 mesi',
-        note:'Promo DOPPIO SCONTO: Sky TV + Netflix + Sky Cinema + UHD a 14,99€/mese per i primi 6 mesi, poi 24,99€/mese per i restanti 12 mesi. Validità dal 20 aprile al 26 luglio 2026 (no backlog). Codice promo 1100771. Netflix Standard con pubblicità incluso; gli upgrade sono addebitati come delta.'
+        note:'Promo DOPPIO SCONTO: Sky TV + Netflix + Sky Cinema + UHD a 14,99€/mese per i primi 6 mesi, poi 24,99€/mese per i restanti 12 mesi. Validità fino al 26 luglio 2026 (no backlog). Codice promo 1100771. Netflix Standard con pubblicità incluso; gli upgrade sono addebitati come delta.'
       }
     ],
     threeP:[
