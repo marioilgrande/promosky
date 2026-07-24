@@ -2775,6 +2775,24 @@
     const diffMs = d - now;
     return Math.ceil(diffMs / (1000 * 60 * 60 * 24));
   }
+  // Renderizza il campo #scadenza con badge inline "Scade tra N giorni" se ≤5
+  function _renderScadenzaCell(scadenzaStr){
+    const el = qs('#scadenza');
+    if(!el) return;
+    el.innerHTML = '';
+    if(!scadenzaStr || scadenzaStr === '-' || scadenzaStr === '—'){
+      el.textContent = scadenzaStr || '-';
+      return;
+    }
+    el.appendChild(document.createTextNode(scadenzaStr));
+    const days = _daysToExpire({scadenza: scadenzaStr});
+    if(days != null && days >= 0 && days <= 5){
+      const badge = document.createElement('span');
+      badge.textContent = ' ⚠️ Scade tra ' + days + ' giorn' + (days === 1 ? 'o' : 'i');
+      badge.style.cssText = 'display:inline-block;margin-left:8px;padding:2px 8px;background:#fff3e0;color:#7a3b00;border:1px solid #ffcc80;border-radius:12px;font-size:11px;font-weight:700;vertical-align:middle;';
+      el.appendChild(badge);
+    }
+  }
 
   function isPromoAvailable(p){
     if(!p) return false;
@@ -3655,7 +3673,7 @@
       qs('#priceAmount').textContent = _price;
       qs('#attivazione').textContent = (_variant && _variant.extra) ? _variant.extra : '—';
       qs('#codice').textContent      = _variant ? _variant.codice : '—';
-      qs('#scadenza').textContent    = '—';
+      _renderScadenzaCell('—');
       qs('#note').textContent        = _layer.note || '';
 
       const _priceDetailEl = qs('#priceDetail');
@@ -3713,7 +3731,7 @@
       qs('#priceAmount').textContent = _off.promoMonthly + '€/m + IVA';
       qs('#attivazione').textContent = _off.attivazione;
       qs('#codice').textContent      = _off.codice;
-      qs('#scadenza').textContent    = _off.scadenza || '—';
+      _renderScadenzaCell(_off.scadenza || '—');
       qs('#note').textContent        = _off.note || '';
 
       const _pd = qs('#priceDetail');
@@ -3804,7 +3822,7 @@
       qs('#priceAmount').textContent = priceStr;
       qs('#attivazione').textContent = attivazione;
       qs('#codice').textContent      = codice;
-      qs('#scadenza').textContent    = scadenza;
+      _renderScadenzaCell(scadenza);
       qs('#note').textContent        = note;
 
       const _pd = qs('#priceDetail');
@@ -3859,7 +3877,7 @@
       qs('#priceAmount').textContent = _total.toFixed(2).replace('.',',') + '€/m + IVA';
       qs('#attivazione').textContent = 'WiFi 29€ + IVA · Ufficio 19€ + IVA (totale 48€ + IVA)';
       qs('#codice').textContent      = 'WiFi: ' + ((_w.codiceVoce && _w.codiceVoce.unlimited) || '-') + ' · Ufficio: ' + _off.codice;
-      qs('#scadenza').textContent    = _w.scadenza || _off.scadenza || '—';
+      _renderScadenzaCell(_w.scadenza || _off.scadenza || '—');
       qs('#note').textContent        = 'Bundle 3P Ufficio: Sky WiFi Business (voce unlimited inclusa 12 mesi) + Sky Ufficio TV · 2 contratti separati.' + (r.ateco === 'grey' ? ' · ⚠️ ATECO GRIGIO: check call entro 7gg + Vocal Order richiesto.' : '');
 
       const _pd = qs('#priceDetail');
@@ -3909,7 +3927,7 @@
     qs('#priceAmount').textContent = (typeof monthly === 'number') ? formatEUR(monthly) : '—';
     qs('#attivazione').textContent = best.attivazione || '-';
     qs('#codice').textContent      = best.codice || '-';
-    qs('#scadenza').textContent    = best.scadenza || '-';
+    _renderScadenzaCell(best.scadenza || '-');
     qs('#note').textContent        = best.note || '-';
 
     const priceDetailEl = qs('#priceDetail');
