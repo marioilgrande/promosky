@@ -2018,11 +2018,11 @@
     ],
     businessWifi:[
       { id:'BIZ_WIFI_BB', name:'Sky WiFi BB Business (Copertura Standard)', priceValue:29.89, attivazione:'35,38€ (29€ + IVA)',
-        codiceVoce:{consumo:'1401041', unlimited:'1401056'}, scadenza:'28/06/2026', durata:'Prezzo bloccato 12 mesi · senza vincoli',
+        codiceVoce:{consumo:'1401041', unlimited:'1401056'}, scadenza:'31/07/2026 (Backlog 2 giorni)', durata:'Prezzo bloccato 12 mesi · senza vincoli',
         coverage:'standard', noCommitment:true,
         note:'Offerta business Sky WiFi BB copertura Standard: canone 24,50€ + IVA per 12 mesi a prezzo bloccato, senza vincoli contrattuali.' },
       { id:'BIZ_WIFI_OF_FC', name:'Sky WiFi Business (Copertura Open Fiber / FiberCop)', priceValue:26.23, attivazione:'35,38€ (29€ + IVA)',
-        codiceVoce:{consumo:'1401208', unlimited:'1401209'}, scadenza:'28/06/2026 (Backlog 2 giorni)', durata:'Prezzo bloccato 12 mesi · senza vincoli',
+        codiceVoce:{consumo:'1401208', unlimited:'1401209'}, scadenza:'31/07/2026 (Backlog 2 giorni)', durata:'Prezzo bloccato 12 mesi · senza vincoli',
         coverage:'of_fc', noCommitment:true,
         note:'Offerta business Sky WiFi su copertura Open Fiber / FiberCop: canone 21,50€ + IVA al mese per 12 mesi (26,23€ IVA inclusa) a prezzo bloccato, senza vincoli contrattuali. Attivazione 29€ (Partita IVA). Validità dal 30 marzo al 28 giugno 2026. Backlog 2 giorni.' }
     ]
@@ -3673,7 +3673,7 @@
       qs('#priceAmount').textContent = _price;
       qs('#attivazione').textContent = (_variant && _variant.extra) ? _variant.extra : '—';
       qs('#codice').textContent      = _variant ? _variant.codice : '—';
-      _renderScadenzaCell('—');
+      _renderScadenzaCell(_layer.scadenza || '—');
       qs('#note').textContent        = _layer.note || '';
 
       const _priceDetailEl = qs('#priceDetail');
@@ -3706,7 +3706,7 @@
         codice: _variant ? _variant.codice : '-',
         attivazione: _variant ? (_variant.extra || '-') : '-',
         totalMonthly: _layer.promoMonthly || _layer.listino || 0,
-        scadenza: '—',
+        scadenza: _layer.scadenza || '—',
         durata: '12 mesi',
         hasWifi:false, hasNetflix:false,
         ivaEsclusa:true,
@@ -5457,6 +5457,7 @@
       pack:'Sky Bar · Serie A + Sport + Coppe europee',
       vincolo:'12 mesi',
       note:'4K incluso 12 mesi (anziché 20€/mese) per Sky Q · Installazione 100€ anziché 180€ una tantum (Sky Q) · Attivazione 99€ per Stream.',
+      scadenza:'02/08/2026 (no backlog)',
       variants:[
         {label:'1 decoder Sky Q/HD · SENZA Smart TV', prezzo:'199€/m + IVA × 12 mesi', codice:'8287', extra:'Installazione 100€ una tantum'},
         {label:'1 decoder Sky Q/HD · CON Smart TV 65″ (99€)', prezzo:'199€/m + IVA × 12 mesi', codice:'8288', extra:'Installazione 100€ + Smart TV 99€ una tantum'},
@@ -5472,6 +5473,7 @@
       pack:'Sky Bar · Serie A + Sport + Coppe europee',
       vincolo:'12 mesi',
       note:'4K incluso 12 mesi (anziché 20€/mese) per Sky Q · Installazione 100€ anziché 180€ una tantum (Sky Q) · Attivazione 99€ per Stream.',
+      scadenza:'02/08/2026 (no backlog)',
       variants:[
         {label:'1 decoder Sky Q/HD · SENZA Smart TV', prezzo:'249€/m + IVA × 12 mesi', codice:'8289', extra:'Installazione 100€ una tantum'},
         {label:'1 decoder Sky Q/HD · CON Smart TV 65″ (99€)', prezzo:'249€/m + IVA × 12 mesi', codice:'8290', extra:'Installazione 100€ + Smart TV 99€ una tantum'},
@@ -5487,6 +5489,7 @@
       pack:'Sky Bar · Serie A + Sport + Coppe europee',
       vincolo:'12 mesi',
       note:'4K incluso 12 mesi (anziché 20€/mese) per Sky Q · Installazione 100€ anziché 180€ una tantum (Sky Q) · Attivazione 99€ per Stream.',
+      scadenza:'02/08/2026 (no backlog)',
       variants:[
         {label:'1 decoder Sky Q/HD · SENZA Smart TV', prezzo:'299€/m + IVA × 12 mesi', codice:'8291', extra:'Installazione 100€ una tantum'},
         {label:'1 decoder Sky Q/HD · CON Smart TV 65″ (99€)', prezzo:'299€/m + IVA × 12 mesi', codice:'8292', extra:'Installazione 100€ + Smart TV 99€ una tantum'},
@@ -5502,6 +5505,7 @@
       pack:'Sky Sport & Serie A + Coppe Europee',
       vincolo:'12 mesi',
       note:'Attenzione al prodotto.',
+      scadenza:'02/08/2026 (no backlog)',
       variants:[
         {label:'1 decoder Sky Q/HD · SENZA Smart TV', prezzo:'299€/m + IVA × 12 mesi', codice:'8251', extra:''},
         {label:'1 decoder Sky Q/HD · CON Smart TV 65″ (99€)', prezzo:'299€/m + IVA × 12 mesi', codice:'8267', extra:''},
@@ -5516,6 +5520,7 @@
       pack:'Sky Business Plus Q',
       vincolo:'12 mesi',
       note:'Solo tecnologia Sky Q · Installazione 100€ (anziché 180€) · Attivazione inclusa (anziché 100€) · 4K incluso 12 mesi · Solo nuovi clienti o cessati da >13 mesi · Prima verifica back office statuto associazione + P.IVA · Valida anche per palestre indipendenti.',
+      scadenza:'02/08/2026 (no backlog)',
       variants:[
         {label:'Sky Q · Pack Sky Business Plus', prezzo:'199€/m + IVA × 12 mesi', codice:'8269', extra:'Installazione 100€ · Attivazione inclusa'}
       ]
@@ -5525,6 +5530,7 @@
       pack:'Sky Business Plus',
       vincolo:'-',
       note:'Solo tecnologia HD · Listino 599€/m + IVA · 2° STB 129€/m + IVA · 4K 20€/m + IVA · Installazione 180€ (Q) · Attivazione 99€ HD / 150€ Q. Tutte le vendite (independent + KA) solo con decoder HD.',
+      scadenza:'02/08/2026 (no backlog)',
       variants:[
         {label:'Sky HD · Pack Plus (listino)', prezzo:'599€/m + IVA', codice:'—', extra:'Listino Betting'}
       ]
@@ -5534,6 +5540,7 @@
       pack:'Sky Business Plus',
       vincolo:'-',
       note:'Solo tecnologia HD · Listino 599€/m + IVA · 2° STB 79€/m + IVA · Installazione 180€ · Attivazione 99€ HD. Tutte le vendite solo con decoder HD.',
+      scadenza:'02/08/2026 (no backlog)',
       variants:[
         {label:'Sky HD · Pack Plus (listino)', prezzo:'599€/m + IVA', codice:'—', extra:'Listino Gallerie'}
       ]
@@ -5552,7 +5559,7 @@
       attivazione:'19€ + IVA',
       pack:'Serie A + Sport + News + Intrattenimento',
       codice:'8299',
-      scadenza:'-',
+      scadenza:'02/08/2026 (no backlog)',
       note:'📡 NO parabola · Tecnologia IP (streaming via WiFi/rete) · richiede connessione ≥10 Mbps · 1 solo punto visione · autoinstallante (consegna ODS) · permanenza minima 12 mesi.'
     },
     hd: {
@@ -5563,7 +5570,7 @@
       attivazione:'19€ + IVA',
       pack:'Serie A + Sport + News + Intrattenimento',
       codice:'8300',
-      scadenza:'-',
+      scadenza:'02/08/2026 (no backlog)',
       note:'🛰️ Con parabola satellitare · Ricezione via satellite · fino a 5 punti visione · autoinstallante (consegna ODS) · permanenza minima 12 mesi.'
     }
   };
