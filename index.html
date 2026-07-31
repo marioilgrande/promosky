@@ -1657,6 +1657,11 @@
                 <input id="c_partita_iva" type="text" inputmode="numeric" placeholder="11 cifre" maxlength="11" />
                 <div class="helpMini">Solo numeri, <b>11 cifre</b>.</div>
               </div>
+              <div style="grid-column:1/-1">
+                <label for="c_pec">PEC (posta elettronica certificata)</label>
+                <input id="c_pec" type="email" placeholder="Es. azienda@pec.it" autocomplete="off" style="text-transform:lowercase;" />
+                <div class="helpMini">Usata per la fatturazione elettronica. Riportata sul contratto Sky Bar / Sky Ufficio.</div>
+              </div>
             </div>
           </div>
 
@@ -4317,6 +4322,7 @@
     const isBusiness = (state.tipo === 'business');
     const ragioneSociale = isBusiness ? clean(qs('#c_ragione_sociale')?.value || '') : '';
     const partitaIva = isBusiness ? (qs('#c_partita_iva')?.value || '').replace(/\s+/g,'') : '';
+    const pecAzienda = isBusiness ? clean(qs('#c_pec')?.value || '').toLowerCase() : '';
     const formaGiuridicaLabel = (() => {
       if(!isBusiness || !state.businessForma) return '';
       return state.businessForma === 'ditta' ? 'Ditta individuale' : 'Società';
@@ -4332,6 +4338,7 @@
       lines.push(`FORMA GIURIDICA: ${formaGiuridicaLabel || '-'}`);
       lines.push(`RAGIONE SOCIALE: ${ragioneSociale}`);
       lines.push(`PARTITA IVA: ${partitaIva}`);
+      if(pecAzienda) lines.push(`PEC: ${pecAzienda}`);
       lines.push(``);
     }
 
@@ -4514,7 +4521,7 @@
     'c_spedizione','c_indirizzo_spedizione',
     'd_tipo','d_numero','d_emissione','d_scadenza','d_rilasciato',
     'w_linea','w_numero','w_migrazione',
-    'c_ragione_sociale','c_partita_iva',
+    'c_ragione_sociale','c_partita_iva','c_pec',
     'c_tipologia_locale',
     'dis_nome','dis_cognome','dis_cf','dis_codice_cliente',
     'dis_indirizzo','dis_citta','dis_email','dis_telefono','dis_cellulare',
@@ -4674,6 +4681,15 @@
       _setB('CAP',             _f.c_cap);
       _setB('Telefono 1',      _f.c_telefono);
       _setB('Email fatturazione', _f.c_mail);
+      // PEC (fatturazione elettronica)
+      const _pecB = String(_f.c_pec || '').trim().toLowerCase();
+      if(_pecB){
+        _setB('PEC Fattura Sky',      _pecB);
+        _setB('Email aggiuntiva PEC', _pecB);
+      }
+      // Codice venditore fisso (tutte le copie del contratto)
+      ['Codice venditore n_1','Codice venditore n_2','Codice venditore n_3','Codice venditore n_4','campo dealer']
+        .forEach(_n => _setB(_n, '99805'));
       // Legale rappresentante
       _setB('Nome',    _f.c_nome);
       _setB('Cognome', _f.c_cognome);
@@ -4988,6 +5004,14 @@
     _setO('CAP',                    _f.c_cap);
     _setO('Telefono 1',             _f.c_telefono);
     _setO('Email fatturazione',     _f.c_mail);
+    // PEC (fatturazione elettronica)
+    const _pecO = String(_f.c_pec || '').trim().toLowerCase();
+    if(_pecO){
+      _setO('PEC Fattura Sky',      _pecO);
+      _setO('Email aggiuntiva PEC', _pecO);
+    }
+    // Codice venditore/dealer fisso
+    _setO('codice dealer', '99805');
 
     // === Legale rappresentante ===
     _setO('Nome',    _f.c_nome);
