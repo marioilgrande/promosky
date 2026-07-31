@@ -4687,9 +4687,8 @@
         _setB('PEC Fattura Sky',      _pecB);
         _setB('Email aggiuntiva PEC', _pecB);
       }
-      // Codice venditore fisso (tutte le copie del contratto)
-      ['Codice venditore n_1','Codice venditore n_2','Codice venditore n_3','Codice venditore n_4','campo dealer']
-        .forEach(_n => _setB(_n, '99805'));
+      // Codice venditore fisso (una sola volta, prima casella della riga)
+      _setB('Codice venditore n_1', '99805');
       // Legale rappresentante
       _setB('Nome',    _f.c_nome);
       _setB('Cognome', _f.c_cognome);
@@ -5010,8 +5009,10 @@
       _setO('PEC Fattura Sky',      _pecO);
       _setO('Email aggiuntiva PEC', _pecO);
     }
-    // Codice venditore/dealer fisso
-    _setO('codice dealer', '99805');
+    // Codice venditore fisso (una sola volta).
+    // Nel template il campo accanto a "Codice venditore n." si chiama
+    // 'Richiesta di abbonamento ufficio' (nome fuorviante, posizione corretta).
+    _setO('Richiesta di abbonamento ufficio', '99805');
 
     // === Legale rappresentante ===
     _setO('Nome',    _f.c_nome);
