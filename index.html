@@ -821,9 +821,10 @@
 
         <p>
           <strong>📺 Only TV</strong><br>
-          <em>Validità dal 27/07 al 30/08/2026 (no backlog) · Durata contratto 18 mesi</em>
+          <em>Validità fino al 30/08/2026 (no backlog) · Durata contratto 18 mesi</em>
         </p>
         <ul style="margin:4px 0 8px 18px; padding:0;">
+          <li><strong>Sky TV + Sky Calcio</strong> a <strong>15,99€</strong>/mese per <strong>18 mesi</strong> · cod. <strong>1100738</strong> · <strong>no backlog</strong> · validità <strong>03/08 – 30/08/2026</strong></li>
           <li><strong>Sky TV + Sky Sport + Sky Insider</strong> a <strong>24,99€</strong>/mese per <strong>18 mesi</strong> · cod. <strong>1100782</strong> · <strong>no backlog</strong> · validità <strong>27/07 – 30/08/2026</strong></li>
           <li><strong>Sky TV + Sky Sport + UHD + Sky Insider</strong> a <strong>24,99€</strong>/mese per i primi <strong>6 mesi</strong>, poi <strong>29,99€</strong>/mese per i restanti <strong>12 mesi</strong> · cod. <strong>1100783</strong> · <strong>no backlog</strong> · validità <strong>27/07 – 30/08/2026</strong></li>
         </ul>
@@ -1269,6 +1270,8 @@
         </div>
 
         <div id="recapBox" class="recap" style="display:none"></div>
+
+        <div id="upsellBox" style="display:none;margin-top:10px;padding:10px 12px;border-radius:10px;background:#eaf4ff;border:1px solid #b8d5f5;color:#0b1f3a;font-size:13px;line-height:1.45;"></div>
 
         <div class="kpis">
           <div class="kpi">
@@ -1886,6 +1889,20 @@
 
   const PROMO = {
     tvOnly:[
+      {
+        id:'TV_CALCIO_1599',
+        name:'Sky TV + Sky Calcio',
+        match:(sel,nf)=> true,
+        availableFrom:'2026-08-03',
+        priceValue:15.99,
+        included:['calcio'],
+        includesNetflixBase:false,
+        attivazione:'Stream 19€',
+        codice:'1100738',
+        scadenza:'30/08/2026 (no backlog)',
+        durata:'18 mesi',
+        note:'Promo: Sky TV + Sky Calcio 15,99€/mese per 18 mesi. Validità dal 3 al 30 agosto 2026 (no backlog). Codice promo 1100738.'
+      },
       {
         id:'TV_SPORT_INSIDER_2499',
         name:'Sky TV + Sky Sport + Sky Insider',
@@ -3480,7 +3497,45 @@
         return (a.best.totalMonthly ?? 0) - (b.best.totalMonthly ?? 0);
       });
 
-      return { best: merged[0].best };
+      const winner = merged[0].best;
+
+      // Suggerimento di upselling: cerco fra le alternative scartate quella
+      // che costa poco di piu' al mese ma include pacchetti in piu'.
+      // Non cambia la scelta, serve solo a informare in fase di trattativa.
+      const UPSELL_MAX_DELTA = 5;   // euro/mese di differenza massima
+      const winnerMonthly = Number(winner.totalMonthly ?? winner.priceValue ?? 0);
+      const winnerPacks = new Set([
+        ...(winner.included || []),
+        ...(winner.extraPackIds || [])
+      ]);
+
+      let upsell = null;
+      merged.slice(1).forEach(x => {
+        const cand = x.best;
+        const candMonthly = Number(cand.totalMonthly ?? cand.priceValue ?? 0);
+        const delta = Number((candMonthly - winnerMonthly).toFixed(2));
+        if (delta <= 0 || delta > UPSELL_MAX_DELTA) return;
+
+        const candPacks = new Set([
+          ...(cand.included || []),
+          ...(cand.extraPackIds || [])
+        ]);
+        const gained = [...candPacks].filter(p => !winnerPacks.has(p));
+        if (!gained.length) return;
+
+        if (!upsell || delta < upsell.delta){
+          upsell = {
+            name: cand.name,
+            codice: cand.codice,
+            monthly: candMonthly,
+            delta,
+            packs: gained.map(p => PACK_LABEL[p] || p)
+          };
+        }
+      });
+      if (upsell) winner.upsellHint = upsell;
+
+      return { best: winner };
     }
 
     return {error:'Nessuna combinazione disponibile.'};
@@ -3660,6 +3715,10 @@
       wifiAltBox.scrollIntoView({behavior:'smooth', block:'start'});
       return;
     }
+
+    // Il banner di upselling riguarda solo il confronto Only TV
+    const _upsellBoxReset = qs('#upsellBox');
+    if (_upsellBoxReset){ _upsellBoxReset.style.display = 'none'; _upsellBoxReset.innerHTML = ''; }
 
     // === Sky Bar context ===
     if (r.context === 'sky_bar'){
@@ -3972,6 +4031,24 @@
     } else {
       recap.style.display = 'none';
       recap.innerHTML = '';
+    }
+
+    const upsellBox = qs('#upsellBox');
+    if (upsellBox){
+      const u = best.upsellHint;
+      if (u){
+        const deltaStr = formatEUR(u.delta);
+        const monthlyStr = formatEUR(u.monthly);
+        upsellBox.innerHTML =
+          '\uD83D\uDCA1 <b>Con soli ' + deltaStr + ' in pi\u00f9 al mese</b> il cliente pu\u00f2 avere <b>' +
+          escapeHtml(u.packs.join(' + ')) + '</b> incluso: ' +
+          escapeHtml(u.name) + ' a ' + monthlyStr + '/mese' +
+          (u.codice ? ' \u00b7 cod. <b>' + escapeHtml(u.codice) + '</b>' : '') + '.';
+        upsellBox.style.display = 'block';
+      } else {
+        upsellBox.style.display = 'none';
+        upsellBox.innerHTML = '';
+      }
     }
 
     fillComposition(best);
