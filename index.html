@@ -798,6 +798,7 @@
           <li><strong>Sky WiFi + Sky TV</strong> a <strong>29,90€</strong>/mese · cod. <strong>1300207</strong> consumo · <strong>1300208</strong> Unlimited</li>
           <li><strong>Sky WiFi + Sky TV + Sky Sport</strong> a <strong>35,90€</strong>/mese · cod. <strong>1300201</strong> consumo · <strong>1300202</strong> Unlimited</li>
           <li><strong>Sky WiFi + Sky TV + Sky Cinema</strong> a <strong>35,90€</strong>/mese · cod. <strong>1300197</strong> consumo · <strong>1300198</strong> Unlimited</li>
+          <li><strong>Sky WiFi + Sky TV + Sky Calcio</strong> a <strong>29,90€</strong>/mese · cod. <strong>1300216</strong> consumo · <strong>1300217</strong> Unlimited · attivazione WiFi 0€ e TV 19€ · validità <strong>03/08 – 20/09/2026</strong></li>
         </ul>
 
         <p>
@@ -808,6 +809,7 @@
           <li><strong>Sky WiFi + Sky TV</strong> a <strong>27,90€</strong>/mese · cod. <strong>1300229</strong> consumo · <strong>1300230</strong> Unlimited</li>
           <li><strong>Sky WiFi + Sky TV + Sky Cinema</strong> a <strong>35,90€</strong>/mese · cod. <strong>1300226</strong> consumo · <strong>1300225</strong> Unlimited</li>
           <li><strong>Sky WiFi + Sky TV + Sky Sport</strong> a <strong>35,90€</strong>/mese · cod. <strong>1300227</strong> consumo · <strong>1300228</strong> Unlimited</li>
+          <li><strong>Sky WiFi + Sky TV + Sky Calcio</strong> a <strong>27,90€</strong>/mese · cod. <strong>1300251</strong> consumo · <strong>1300252</strong> Unlimited · attivazione WiFi e TV 0€ · validità <strong>03/08 – 20/09/2026</strong></li>
         </ul>
 
         <p>
@@ -821,9 +823,12 @@
 
         <p>
           <strong>📺 Only TV</strong><br>
-          <em>Validità fino al 30/08/2026 (no backlog) · Durata contratto 18 mesi</em>
+          <em>No backlog · Durata contratto 18 mesi</em>
         </p>
         <ul style="margin:4px 0 8px 18px; padding:0;">
+          <li><strong>Sky TV + Netflix</strong> a <strong>14,99€</strong>/mese per <strong>18 mesi</strong> · cod. <strong>1100731</strong> fino al 31/08, <strong>1100806</strong> dal 01/09 · validità <strong>17/08 – 27/09/2026</strong></li>
+          <li><strong>Sky TV + Sky Cinema + Sky Calcio</strong> a <strong>19,99€</strong>/mese per <strong>18 mesi</strong> · cod. <strong>1100739</strong> · validità <strong>17/08 – 27/09/2026</strong></li>
+          <li><strong>Sky TV + Netflix + Sky Cinema + UHD (doppio sconto)</strong> a <strong>14,99€</strong>/mese per i primi <strong>6 mesi</strong>, poi <strong>24,99€</strong>/mese per i restanti <strong>12 mesi</strong> · cod. <strong>1100771</strong> fino al 31/08, <strong>1100807</strong> dal 01/09 · validità <strong>17/08 – 27/09/2026</strong></li>
           <li><strong>Sky TV + Sky Calcio</strong> a <strong>15,99€</strong>/mese per <strong>18 mesi</strong> · cod. <strong>1100738</strong> · <strong>no backlog</strong> · validità <strong>03/08 – 30/08/2026</strong></li>
           <li><strong>Sky TV + Sky Sport + Sky Insider</strong> a <strong>24,99€</strong>/mese per <strong>18 mesi</strong> · cod. <strong>1100782</strong> · <strong>no backlog</strong> · validità <strong>27/07 – 30/08/2026</strong></li>
           <li><strong>Sky TV + Sky Sport + UHD + Sky Insider</strong> a <strong>24,99€</strong>/mese per i primi <strong>6 mesi</strong>, poi <strong>29,99€</strong>/mese per i restanti <strong>12 mesi</strong> · cod. <strong>1100783</strong> · <strong>no backlog</strong> · validità <strong>27/07 – 30/08/2026</strong></li>
@@ -1890,6 +1895,54 @@
   const PROMO = {
     tvOnly:[
       {
+        id:'TV_NETFLIX_1499',
+        name:'Sky TV + Netflix',
+        match:(sel,nf)=> true,
+        availableFrom:'2026-08-17',
+        priceValue:14.99,
+        included:[],
+        includesNetflixBase:true,
+        attivazione:'Stream 19€',
+        codice:'1100731',
+        codiceDal:{ da:'2026-09-01', codice:'1100806' },
+        scadenza:'27/09/2026 (no backlog)',
+        durata:'18 mesi',
+        note:'Promo: Sky TV + Netflix 14,99€/mese per 18 mesi. Validità dal 17 agosto al 27 settembre 2026 (no backlog). Codice promo 1100731 fino al 31/08, 1100806 dal 01/09. Netflix Standard con pubblicità incluso; gli upgrade sono addebitati come delta.'
+      },
+      {
+        id:'TV_CINEMA_CALCIO_1999',
+        name:'Sky TV + Sky Cinema + Sky Calcio',
+        match:(sel,nf)=> sel.has('cinema') && sel.has('calcio'),
+        availableFrom:'2026-08-17',
+        priceValue:19.99,
+        included:['cinema','calcio'],
+        includesNetflixBase:false,
+        attivazione:'Stream 19€',
+        codice:'1100739',
+        scadenza:'27/09/2026 (no backlog)',
+        durata:'18 mesi',
+        note:'Promo: Sky TV + Sky Cinema + Sky Calcio 19,99€/mese per 18 mesi. Validità dal 17 agosto al 27 settembre 2026 (no backlog). Codice promo 1100739.'
+      },
+      {
+        id:'TV_NETFLIX_CINEMA_UHD_DOPPIO',
+        name:'Sky TV + Netflix + Sky Cinema + UHD (Doppio sconto)',
+        match:(sel,nf)=> true,
+        availableFrom:'2026-08-17',
+        priceValue:14.99,
+        phases:[
+          { months:6, price:14.99 },
+          { months:12, price:24.99 }
+        ],
+        included:['cinema','uhd'],
+        includesNetflixBase:true,
+        attivazione:'Stream 19€',
+        codice:'1100771',
+        codiceDal:{ da:'2026-09-01', codice:'1100807' },
+        scadenza:'27/09/2026 (no backlog)',
+        durata:'18 mesi',
+        note:'Promo DOPPIO SCONTO: Sky TV + Netflix + Sky Cinema + UHD a 14,99€/mese per i primi 6 mesi, poi 24,99€/mese per i restanti 12 mesi. Validità dal 17 agosto al 27 settembre 2026 (no backlog). Codice promo 1100771 fino al 31/08, 1100807 dal 01/09. Netflix Standard con pubblicità incluso; gli upgrade sono addebitati come delta.'
+      },
+      {
         id:'TV_CALCIO_1599',
         name:'Sky TV + Sky Calcio',
         match:(sel,nf)=> true,
@@ -1945,7 +1998,12 @@
         note:'Validità 30/03/2026 – 31/07/2026. Backlog 2 giorni.' },
       { id:'3P_CINEMA', name:'Sky WiFi + Sky TV + Cinema (3P)', priceValue:35.90, attivazione:'Attivazione Sky WiFi 0€, Stream 19€',
         codiceVoce:{consumo:'1300197', unlimited:'1300198'}, scadenza:'30/08/2026 (Backlog 2 giorni)', durata:'18 mesi', included:['cinema'],
-        note:'Validità 30/03/2026 – 31/07/2026. Backlog 2 giorni.' }
+        note:'Validità 30/03/2026 – 31/07/2026. Backlog 2 giorni.' },
+      { id:'3P_CALCIO', name:'Sky WiFi + Sky TV + Sky Calcio (3P)', priceValue:29.90,
+        attivazione:'Sky WiFi 0€ (anziché 49€), Sky TV 19€ (anziché 148€)',
+        codiceVoce:{consumo:'1300216', unlimited:'1300217'}, availableFrom:'2026-08-03',
+        scadenza:'20/09/2026 (Backlog 2 giorni)', durata:'18 mesi', included:['calcio'],
+        note:'Sky WiFi + Sky Calcio 29,90€/mese per 18 mesi. Voce Unlimited inclusa per 18 mesi. Attivazione Sky WiFi 0€ anziché 49€, Sky TV 19€ anziché 148€. Validità 3 agosto – 20 settembre 2026 (2 giorni di backlog).' }
     ],
     threeP_OF:[
       { id:'3P_OF_BASE', name:'Sky WiFi + Sky TV (3P – Open Fiber)', priceValue:27.90, attivazione:'Attivazione WiFi e TV 0€',
@@ -1956,7 +2014,12 @@
         note:'Triple Play Open Fiber: Sky WiFi + Sky TV + Sky Cinema 35,90€/mese per 18 mesi. Attivazione WiFi e TV 0€. Validità 30/03 – 31/07/2026 (2 giorni di backlog).' },
       { id:'3P_OF_SPORT', name:'Sky WiFi + Sky TV + Sport (3P – Open Fiber)', priceValue:35.90, attivazione:'Attivazione WiFi e TV 0€',
         codiceVoce:{consumo:'1300227', unlimited:'1300228'}, scadenza:'30/08/2026 (Backlog 2 giorni)', durata:'18 mesi', included:['sport'],
-        note:'Triple Play Open Fiber: Sky WiFi + Sky TV + Sky Sport 35,90€/mese per 18 mesi. Attivazione WiFi e TV 0€. Validità 30/03 – 31/07/2026 (2 giorni di backlog).' }
+        note:'Triple Play Open Fiber: Sky WiFi + Sky TV + Sky Sport 35,90€/mese per 18 mesi. Attivazione WiFi e TV 0€. Validità 30/03 – 31/07/2026 (2 giorni di backlog).' },
+      { id:'3P_OF_CALCIO', name:'Sky WiFi + Sky TV + Sky Calcio (3P – Open Fiber)', priceValue:27.90,
+        attivazione:'Sky WiFi 0€ (anziché 49€), Sky TV 0€ (anziché 148€)',
+        codiceVoce:{consumo:'1300251', unlimited:'1300252'}, availableFrom:'2026-08-03',
+        scadenza:'20/09/2026 (Backlog 2 giorni)', durata:'18 mesi', included:['calcio'],
+        note:'Triple Play Open Fiber: Sky WiFi + Sky Calcio 27,90€/mese per 18 mesi. Voce Unlimited inclusa per 18 mesi. Attivazione Sky WiFi e Sky TV 0€ (anziché 49€ e 148€). Validità 3 agosto – 20 settembre 2026 (2 giorni di backlog).' }
     ],
     fourP:[
       { id:'4P_SPORT_NF', name:'Sky Glass + WiFi + TV + Sport + Netflix (4P)', priceValue:40.89, attivazione:'Attivazione Sky WiFi 0€',
@@ -2820,6 +2883,19 @@
     }
   }
 
+  // Alcune promo cambiano codice a partire da una certa data
+  // (es. 1100731 fino al 31/08, poi 1100806 dal 01/09).
+  function _codiceAttuale(offer){
+    if(!offer) return undefined;
+    const sw = offer.codiceDal;
+    if(sw && sw.da && sw.codice){
+      const oggi = new Date(); oggi.setHours(0,0,0,0);
+      const da = new Date(sw.da + 'T00:00:00');
+      if(oggi >= da) return sw.codice;
+    }
+    return offer.codice;
+  }
+
   function isPromoAvailable(p){
     if(!p) return false;
     // Availability window start (availableFrom)
@@ -2916,8 +2992,12 @@
     const base   = source.find(p=>p.id === `${idPrefix}_BASE`);
     const sport  = source.find(p=>p.id === `${idPrefix}_SPORT`);
     const cinema = source.find(p=>p.id === `${idPrefix}_CINEMA`);
+    const calcio = source.find(p=>p.id === `${idPrefix}_CALCIO`);
 
     let list = [];
+    // La promo con Calcio costa quanto la base ma include un pacchetto in piu':
+    // messa per prima vince i pari merito (Array.sort e' stabile).
+    if(calcio) list.push(calcio);
     if(base) list.push(base);
     if(sport && sel.has('sport')) list.push(sport);
     if(cinema && sel.has('cinema')) list.push(cinema);
@@ -3527,7 +3607,7 @@
         if (!upsell || delta < upsell.delta){
           upsell = {
             name: cand.name,
-            codice: cand.codice,
+            codice: _codiceAttuale(cand),
             monthly: candMonthly,
             delta,
             packs: gained.map(p => PACK_LABEL[p] || p)
@@ -3536,6 +3616,7 @@
       });
       if (upsell) winner.upsellHint = upsell;
 
+      winner.codice = _codiceAttuale(winner);
       return { best: winner };
     }
 
