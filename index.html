@@ -1781,6 +1781,32 @@
                 </div>
               </div>
 
+              <div id="ofApptWrap" style="display:none; grid-column:1/-1; margin-top:6px;">
+                <div class="dlgSection" style="padding:12px; margin:0; background:#fff8f0; border:1px dashed #ffcc80;">
+                  <h3 style="margin:0 0 6px;">📅 Appuntamento installazione (copertura Open Fiber)</h3>
+                  <div class="helpMini" style="margin:0 0 10px;">
+                    L'appuntamento verrà fissato alla <b>prima data utile</b>. Indica la fascia oraria preferita dal cliente;
+                    se ha <b>esigenze particolari</b> (giorni da evitare, orari, accessi al palazzo…), scrivile nelle note qui sotto.
+                  </div>
+                  <div class="grid2">
+                    <div style="grid-column:1/-1">
+                      <label for="of_fascia">FASCIA ORARIA PREFERITA</label>
+                      <select id="of_fascia">
+                        <option value="" selected>Nessuna preferenza</option>
+                        <option value="8.30 - 11.30">8.30 - 11.30</option>
+                        <option value="11.30 - 14.30">11.30 - 14.30</option>
+                        <option value="14.30 - 17.30">14.30 - 17.30</option>
+                        <option value="16.30 - 19.30">16.30 - 19.30</option>
+                      </select>
+                    </div>
+                    <div style="grid-column:1/-1">
+                      <label for="of_note_appuntamento">NOTE APPUNTAMENTO</label>
+                      <textarea id="of_note_appuntamento" rows="3" placeholder="Es. non disponibile il lunedì, citofono a nome…, cantiere aperto solo la mattina"></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
 
@@ -4259,9 +4285,30 @@
     return !!lastBest && lastBest.hasWifi === true;
   };
 
+  // La copertura Open Fiber prevede l'uscita del tecnico: mostro i campi
+  // per la fascia oraria preferita e le esigenze del cliente.
+  const isOpenFiber = ()=>{
+    if(state.off === 'wifi_tv')   return state.coverage3P === 'of';
+    if(state.off === 'wifi')      return state.coverageWifi === 'of';
+    if(state.off === '3p_ufficio')return state.office3PCoverage === 'of';
+    return false;
+  };
+
+  const syncOfAppt = ()=>{
+    const wrap = qs('#ofApptWrap');
+    if(!wrap) return;
+    const show = isOpenFiber();
+    wrap.style.display = show ? 'block' : 'none';
+    if(!show){
+      const f = qs('#of_fascia'); if(f) f.value = '';
+      const n = qs('#of_note_appuntamento'); if(n) n.value = '';
+    }
+  };
+
   const syncWifi = ()=>{
     const show = needsWifiSection();
     wifiWrap.style.display = show ? 'block' : 'none';
+    syncOfAppt();
 
     if(!show){
       if(wLinea) wLinea.required = false;
@@ -4533,6 +4580,16 @@
       lines.push(``);
     }
 
+    // Appuntamento installazione (solo copertura Open Fiber)
+    const _ofFascia = clean(qs('#of_fascia')?.value);
+    const _ofNote   = clean(qs('#of_note_appuntamento')?.value);
+    if(isOpenFiber() && (_ofFascia || _ofNote)){
+      lines.push(`*APPUNTAMENTO INSTALLAZIONE*`);
+      lines.push(`FASCIA ORARIA PREFERITA: ${_ofFascia || 'Nessuna preferenza'}`);
+      if(_ofNote) lines.push(`NOTE APPUNTAMENTO: ${_ofNote}`);
+      lines.push(``);
+    }
+
     lines.push(`*DOCUMENTO*`);
     lines.push(`TIPO DOCUMENTO: ${tipoDoc}`);
     lines.push(`NUMERO DOCUMENTO: ${numDoc}`);
@@ -4681,6 +4738,7 @@
     'c_spedizione','c_indirizzo_spedizione',
     'd_tipo','d_numero','d_emissione','d_scadenza','d_rilasciato',
     'w_linea','w_numero','w_migrazione',
+    'of_fascia','of_note_appuntamento',
     'c_ragione_sociale','c_partita_iva','c_pec',
     'c_tipologia_locale',
     'dis_nome','dis_cognome','dis_cf','dis_codice_cliente',
