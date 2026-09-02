@@ -1298,6 +1298,7 @@
             <b id="scadenza">-</b>
           </div>
         </div>
+        <div id="offerWarning" style="display:none;margin:10px 0;padding:10px 12px;border-radius:8px;background:#fff3e0;border:1px solid #ffcc80;color:#7a3b00;font-size:13px;line-height:1.45;"></div>
         <div class="notes" id="note"></div>
 
         <section class="recap" id="compositionBox" style="display:none; margin-top:14px;">
@@ -1818,6 +1819,7 @@
                   <option value="" selected disabled>Seleziona…</option>
                   <option value="carta_identita">Carta identità</option>
                   <option value="patente">Patente</option>
+                  <option value="passaporto">Passaporto</option>
                 </select>
               </div>
 
@@ -2030,6 +2032,7 @@
         name:'Sky WiFi (Copertura Standard)',
         priceValue:25.90,
         attivazione:'0€',
+        warning:'Da proporre solo in ultima battuta: l\'attivazione gratuita comporta il decommissioning del gettone. Resta comunque preferibile a non concludere la vendita.',
         codiceVoce:{ consumo:'1400800', unlimited:'1400801' },
         codiceLabels:{ consumo:'Voce a consumo', unlimited:'Ultra Wifi Plus' },
         scadenza:'27/09/2026 (Backlog 2 giorni)',
@@ -3690,6 +3693,10 @@
           </div>
         </div>
 
+        ${o.warning ? `<div style="margin-top:12px;padding:10px 12px;border-radius:8px;background:#fff3e0;border:1px solid #ffcc80;color:#7a3b00;font-size:13px;line-height:1.45;">
+          ⚠️ <b>Da offrire in ultima battuta</b><br>${o.warning}
+        </div>` : ''}
+
         <div class="notes">${o.note || '-'}</div>
 
         <section class="recap" style="margin-top:14px;">
@@ -4082,6 +4089,18 @@
     qs('#codice').textContent      = best.codice || '-';
     _renderScadenzaCell(best.scadenza || '-');
     qs('#note').textContent        = best.note || '-';
+
+    // Avviso sulle promo che vanno proposte solo come ultima opzione
+    const _warnBox = qs('#offerWarning');
+    if(_warnBox){
+      if(best.warning){
+        _warnBox.style.display = 'block';
+        _warnBox.innerHTML = '⚠️ <b>Da offrire in ultima battuta</b><br>' + escapeHtml(best.warning);
+      } else {
+        _warnBox.style.display = 'none';
+        _warnBox.innerHTML = '';
+      }
+    }
 
     const priceDetailEl = qs('#priceDetail');
     if (Array.isArray(best.phases) && best.phases.length){
@@ -4488,7 +4507,10 @@
     const spedizione = qs('#c_spedizione').value;
     const indirizzoSped = clean(qs('#c_indirizzo_spedizione').value);
 
-    const tipoDoc = qs('#d_tipo').value === 'patente' ? 'Patente' : 'Carta identità';
+    const _dTipo = qs('#d_tipo').value;
+    const tipoDoc = _dTipo === 'patente' ? 'Patente'
+                  : _dTipo === 'passaporto' ? 'Passaporto'
+                  : 'Carta identità';
     const numDoc = clean(qs('#d_numero').value);
     const emDoc = formatDateITFromInput(qs('#d_emissione').value);
     const scDoc = formatDateITFromInput(qs('#d_scadenza').value);
@@ -5083,7 +5105,9 @@
     set('email',         f.c_mail);
 
     // Documento
-    set('cod tipo docu', f.d_tipo === 'patente' ? 'PAT' : 'CI');
+    set('cod tipo docu', f.d_tipo === 'patente' ? 'PAT'
+                       : f.d_tipo === 'passaporto' ? 'PAS'
+                       : 'CI');
     set('num docu',      f.d_numero);
     set('data rilascio', formatIT(f.d_emissione));
     set('ente emittente',f.d_rilasciato);
