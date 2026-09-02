@@ -743,7 +743,6 @@
       <div style="display:flex; gap:8px; align-items:center;">
         <button class="btn secondary draftsHeaderBtn" id="draftsBtnHeader" type="button">📂 Bozze</button>
         <button class="btn secondary" id="promoBtn" type="button">👁️ PROMO</button>
-        <button class="btn secondary" id="scadenzeBtn" type="button">⏱️ Scadenze</button>
         <button class="btn secondary" id="resetBtn" aria-label="Pulisci campi" type="button">RESET</button>
       </div>
     </header>
@@ -2483,8 +2482,24 @@
     if(scadenzeDlg.open) scadenzeDlg.close();
     else scadenzeDlg.removeAttribute('open');
   };
-  const _scadBtn = qs('#scadenzeBtn');
-  if(_scadBtn) _scadBtn.addEventListener('click', apriScadenze);
+  // Il pannello non ha un bottone visibile: si apre con cinque tocchi
+  // rapidi sul logo Sky. Serve a evitare aperture accidentali da parte
+  // degli agenti, non e' una misura di sicurezza: il codice della pagina
+  // e' pubblico e chi lo ispeziona puo' comunque trovarlo.
+  const _logoScad = document.querySelector('header .logo');
+  if(_logoScad){
+    let tocchi = 0, ultimoTocco = 0;
+    _logoScad.style.cursor = 'pointer';
+    _logoScad.addEventListener('click', () => {
+      const ora = Date.now();
+      tocchi = (ora - ultimoTocco < 800) ? tocchi + 1 : 1;
+      ultimoTocco = ora;
+      if(tocchi >= 5){
+        tocchi = 0;
+        apriScadenze();
+      }
+    });
+  }
   ['#scadenzeCloseTop', '#scadenzeCloseBtn'].forEach(sel => {
     const b = qs(sel); if(b) b.addEventListener('click', chiudiScadenze);
   });
