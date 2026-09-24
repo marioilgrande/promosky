@@ -1814,18 +1814,20 @@
                 <div class="dlgSection" style="padding:12px; margin:0; background:#fff8f0; border:1px dashed #ffcc80;">
                   <h3 style="margin:0 0 6px;">📅 Appuntamento installazione (copertura Open Fiber)</h3>
                   <div class="helpMini" style="margin:0 0 10px;">
-                    L'appuntamento verrà fissato alla <b>prima data utile</b>. Indica la fascia oraria preferita dal cliente;
+                    L'appuntamento verrà fissato alla <b>prima data utile</b>. La fascia oraria va sempre indicata:
+                    se il cliente non ha preferenze scegli <b>Nessuna preferenza</b>.
                     se ha <b>esigenze particolari</b> (giorni da evitare, orari, accessi al palazzo…), scrivile nelle note qui sotto.
                   </div>
                   <div class="grid2">
                     <div style="grid-column:1/-1">
                       <label for="of_fascia">FASCIA ORARIA PREFERITA</label>
-                      <select id="of_fascia">
-                        <option value="" selected>Nessuna preferenza</option>
+                      <select id="of_fascia" required>
+                        <option value="" selected disabled>Seleziona…</option>
                         <option value="8.30 - 11.30">8.30 - 11.30</option>
                         <option value="11.30 - 14.30">11.30 - 14.30</option>
                         <option value="14.30 - 17.30">14.30 - 17.30</option>
                         <option value="16.30 - 19.30">16.30 - 19.30</option>
+                        <option value="nessuna">Nessuna preferenza</option>
                       </select>
                     </div>
                     <div style="grid-column:1/-1">
@@ -4817,6 +4819,14 @@
       if(!v) markMissing('c_indirizzo_spedizione','INDIRIZZO SPEDIZIONE');
     }
 
+    // Con Open Fiber e' prevista l'uscita del tecnico: la fascia va scelta
+    // sempre, anche per dire esplicitamente che non ci sono preferenze.
+    syncOfAppt();
+    if(isOpenFiber()){
+      const f = qs('#of_fascia');
+      if(f && !clean(f.value)) markMissing('of_fascia','FASCIA ORARIA PREFERITA (installazione Open Fiber)');
+    }
+
     syncWifi();
     if(needsWifiSection()){
       const v = clean(wLinea.value);
@@ -4959,9 +4969,9 @@
     // Appuntamento installazione (solo copertura Open Fiber)
     const _ofFascia = clean(qs('#of_fascia')?.value);
     const _ofNote   = clean(qs('#of_note_appuntamento')?.value);
-    if(isOpenFiber() && (_ofFascia || _ofNote)){
+    if(isOpenFiber()){
       lines.push(`*APPUNTAMENTO INSTALLAZIONE*`);
-      lines.push(`FASCIA ORARIA PREFERITA: ${_ofFascia || 'Nessuna preferenza'}`);
+      lines.push(`FASCIA ORARIA PREFERITA: ${(!_ofFascia || _ofFascia === 'nessuna') ? 'Nessuna preferenza' : _ofFascia}`);
       if(_ofNote) lines.push(`NOTE APPUNTAMENTO: ${_ofNote}`);
       lines.push(``);
     }
