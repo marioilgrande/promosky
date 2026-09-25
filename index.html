@@ -525,20 +525,40 @@
 
   .glass-dot{
     display:inline-block;
-    width:13px;
-    height:13px;
+    width:17px;
+    height:17px;
     border-radius:50%;
-    margin-right:7px;
-    vertical-align:-2px;
-    border:1px solid rgba(15,23,42,.3);
-    box-shadow:0 1px 3px rgba(15,23,42,.25);
+    margin-right:8px;
+    vertical-align:-4px;
+    /* bordo scuro: serve soprattutto a far vedere il pallino bianco */
+    border:1.5px solid rgba(15,23,42,.5);
+    box-shadow:0 1px 3px rgba(15,23,42,.3);
   }
   .chip[aria-pressed="true"] .glass-dot{
-    border-color:rgba(255,255,255,.85);
-    box-shadow:0 0 0 2px rgba(255,255,255,.35);
+    border:2px solid #ffffff;
+    box-shadow:0 0 0 1.5px rgba(15,23,42,.35);
   }
   .glass-pallini{ display:flex; gap:2px; align-items:center; }
   .glass-pallini .glass-dot{ margin-right:3px; }
+
+  #glassBox{ scroll-margin-top:14px; }
+  @keyframes glassEvidenzia{
+    0%  { box-shadow:0 0 0 0 rgba(230,0,126,.55); background:#fde7f3; }
+    100%{ box-shadow:0 0 0 16px rgba(230,0,126,0); }
+  }
+  #glassBox.glass-evidenzia{ animation:glassEvidenzia .9s ease-out 2; }
+
+  .glass-agos{
+    margin-top:8px;
+    padding:8px 11px;
+    font-size:12.5px;
+    line-height:1.4;
+    color:#0c3d7a;
+    background:#e8f1ff;
+    border:1px solid #bcd6fb;
+    border-radius:10px;
+  }
+  .glass-agos[hidden]{ display:none; }
 
   .glass-hint{
     margin-top:7px;
@@ -572,6 +592,34 @@
   }
   .promo-dlg #promoSliderBox{ margin-top:14px !important; }
   .promo-dlg .dlgActions{ flex:0 0 auto; }
+
+  .promo-tabs{
+    flex:0 0 auto;
+    display:flex;
+    gap:8px;
+    padding:10px 14px;
+    background:#ffffff;
+    border-bottom:1px solid var(--border);
+  }
+  .promo-tab{
+    flex:1 1 0;
+    appearance:none;
+    font:inherit;
+    font-size:14px;
+    font-weight:700;
+    padding:10px 12px;
+    border-radius:12px;
+    border:1px solid #c7d2fe;
+    background:#ffffff;
+    color:#1f2937;
+    cursor:pointer;
+  }
+  .promo-tab[aria-selected="true"]{
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    border-color:transparent;
+    color:#ffffff;
+  }
+  .promo-dlg .promo-pannello{ margin-top:14px; }
 
   .promo-pannello{
     background:#fff;
@@ -1000,9 +1048,13 @@
       <div class="dlgHead">
         <div class="dlgTitle">
           <b id="promoDlgTitolo">Promo in corso</b>
-          <div class="muted">Locandine e offerte attive · premi Chiudi o Esc per uscire</div>
+          <div class="muted">Offerte attive e locandine · premi Chiudi o Esc per uscire</div>
         </div>
         <button class="btn secondary" id="promoDlgClose" type="button">Chiudi</button>
+      </div>
+      <div class="promo-tabs" role="tablist" aria-label="Sezioni della finestra promo">
+        <button type="button" role="tab" class="promo-tab" data-sezione="offerte" aria-selected="true">📋 Offerte</button>
+        <button type="button" role="tab" class="promo-tab" data-sezione="locandine" aria-selected="false">🖼️ Locandine</button>
       </div>
       <div class="dlgBody" id="promoCard">
       <div id="promoSliderBox" style="margin:-2px 0 14px; display:flex; flex-direction:column; gap:10px; align-items:center; text-align:center;">
@@ -1046,12 +1098,12 @@
 
         <div class="pp-filtri">
           <div class="chips promo-filtri" id="promoFiltri" role="group" aria-label="Filtra le offerte per categoria">
-            <button class="chip" type="button" data-cat="tutte" aria-pressed="true">Tutte</button>
             <button class="chip" type="button" data-cat="wifi" aria-pressed="false">Sky WiFi</button>
             <button class="chip" type="button" data-cat="3p" aria-pressed="false">3P / 4P</button>
             <button class="chip" type="button" data-cat="tv" aria-pressed="false">Only TV</button>
             <button class="chip" type="button" data-cat="glass" aria-pressed="false">Sky Glass</button>
             <button class="chip" type="button" data-cat="business" aria-pressed="false">Business</button>
+            <button class="chip" type="button" data-cat="tutte" aria-pressed="true">Tutte</button>
           </div>
         </div>
 
@@ -1963,6 +2015,7 @@
                 <button class="chip" data-group="glass_plan" data-value="rate12" aria-pressed="false" style="display:none">Rate 12 mesi</button>
                 <button class="chip" data-group="glass_plan" data-value="rate48" aria-pressed="false" style="display:none">Rate 48 mesi</button>
               </div>
+              <div class="glass-agos" id="glassAgosNota" hidden>💳 Pagamento rateale <b>tramite finanziamento Agos</b>, senza interessi.</div>
             </div>
           </div>
 
@@ -2372,9 +2425,19 @@
               </div>
 
               <div id="ibanWrap">
-                <label for="c_iban">IBAN</label>
+                <label for="c_iban_tipo">TIPO IBAN</label>
+                <select id="c_iban_tipo">
+                  <option value="it" selected>IBAN italiano</option>
+                  <option value="estero">IBAN estero</option>
+                </select>
+                <label for="c_iban" style="margin-top:10px">IBAN</label>
                 <input id="c_iban" type="text" placeholder="27 caratteri (es. IT...)" />
-                <div class="helpMini">Controllo unico: deve essere <b>esattamente 27 caratteri</b> (senza spazi).</div>
+                <div class="helpMini" id="ibanHelp">Controllo: deve essere <b>esattamente 27 caratteri</b> (senza spazi).</div>
+                <div id="bicWrap" style="display:none; margin-top:10px">
+                  <label for="c_bic">BIC / SWIFT</label>
+                  <input id="c_bic" type="text" placeholder="Es. DEUTDEFFXXX" autocomplete="off" />
+                  <div class="helpMini">Obbligatorio con IBAN estero.</div>
+                </div>
               </div>
 
               <div style="grid-column:1/-1">
@@ -2559,19 +2622,21 @@
   const GLASS_VALIDITA = 'validità 10/09/2026 – 13/01/2027';
   const GLASS_ANTICIPO_LISTINO = 79;
 
+  // Tinte sature e ben distinte: con le tonalita' "realistiche" blu, verde
+  // e nero sembravano tutti lo stesso pallino scuro.
   const GLASS_COLORI = {
-    bianco:{ label:'Bianco', hex:'#f1eee8' },
-    blu:   { label:'Blu',    hex:'#1d3557' },
-    verde: { label:'Verde',  hex:'#2f4f3f' },
-    nero:  { label:'Nero',   hex:'#2b2b2b' },
-    rosa:  { label:'Rosa',   hex:'#d9a3ad' }
+    bianco:{ label:'Bianco', hex:'#ffffff' },
+    blu:   { label:'Blu',    hex:'#1f6fe5' },
+    verde: { label:'Verde',  hex:'#1ea150' },
+    nero:  { label:'Nero',   hex:'#111111' },
+    rosa:  { label:'Rosa',   hex:'#f25fa5' }
   };
 
   const GLASS = {
     '43': {
       codice:'1100825', listino:651,
       fasce:[
-        { prezzo:99, colori:['bianco','blu','verde','nero'],
+        { prezzo:99, colori:['bianco','blu','verde','nero','rosa'],
           piani:{ unico:{} } }
       ]
     },
@@ -2649,7 +2714,7 @@
     let t = `Sky Glass ${s.taglia}" ${s.col.label.toLowerCase()}`;
     t += ` — ${eurG(s.fascia.prezzo)} anziché ${eurG(s.cfgT.listino)}`;
     t += s.piano.nRate
-      ? ` · anticipo ${eurG(s.piano.anticipo)} anziché ${eurG(GLASS_ANTICIPO_LISTINO)} + ${s.piano.nRate} rate da ${eurG(s.piano.rata)}/mese senza interessi`
+      ? ` · anticipo ${eurG(s.piano.anticipo)} anziché ${eurG(GLASS_ANTICIPO_LISTINO)} + ${s.piano.nRate} rate da ${eurG(s.piano.rata)}/mese senza interessi tramite finanziamento Agos`
       : ` · pagamento in unica soluzione`;
     return t + ` · Cod. ${s.cfgT.codice} · ${GLASS_VALIDITA}`;
   }
@@ -3697,7 +3762,7 @@
               </div>
               <div class="glass-pallini" aria-label="Colori disponibili">${pallini}</div>
               <div class="poffer-tags">${tag.join('')}</div>
-              ${rate ? `<div class="poffer-rate">${rate}<div class="pr-nota">Anticipo di listino ${eurG(GLASS_ANTICIPO_LISTINO)}. Rate senza interessi, con carta di credito o finanziamento Agos.</div></div>` : ''}
+              ${rate ? `<div class="poffer-rate">${rate}<div class="pr-nota">In caso di rateizzazione il pagamento avviene <b>tramite finanziamento Agos</b>, senza interessi. Anticipo di listino ${eurG(GLASS_ANTICIPO_LISTINO)}.</div></div>` : ''}
             </li>`;
     }).join('');
   }
@@ -3829,7 +3894,26 @@
   });
 
   const promoDlg = qs('#promoDlg');
+
+  // Offerte e locandine in due sezioni separate. Lo slider ha un display
+  // inline, quindi per nasconderlo uso lo stile e non l'attributo hidden.
+  let _sezionePromo = 'offerte';
+  function _mostraSezionePromo(quale){
+    _sezionePromo = (quale === 'locandine') ? 'locandine' : 'offerte';
+    const locandine = _sezionePromo === 'locandine';
+    const slider = qs('#promoSliderBox'), pannello = qs('.promo-pannello');
+    if(slider)   slider.style.display   = locandine ? 'flex' : 'none';
+    if(pannello) pannello.style.display = locandine ? 'none' : '';
+    qsa('.promo-tab').forEach(t =>
+      t.setAttribute('aria-selected', String(t.dataset.sezione === _sezionePromo)));
+    const corpo = qs('#promoDlg .dlgBody');
+    if(corpo) corpo.scrollTop = 0;
+  }
+  qsa('.promo-tab').forEach(t =>
+    t.addEventListener('click', () => _mostraSezionePromo(t.dataset.sezione)));
+
   qs('#promoBtn').addEventListener('click', () => {
+    _mostraSezionePromo(_sezionePromo);
     // Ricontrollo le scadenze a ogni apertura: idempotente, toglie i badge
     // vecchi e li rimette solo se l'offerta e' ancora in scadenza.
     _prunePromoCardExpired();
@@ -4314,6 +4398,9 @@
     if(hint) hint.textContent =
       `${s.col.label} · ${eurG(s.fascia.prezzo)} anziché ${eurG(s.cfgT.listino)}`;
 
+    const agos = qs('#glassAgosNota');
+    if(agos) agos.hidden = !s.piano.nRate;
+
     // Piani di pagamento previsti per la fascia di prezzo del colore scelto
     qsa('#chipsGlassPlan .chip').forEach(b => {
       const piano = s.fascia.piani[b.dataset.value];
@@ -4321,7 +4408,7 @@
       b.setAttribute('aria-pressed', String(b.dataset.value === s.pianoKey));
       if(piano){
         b.title = piano.nRate
-          ? `Anticipo ${eurG(piano.anticipo)} + ${piano.nRate} rate da ${eurG(piano.rata)}/mese = ${eurG(s.fascia.prezzo)}`
+          ? `Anticipo ${eurG(piano.anticipo)} + ${piano.nRate} rate da ${eurG(piano.rata)}/mese = ${eurG(s.fascia.prezzo)} · tramite finanziamento Agos`
           : `Pagamento in unica soluzione: ${eurG(s.fascia.prezzo)}`;
       }
     });
@@ -5454,6 +5541,18 @@
     if(code && code!=='-') navigator.clipboard.writeText(code);
   });
 
+  // Dopo "Aggiungi Sky Glass" porto l'agente sulla sezione e la evidenzio:
+  // prima compariva piu' in basso, fuori vista, e sembrava che il pulsante
+  // non facesse nulla.
+  function _vaiAlGlass(){
+    const box = qs('#glassBox');
+    if(!box || box.style.display === 'none') return;
+    box.scrollIntoView({ behavior:'smooth', block:'start' });
+    box.classList.remove('glass-evidenzia');
+    void box.offsetWidth;            // riavvia l'animazione
+    box.classList.add('glass-evidenzia');
+  }
+
   qs('#toggleGlassBtn').addEventListener('click', ()=>{
     if(!lastBest) return;
     if(state.off === 'wifi_tv_glass') state.glassEnabled = true;
@@ -5468,9 +5567,11 @@
       });
       // Ricalcolo l'offerta con Netflix incluso (che a sua volta chiama setupGlassVisibility)
       renderResult(computeBest());
+      if(state.glassEnabled) setTimeout(_vaiAlGlass, 60);
       return;
     }
     setupGlassVisibility(lastBest);
+    if(state.glassEnabled) setTimeout(_vaiAlGlass, 60);
   });
 
   qs('#calcRecesso').addEventListener('click', ()=>{
@@ -5527,6 +5628,11 @@
   const paySelect = qs('#c_pagamento');
   const ibanWrap = qs('#ibanWrap');
   const ibanEl = qs('#c_iban');
+  const ibanTipoEl = qs('#c_iban_tipo');
+  const bicWrap = qs('#bicWrap');
+  const bicEl = qs('#c_bic');
+  const ibanHelp = qs('#ibanHelp');
+  const ibanEstero = () => !!ibanTipoEl && ibanTipoEl.value === 'estero';
 
   const cdcInfoDlg = qs('#cdcInfoDlg');
   const cdcOkBtn = qs('#cdcOkBtn');
@@ -5627,14 +5733,30 @@
       ibanWrap.style.display = 'none';
       ibanEl.required = false;
       ibanEl.value = '';
+      if(bicEl){ bicEl.required = false; bicEl.value = ''; }
       if(triggerInfo) openCdcInfo();
     } else {
       ibanWrap.style.display = 'block';
       ibanEl.required = true;
+      // Italiano: 27 caratteri. Estero: lunghezza libera, ma serve il BIC.
+      const estero = ibanEstero();
+      if(bicWrap) bicWrap.style.display = estero ? 'block' : 'none';
+      if(bicEl) bicEl.required = estero;
+      ibanEl.placeholder = estero ? 'IBAN estero (lunghezza libera)' : '27 caratteri (es. IT...)';
+      if(ibanHelp) ibanHelp.innerHTML = estero
+        ? 'IBAN estero: <b>nessun vincolo di lunghezza</b>. Compila anche il <b>BIC</b>.'
+        : 'Controllo: deve essere <b>esattamente 27 caratteri</b> (senza spazi).';
     }
   };
   if(paySelect){
     paySelect.addEventListener('change', ()=> syncPayment(true));
+  }
+  if(ibanTipoEl){
+    ibanTipoEl.addEventListener('change', ()=>{
+      ibanEl.classList.remove('invalid');
+      if(bicEl) bicEl.classList.remove('invalid');
+      syncPayment(false);
+    });
   }
 
   const clearInvalids = ()=> qsa('#contractDlg .invalid').forEach(el=>el.classList.remove('invalid'));
@@ -5657,6 +5779,7 @@
     syncPayment(false);
     if(paySelect && paySelect.value === 'iban'){
       ibanEl.value = toUpperNoSpaces(ibanEl.value);
+      if(bicEl) bicEl.value = toUpperNoSpaces(bicEl.value);
     }
 
     const missing = [];
@@ -5731,7 +5854,16 @@
 
     if(paySelect && paySelect.value === 'iban'){
       const iban = toUpperNoSpaces(ibanEl.value);
-      if(iban.length !== 27){
+      if(ibanEstero()){
+        if(!iban){
+          ibanEl.classList.add('invalid');
+          missing.push('IBAN ESTERO');
+        }
+        if(!toUpperNoSpaces(bicEl ? bicEl.value : '')){
+          if(bicEl) bicEl.classList.add('invalid');
+          missing.push('BIC (obbligatorio con IBAN estero)');
+        }
+      } else if(iban.length !== 27){
         ibanEl.classList.add('invalid');
         missing.push('IBAN (deve essere 27 caratteri)');
       }
@@ -5775,6 +5907,8 @@
 
     const metodoPag = (paySelect.value === 'cdc') ? 'CDC (Carta di credito)' : 'IBAN (Addebito su conto)';
     const iban = (paySelect.value === 'iban') ? toUpperNoSpaces(qs('#c_iban').value) : '';
+    const ibanEsteroSel = (paySelect.value === 'iban') && ibanEstero();
+    const bic = ibanEsteroSel ? toUpperNoSpaces(bicEl ? bicEl.value : '') : '';
 
     const spedizione = qs('#c_spedizione').value;
     const indirizzoSped = clean(qs('#c_indirizzo_spedizione').value);
@@ -5833,13 +5967,18 @@
     lines.push(`CODICE FISCALE: ${cf}`);
     lines.push(`DATA DI NASCITA: ${dataNascita}`);
     lines.push(`LUOGO DI NASCITA: ${luogoNascita}`);
+    lines.push(``);   // riga vuota: il luogo di nascita non va confuso con l'indirizzo
     lines.push(`INDIRIZZO: ${indirizzo}`);
     lines.push(`CITTA: ${citta}`);
     lines.push(`CAP: ${cap}`);
+    lines.push(``);
     lines.push(`TELEFONO: ${tel}`);
     lines.push(`MAIL: ${mail}`);
     lines.push(`METODO PAGAMENTO: ${metodoPag}`);
-    if(paySelect.value === 'iban') lines.push(`IBAN: ${iban}`);
+    if(paySelect.value === 'iban'){
+      lines.push(`${ibanEsteroSel ? 'IBAN ESTERO' : 'IBAN'}: ${iban}`);
+      if(ibanEsteroSel) lines.push(`BIC: ${bic}`);
+    }
     lines.push(``);
 
     if(hasWifi){
@@ -5913,7 +6052,7 @@
       lines.push(`COLORE: ${g.col.label}`);
       lines.push(`PREZZO DISPOSITIVO: ${eurG(g.fascia.prezzo)} anziché ${eurG(g.cfgT.listino)}`);
       if(g.piano.nRate){
-        lines.push(`PAGAMENTO: ${g.piano.nRate} rate senza interessi`);
+        lines.push(`PAGAMENTO: ${g.piano.nRate} rate senza interessi tramite finanziamento Agos`);
         lines.push(`ANTICIPO: ${eurG(g.piano.anticipo)} anziché ${eurG(GLASS_ANTICIPO_LISTINO)}`);
         lines.push(`RATA GLASS: ${eurG(g.piano.rata)}/mese`);
         lines.push(`TOTALE MENSILE (offerta + Glass): ${formatEUR(Number(monthly||0) + g.piano.rata)}`);
@@ -6032,7 +6171,7 @@
   const FORM_FIELDS = [
     'c_nome','c_cognome','c_cf','c_data_nascita','c_luogo_nascita',
     'c_indirizzo','c_citta','c_cap','c_telefono','c_mail',
-    'c_pagamento','c_iban',
+    'c_pagamento','c_iban_tipo','c_iban','c_bic',
     'c_spedizione','c_indirizzo_spedizione',
     'd_tipo','d_numero','d_emissione','d_scadenza','d_rilasciato',
     'w_linea','w_numero','w_migrazione',
@@ -6177,6 +6316,42 @@
   }
 
   // === PDF fill ===
+  // IBAN nei PDF: le caselle dei moduli Sky sono 27. Un IBAN estero puo'
+  // essere piu' lungo: pdf-lib lo rifiuterebbe e, siccome gli errori sui
+  // campi vengono ignorati, il contratto uscirebbe con l'IBAN vuoto. In quel
+  // caso tolgo caselle e limite e lo scrivo per intero.
+  function _scriviIbanPdf(form, nome, iban){
+    if(!iban) return;
+    try{
+      const fld = form.getTextField(nome);
+      const max = fld.getMaxLength();
+      if(max !== undefined && iban.length > max){
+        fld.disableCombing();
+        fld.setMaxLength(undefined);
+      }
+      fld.setText(iban);
+    }catch(e){
+      console.error(`[PDF] IBAN non scritto nel campo "${nome}"`, e);
+    }
+  }
+  // BIC: nel modulo Sky Bar il campo e' alto 10pt ma chiede un carattere da
+  // 12, e il testo finiva fuori dal riquadro senza essere stampato. Adatto
+  // la dimensione all'altezza del campo.
+  function _scriviBicPdf(form, nome, bic){
+    if(!bic) return;
+    try{
+      const fld = form.getTextField(nome);
+      const alt = fld.acroField.getWidgets()[0].getRectangle().height;
+      if(alt && alt < 13) fld.setFontSize(Math.max(6, Math.floor(alt * 0.85)));
+      fld.setText(bic);
+    }catch(e){
+      console.error(`[PDF] BIC non scritto nel campo "${nome}"`, e);
+    }
+  }
+  const _ibanDaCampi = f => String(f.c_iban||'').replace(/\s+/g,'').toUpperCase();
+  const _bicDaCampi  = f => (f.c_iban_tipo === 'estero')
+    ? String(f.c_bic||'').replace(/\s+/g,'').toUpperCase() : '';
+
   async function buildContractPdf(data){
     if (typeof PDFLib === 'undefined') throw new Error('Libreria pdf-lib non caricata');
     // === Sky Bar: usa template BUSINESS ===
@@ -6237,7 +6412,8 @@
       _setB('PIVA_2',            _f.c_partita_iva);
       // IBAN
       if(_f.c_pagamento === 'iban'){
-        _setB('IBAN', String(_f.c_iban||'').replace(/\s+/g,'').toUpperCase());
+        _scriviIbanPdf(_formBiz, 'IBAN', _ibanDaCampi(_f));
+        _scriviBicPdf(_formBiz, 'BIC', _bicDaCampi(_f));
         _setB('Conto Corrente intestato a', ((_f.c_cognome||'') + ' ' + (_f.c_nome||'')).trim());
         _setB('0 Nome',      _f.c_nome);
         _setB('0 Cognome',   _f.c_cognome);
@@ -6421,7 +6597,10 @@
     } else if(f.c_pagamento === 'iban'){
       chk('sepa');
       chk('mese 2');
-      set('iban',                String(f.c_iban||'').replace(/\s+/g,'').toUpperCase());
+      _scriviIbanPdf(form, 'iban', _ibanDaCampi(f));
+      // il modulo residenziale non ha una casella BIC: uso "Banca/Istituto
+      // finanziario", che sta proprio sopra l'IBAN ed era vuoto
+      if(_bicDaCampi(f)) set('banca', 'BIC ' + _bicDaCampi(f));
       set('cognome nome',        ((f.c_cognome||'') + ' ' + (f.c_nome||'')).trim());
       set('cod fiscale p3',      f.c_cf);
       set('via piazza loc',      ((f.c_indirizzo||'') + ', ' + (f.c_citta||'') + ' ' + (f.c_cap||'')).trim());
@@ -6569,7 +6748,8 @@
 
     // === IBAN (se pagamento SEPA) ===
     if(_f.c_pagamento === 'iban'){
-      _setO('IBAN', String(_f.c_iban||'').replace(/\s+/g,'').toUpperCase());
+      _scriviIbanPdf(_formOff, 'IBAN', _ibanDaCampi(_f));
+      _scriviBicPdf(_formOff, 'BIC', _bicDaCampi(_f));
       _setO('Conto Corrente intestato a', ((_f.c_cognome||'') + ' ' + (_f.c_nome||'')).trim());
       _setO('0 Nome',           _f.c_nome);
       _setO('0 Cognome',        _f.c_cognome);
