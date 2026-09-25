@@ -426,6 +426,254 @@
     border-style:dashed;
   }
 
+  /* === PROMO · elenco offerte a schede === */
+  .promo-groups{ display:flex; flex-direction:column; gap:11px; }
+
+  .pgroup{
+    /* Le schede fuori dalla finestra non vengono impaginate finche'
+       non si scorre fin li'. */
+    content-visibility:auto;
+    contain-intrinsic-size:auto 260px;
+    text-align:left;
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 4px 14px rgba(15,23,42,.05);
+  }
+
+  .pgroup-head{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    padding:11px 13px;
+    background:linear-gradient(135deg,#f6f8ff,#fdf2f8);
+    border-bottom:1px solid var(--border);
+  }
+  .pgroup-icon{ font-size:19px; line-height:1.25; flex:0 0 auto; }
+  .pgroup-title{ font-size:15px; font-weight:800; color:#111827; line-height:1.25; }
+  .pgroup-sub{ font-size:12px; color:var(--sub); line-height:1.4; margin-top:3px; }
+
+  .pgroup-list{ list-style:none; margin:0; padding:0; }
+
+  .poffer{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+    padding:11px 13px;
+    border-top:1px solid #f1f3fa;
+  }
+  .poffer > span[data-expire-badge]{ align-self:flex-start; }
+
+  .poffer-top{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .poffer-name{ font-size:14px; font-weight:700; color:#111827; line-height:1.3; }
+  .poffer-price{ flex:0 0 auto; text-align:right; white-space:nowrap; }
+  .po-price{ font-size:19px; font-weight:900; color:var(--accent); letter-spacing:-.01em; }
+  .po-unit{
+    display:block;
+    font-size:10px;
+    color:var(--sub);
+    text-transform:uppercase;
+    letter-spacing:.07em;
+    margin-top:1px;
+  }
+
+  .poffer-tags{ display:flex; flex-wrap:wrap; gap:5px; }
+  .ptag{
+    font-size:11px;
+    padding:3px 8px;
+    border-radius:999px;
+    background:#f3f5fc;
+    border:1px solid #e3e8f7;
+    color:#41506e;
+    line-height:1.45;
+  }
+  .ptag.pcode{
+    font-family:ui-monospace,monospace;
+    background:#111827;
+    border-color:#111827;
+    color:#e5ebff;
+    font-weight:600;
+  }
+  .ptag.pwarn{ background:#fff7ed; border-color:#fed7aa; color:#7c3a00; font-weight:600; }
+
+  /* Colore e piano hanno etichette lunghe (pallino + prezzo): senza
+     colonne piu' larghe il testo andava a capo dentro il pulsante. */
+  /* Le tre scelte del Glass stanno su tutta la larghezza, etichetta sopra
+     e pulsanti sotto: nella colonna stretta del riepilogo cinque colori
+     finivano incolonnati uno sull'altro. */
+  .glass-scelte{ grid-template-columns:1fr; row-gap:6px; }
+  .glass-scelte .recap-label{ margin-top:10px; font-weight:600; }
+  .glass-scelte > .recap-label:first-child{ margin-top:0; }
+
+  #chipsGlassSize{ grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); }
+  #chipsGlassColor{ grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); }
+  #chipsGlassPlan{ grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); }
+
+  /* Su telefono la colonna e' circa 280px: con 140px di minimo entrava
+     un solo pulsante per riga e i cinque colori si incolonnavano. */
+  @media(max-width:560px){
+    #chipsGlassSize,
+    #chipsGlassColor,
+    #chipsGlassPlan{ grid-template-columns:repeat(auto-fit,minmax(118px,1fr)); }
+  }
+
+  .glass-dot{
+    display:inline-block;
+    width:13px;
+    height:13px;
+    border-radius:50%;
+    margin-right:7px;
+    vertical-align:-2px;
+    border:1px solid rgba(15,23,42,.3);
+    box-shadow:0 1px 3px rgba(15,23,42,.25);
+  }
+  .chip[aria-pressed="true"] .glass-dot{
+    border-color:rgba(255,255,255,.85);
+    box-shadow:0 0 0 2px rgba(255,255,255,.35);
+  }
+  .glass-pallini{ display:flex; gap:2px; align-items:center; }
+  .glass-pallini .glass-dot{ margin-right:3px; }
+
+  .glass-hint{
+    margin-top:7px;
+    font-size:12px;
+    color:var(--sub);
+    line-height:1.4;
+  }
+
+  /* Attenzione: il display va messo solo su [open]. Sulla regola base
+     annullerebbe il display:none che il browser da' ai dialog chiusi, e
+     la finestra resterebbe stampata dentro la pagina. */
+  .promo-dlg{
+    max-width:920px;
+    width:94%;
+    max-height:92vh;
+    padding:0;
+  }
+  .promo-dlg[open]{
+    display:flex;
+    flex-direction:column;
+  }
+  .promo-dlg .dlgHead{ flex:0 0 auto; }
+  .promo-dlg .dlgBody{
+    flex:1 1 auto;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    background:#f7f9ff;
+    /* Niente padding in alto: la barra dei filtri deve potersi agganciare
+       a filo del bordo superiore quando si scorre. */
+    padding-top:0;
+  }
+  .promo-dlg #promoSliderBox{ margin-top:14px !important; }
+  .promo-dlg .dlgActions{ flex:0 0 auto; }
+
+  .promo-pannello{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:16px;
+    box-shadow:0 8px 22px rgba(15,23,42,.07);
+  }
+  .pp-head{
+    padding:13px 15px;
+    background:linear-gradient(135deg,#eef3ff,#fde9f5);
+    border-bottom:1px solid var(--border);
+    border-radius:15px 15px 0 0;
+  }
+  .pp-titolo{ font-size:16px; font-weight:800; color:#111827; }
+  .pp-conteggio{ font-size:12px; color:var(--sub); margin-top:3px; }
+
+  .pp-filtri{
+    position:sticky;
+    top:0;
+    z-index:5;
+    padding:11px 15px;
+    /* niente backdrop-filter: e' costoso da ridisegnare e su questa
+       pagina si faceva sentire a ogni interazione */
+    background:#ffffff;
+    border-bottom:1px solid var(--border);
+  }
+  .pp-body{ padding:13px 13px 15px; background:#fbfcff; border-radius:0 0 15px 15px; }
+
+  .promo-filtri{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+    padding:0;
+    margin-bottom:12px;
+    background:none;
+    border:none;
+    border-radius:0;
+  }
+  .promo-filtri .chip{
+    width:auto;
+    min-height:0;
+    padding:8px 14px;
+    font-size:13px;
+    box-shadow:0 2px 7px rgba(148,163,184,.32);
+  }
+
+  .promo-vuoto{
+    margin:0;
+    padding:18px 14px;
+    text-align:center;
+    color:var(--sub);
+    font-size:13px;
+    background:#fff;
+    border:1px dashed var(--border);
+    border-radius:14px;
+  }
+
+  /* Il filtro agisce via CSS: cosi' non litiga con il display inline
+     usato dal controllo scadenze per nascondere le schede scadute. */
+  .promo-groups[data-filtro="wifi"]     .pgroup:not([data-cat="wifi"]),
+  .promo-groups[data-filtro="3p"]       .pgroup:not([data-cat="3p"]),
+  .promo-groups[data-filtro="tv"]       .pgroup:not([data-cat="tv"]),
+  .promo-groups[data-filtro="glass"]    .pgroup:not([data-cat="glass"]),
+  .promo-groups[data-filtro="business"] .pgroup:not([data-cat="business"]){
+    display:none !important;
+  }
+
+  .poffer-rate > div + div{ margin-top:4px; }
+  .poffer-rate .pr-nota{ color:var(--sub); font-size:11px; }
+
+  .poffer-rate{
+    font-size:11.5px;
+    line-height:1.5;
+    color:#41506e;
+    background:#f7f9ff;
+    border:1px dashed #d8dff2;
+    border-radius:10px;
+    padding:7px 10px;
+  }
+
+  .pnote{
+    display:block;
+    padding:9px 13px;
+    border-top:1px dashed #d8dff2;
+    background:#fbfcff;
+    font-size:12px;
+    color:#41506e;
+    line-height:1.45;
+  }
+
+  @media(max-width:520px){
+    .poffer-top{ flex-direction:column; align-items:flex-start; gap:2px; }
+    .poffer-price{ text-align:left; }
+    .po-unit{
+      display:inline;
+      margin-left:5px;
+      text-transform:none;
+      letter-spacing:0;
+      font-size:11px;
+    }
+  }
+
   #listinoBtn, #listinoBtnMb{ display:none !important; }
 
   dialog{
@@ -555,8 +803,8 @@
     .step{ width:24px; height:24px; font-size:11px; }
 
     #promoCard{ font-size:13px; }
-    #promoCard ul{ padding-left:18px; }
-    #promoCard li{ margin-bottom:4px; line-height:1.4; word-break:break-word; }
+    #promoCard .pgroup-list{ padding-left:0; }
+    #promoCard .poffer{ word-break:break-word; }
 
     .result-head{ gap:10px; }
     .result-name{ font-size:17px; }
@@ -747,8 +995,16 @@
       </div>
     </header>
 
-    <!-- CARD PROMO -->
-    <section class="result-card promo-card" id="promoCard" style="display:none; margin-bottom:14px;">
+    <!-- FINESTRA PROMO -->
+    <dialog id="promoDlg" class="promo-dlg" aria-labelledby="promoDlgTitolo">
+      <div class="dlgHead">
+        <div class="dlgTitle">
+          <b id="promoDlgTitolo">Promo in corso</b>
+          <div class="muted">Locandine e offerte attive · premi Chiudi o Esc per uscire</div>
+        </div>
+        <button class="btn secondary" id="promoDlgClose" type="button">Chiudi</button>
+      </div>
+      <div class="dlgBody" id="promoCard">
       <div id="promoSliderBox" style="margin:-2px 0 14px; display:flex; flex-direction:column; gap:10px; align-items:center; text-align:center;">
         <div style="font-size:13px; color:#374151; line-height:1.4;">
           <b>📷 Locandine promo</b><br>
@@ -780,95 +1036,444 @@
         </div>
       </div>
 
-      <div style="font-size:14px; line-height:1.45;">
-        <p>
-          <strong>🛜 Sky WiFi (Only)</strong><br>
-          <em>Durata 12 mesi · Backlog 2 giorni · Validità 30/03 – 27/09/2026</em>
-        </p>
-        <ul style="margin:4px 0 8px 18px; padding:0;">
-          <li><strong>Standard</strong> a <strong>25,90€</strong>/mese · <strong>attivazione 29€</strong> · cod. <strong>Voce a consumo 8122</strong> · <strong>Voce Unlimited 8123</strong> · <strong>Ultra Wifi Plus 1400925</strong></li>
-          <li><strong>Open Fiber</strong> a <strong>22,90€</strong>/mese · attivazione 0€ · cod. <strong>Voce a consumo 1401189</strong> · <strong>Voce Unlimited 1401190</strong></li>
-        </ul>
+      <section class="promo-pannello" aria-labelledby="promoPannelloTitolo">
+        <div class="pp-head">
+          <div>
+            <div class="pp-titolo" id="promoPannelloTitolo">Offerte in corso</div>
+            <div class="pp-conteggio" id="promoConteggio">—</div>
+          </div>
+        </div>
 
-        <p>
-          <strong>🛜 3P – Standard</strong><br>
-          <em>Durata 18 mesi · Attivazione Sky WiFi 0€ · Backlog 2 giorni</em>
-        </p>
-        <ul style="margin:4px 0 8px 18px; padding:0;">
-          <li><strong>Sky WiFi + Sky TV</strong> a <strong>29,90€</strong>/mese · cod. <strong>1300207</strong> consumo · <strong>1300208</strong> Unlimited · fino al <strong>27/09</strong></li>
-          <li><strong>Sky WiFi + Sky TV + Sky Sport</strong> a <strong>35,90€</strong>/mese · cod. <strong>1300201</strong> consumo · <strong>1300202</strong> Unlimited · fino al <strong>27/09</strong></li>
-          <li><strong>Sky WiFi + Sky TV + Sky Cinema</strong> a <strong>35,90€</strong>/mese · cod. <strong>1300197</strong> consumo · <strong>1300198</strong> Unlimited · fino al <strong>27/09</strong></li>
-          <li><strong>Sky WiFi + Sky TV + Sky Calcio</strong> a <strong>29,90€</strong>/mese · cod. <strong>1300216</strong> consumo · <strong>1300217</strong> Unlimited · attivazione WiFi 0€ e TV 19€ · validità <strong>03/08 – 20/09/2026</strong></li>
-        </ul>
+        <div class="pp-filtri">
+          <div class="chips promo-filtri" id="promoFiltri" role="group" aria-label="Filtra le offerte per categoria">
+            <button class="chip" type="button" data-cat="tutte" aria-pressed="true">Tutte</button>
+            <button class="chip" type="button" data-cat="wifi" aria-pressed="false">Sky WiFi</button>
+            <button class="chip" type="button" data-cat="3p" aria-pressed="false">3P / 4P</button>
+            <button class="chip" type="button" data-cat="tv" aria-pressed="false">Only TV</button>
+            <button class="chip" type="button" data-cat="glass" aria-pressed="false">Sky Glass</button>
+            <button class="chip" type="button" data-cat="business" aria-pressed="false">Business</button>
+          </div>
+        </div>
 
-        <p>
-          <strong>🛜 3P – Open Fiber</strong><br>
-          <em>Durata 18 mesi · Attivazione WiFi e TV 0€ · Backlog 2 giorni</em>
-        </p>
-        <ul style="margin:4px 0 8px 18px; padding:0;">
-          <li><strong>Sky WiFi + Sky TV</strong> a <strong>27,90€</strong>/mese · cod. <strong>1300229</strong> consumo · <strong>1300230</strong> Unlimited · fino al <strong>27/09</strong></li>
-          <li><strong>Sky WiFi + Sky TV + Sky Cinema</strong> a <strong>35,90€</strong>/mese · cod. <strong>1300226</strong> consumo · <strong>1300225</strong> Unlimited · fino al <strong>27/09</strong></li>
-          <li><strong>Sky WiFi + Sky TV + Sky Sport</strong> a <strong>35,90€</strong>/mese · cod. <strong>1300227</strong> consumo · <strong>1300228</strong> Unlimited · fino al <strong>27/09</strong></li>
-          <li><strong>Sky WiFi + Sky TV + Sky Calcio</strong> a <strong>27,90€</strong>/mese · cod. <strong>1300251</strong> consumo · <strong>1300252</strong> Unlimited · attivazione WiFi e TV 0€ · validità <strong>03/08 – 20/09/2026</strong></li>
-        </ul>
+        <div class="pp-body">
+          <p class="promo-vuoto" id="promoVuoto" hidden>Nessuna offerta attiva in questa categoria.</p>
+          <div class="promo-groups" data-filtro="tutte">
+        <section class="pgroup" data-cat="wifi">
+          <div class="pgroup-head">
+            <span class="pgroup-icon">🛜</span>
+            <div>
+              <div class="pgroup-title">Sky WiFi (Only)</div>
+              <div class="pgroup-sub">Durata 12 mesi · Backlog 2 giorni · Validità 30/03 – 27/09/2026</div>
+            </div>
+          </div>
+          <ul class="pgroup-list">
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Copertura Standard</div>
+                <div class="poffer-price"><span class="po-price">25,90€</span><span class="po-unit">/mese</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag">Attivazione 29€</span>
+                <span class="ptag pcode">Voce a consumo · 8122</span>
+                <span class="ptag pcode">Voce Unlimited · 8123</span>
+                <span class="ptag pcode">Ultra WiFi Plus · 1400925</span>
+              </div>
+            </li>
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Copertura Open Fiber</div>
+                <div class="poffer-price"><span class="po-price">22,90€</span><span class="po-unit">/mese</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag">Attivazione 0€</span>
+                <span class="ptag pcode">Voce a consumo · 1401189</span>
+                <span class="ptag pcode">Voce Unlimited · 1401190</span>
+              </div>
+            </li>
+          </ul>
+        </section>
 
-        <p>
-          <strong>🖥️ 4P: Sky Glass + Sky WiFi + Sky TV + (Sport/Cinema) + Netflix</strong><br>
-          <em>Durata 18 mesi · Attivazione Sky WiFi 0€ · Backlog 1 giorno · Solo Voce Unlimited · Validità fino al 30/08/2026</em>
-        </p>
-        <ul style="margin:4px 0 8px 18px; padding:0;">
-          <li><strong>Sky Glass + WiFi + TV + Sport + Netflix</strong> a <strong>40,89€</strong>/mese · cod. <strong>1300224</strong></li>
-          <li><strong>Sky Glass + WiFi + TV + Cinema + Netflix</strong> a <strong>40,89€</strong>/mese · cod. <strong>1300223</strong></li>
-        </ul>
+        <section class="pgroup" data-cat="3p">
+          <div class="pgroup-head">
+            <span class="pgroup-icon">🛜</span>
+            <div>
+              <div class="pgroup-title">3P – Copertura Standard</div>
+              <div class="pgroup-sub">Durata 18 mesi · Attivazione Sky WiFi 0€ · Backlog 2 giorni</div>
+            </div>
+          </div>
+          <ul class="pgroup-list">
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Sky WiFi + Sky TV</div>
+                <div class="poffer-price"><span class="po-price">29,90€</span><span class="po-unit">/mese</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag pcode">Consumo · 1300207</span>
+                <span class="ptag pcode">Unlimited · 1300208</span>
+                <span class="ptag pwarn">Fino al 27/09/2026</span>
+              </div>
+            </li>
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Sky WiFi + Sky TV + Sky Sport</div>
+                <div class="poffer-price"><span class="po-price">35,90€</span><span class="po-unit">/mese</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag pcode">Consumo · 1300201</span>
+                <span class="ptag pcode">Unlimited · 1300202</span>
+                <span class="ptag pwarn">Fino al 27/09/2026</span>
+              </div>
+            </li>
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Sky WiFi + Sky TV + Sky Cinema</div>
+                <div class="poffer-price"><span class="po-price">35,90€</span><span class="po-unit">/mese</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag pcode">Consumo · 1300197</span>
+                <span class="ptag pcode">Unlimited · 1300198</span>
+                <span class="ptag pwarn">Fino al 27/09/2026</span>
+              </div>
+            </li>
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Sky WiFi + Sky TV + Sky Calcio</div>
+                <div class="poffer-price"><span class="po-price">29,90€</span><span class="po-unit">/mese</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag pcode">Consumo · 1300216</span>
+                <span class="ptag pcode">Unlimited · 1300217</span>
+                <span class="ptag">Attivazione WiFi 0€ · TV 19€</span>
+                <span class="ptag pwarn">Validità 03/08 – 20/09/2026</span>
+              </div>
+            </li>
+          </ul>
+        </section>
 
-        <p>
-          <strong>📺 Only TV</strong><br>
-          <em>No backlog · Durata contratto 18 mesi</em>
-        </p>
-        <ul style="margin:4px 0 8px 18px; padding:0;">
-          <li><strong>Sky TV + Netflix</strong> a <strong>14,99€</strong>/mese per <strong>18 mesi</strong> · cod. <strong>1100731</strong> fino al 31/08, <strong>1100806</strong> dal 01/09 · validità <strong>17/08 – 27/09/2026</strong></li>
-          <li><strong>Sky TV + Sky Cinema + Sky Calcio</strong> a <strong>19,99€</strong>/mese per <strong>18 mesi</strong> · cod. <strong>1100739</strong> · validità <strong>17/08 – 27/09/2026</strong></li>
-          <li><strong>Sky TV + Netflix + Sky Cinema + UHD (doppio sconto)</strong> a <strong>14,99€</strong>/mese per i primi <strong>6 mesi</strong>, poi <strong>24,99€</strong>/mese per i restanti <strong>12 mesi</strong> · cod. <strong>1100771</strong> fino al 31/08, <strong>1100807</strong> dal 01/09 · validità <strong>17/08 – 27/09/2026</strong></li>
-          <li><strong>Sky TV + Sky Sport + Sky Insider</strong> a <strong>29,99€</strong>/mese per <strong>18 mesi</strong> · cod. <strong>1100800</strong> · <strong>no backlog</strong> · validità <strong>21/09 – 27/09/2026</strong></li>
-        </ul>
+        <section class="pgroup" data-cat="3p">
+          <div class="pgroup-head">
+            <span class="pgroup-icon">🛜</span>
+            <div>
+              <div class="pgroup-title">3P – Copertura Open Fiber</div>
+              <div class="pgroup-sub">Durata 18 mesi · Attivazione WiFi e TV 0€ · Backlog 2 giorni</div>
+            </div>
+          </div>
+          <ul class="pgroup-list">
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Sky WiFi + Sky TV</div>
+                <div class="poffer-price"><span class="po-price">27,90€</span><span class="po-unit">/mese</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag pcode">Consumo · 1300229</span>
+                <span class="ptag pcode">Unlimited · 1300230</span>
+                <span class="ptag pwarn">Fino al 27/09/2026</span>
+              </div>
+            </li>
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Sky WiFi + Sky TV + Sky Sport</div>
+                <div class="poffer-price"><span class="po-price">35,90€</span><span class="po-unit">/mese</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag pcode">Consumo · 1300227</span>
+                <span class="ptag pcode">Unlimited · 1300228</span>
+                <span class="ptag pwarn">Fino al 27/09/2026</span>
+              </div>
+            </li>
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Sky WiFi + Sky TV + Sky Cinema</div>
+                <div class="poffer-price"><span class="po-price">35,90€</span><span class="po-unit">/mese</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag pcode">Consumo · 1300226</span>
+                <span class="ptag pcode">Unlimited · 1300225</span>
+                <span class="ptag pwarn">Fino al 27/09/2026</span>
+              </div>
+            </li>
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Sky WiFi + Sky TV + Sky Calcio</div>
+                <div class="poffer-price"><span class="po-price">27,90€</span><span class="po-unit">/mese</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag pcode">Consumo · 1300251</span>
+                <span class="ptag pcode">Unlimited · 1300252</span>
+                <span class="ptag">Attivazione WiFi e TV 0€</span>
+                <span class="ptag pwarn">Validità 03/08 – 20/09/2026</span>
+              </div>
+            </li>
+          </ul>
+        </section>
 
-        <p>
-          <strong>📺 Sky Glass (acquisto unico)</strong><br>
-          <em>No backlog · Validità 10/09/2026 – 13/01/2027</em>
-        </p>
-        <ul style="margin:4px 0 8px 18px; padding:0;">
-          <li><strong>Sky Glass 43"</strong> a <strong>99€</strong> anziché <strong>651€</strong> · solo unica soluzione · cod. <strong>1100825</strong></li>
-          <li><strong>Sky Glass 55"</strong> a <strong>499€</strong> anziché <strong>987€</strong> (fino al 50%) · rosa <strong>399€</strong> · cod. <strong>1100684</strong></li>
-          <li><strong>Sky Glass 65"</strong> a <strong>649€</strong> anziché <strong>1.323€</strong> (fino al 50%) · rosa <strong>549€</strong> · cod. <strong>1100685</strong></li>
-        </ul>
+        <section class="pgroup" data-cat="3p">
+          <div class="pgroup-head">
+            <span class="pgroup-icon">🖥️</span>
+            <div>
+              <div class="pgroup-title">4P – Sky Glass + Sky WiFi + Sky TV + Netflix</div>
+              <div class="pgroup-sub">Durata 18 mesi · Attivazione Sky WiFi 0€ · Backlog 1 giorno · Solo Voce Unlimited · Validità fino al 30/08/2026</div>
+            </div>
+          </div>
+          <ul class="pgroup-list">
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">+ Sky Sport + Netflix</div>
+                <div class="poffer-price"><span class="po-price">40,89€</span><span class="po-unit">/mese</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag pcode">Cod. 1300224</span>
+              </div>
+            </li>
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">+ Sky Cinema + Netflix</div>
+                <div class="poffer-price"><span class="po-price">40,89€</span><span class="po-unit">/mese</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag pcode">Cod. 1300223</span>
+              </div>
+            </li>
+          </ul>
+        </section>
 
-        <p>
-          <strong>🍺 Sky Bar (Solo TV · Business)</strong><br>
-          <em>Offerta assegnata tramite tool interno in base alla P.IVA · Pack Sky Sport + Serie A + Coppe europee · Vincolo 12 mesi</em>
-        </p>
-        <ul style="margin:4px 0 8px 18px; padding:0;">
-          <li><strong>OFFERTA 1</strong> · <strong>149€/m + IVA × 12 mesi</strong> (poi 199€/m) · Stream <strong>1800182</strong> / +TV <strong>1800184</strong> · Q/HD <strong>1800218</strong> / +TV <strong>1800213</strong> · 2 decoder HD 218€/m · Prova 90gg <strong>1800183</strong></li>
-          <li><strong>OFFERTA 2</strong> · <strong>199€/m + IVA × 12 mesi</strong> · Stream <strong>8295</strong> / +TV <strong>1800133</strong> · Q/HD <strong>1800214</strong> / +TV <strong>1800215</strong> · 2 decoder HD 268€/m · Prova 90gg <strong>1800086</strong></li>
-          <li><strong>OFFERTA 3</strong> · <strong>249€/m + IVA × 12 mesi</strong> · Stream <strong>8296</strong> / +TV <strong>1800134</strong> · Q/HD <strong>1800221</strong> / +TV <strong>1800215</strong> · 2 decoder HD 318€/m (con TV <strong>1800225</strong>) · Prova 90gg <strong>1800097</strong></li>
-          <li><strong>OFFERTA 4</strong> · <strong>299€/m + IVA × 12 mesi</strong> · Stream <strong>8297</strong> / +TV <strong>1800165</strong> · Q/HD <strong>1800222</strong> / +TV <strong>1800226</strong> · 2 decoder HD 368€/m · Prova 90gg <strong>1800099</strong></li>
-          <li><strong>OFFERTA 5</strong> · <strong>399€/m + IVA × 12 mesi</strong> · Stream <strong>8298</strong> / +TV <strong>8301</strong> · Q/HD <strong>1800223</strong> / +TV <strong>1800227</strong> · 2 decoder HD 468€/m · Prova 90gg <strong>1800098</strong></li>
-          <li>Comune a tutte: 4K incluso 12 mesi (anziché 20€/m) · Installazione 100€ anziché 180€ (Q) · Attivazione 100€ (Stream) · 2° decoder 69€/m anziché 129€</li>
-          <li><strong>Associazioni / Palestre indipendenti</strong> · <strong>199€/m + IVA × 12 mesi</strong> · Sky Q · cod. <strong>8269</strong> / con TV <strong>1800206</strong> · Installazione 100€, attivazione inclusa · 4K incluso 12 mesi · Fan Club Calcio stagionale ago-mag cod. <strong>8280</strong></li>
-          <li><strong>Gallerie Commerciali indipendenti</strong> · listino <strong>599€/m + IVA</strong> · HD · Pack Plus · 2° decoder 79€/m · Installazione 180€</li>
-          <li><strong>Betting indipendenti</strong> · listino <strong>599€/m + IVA</strong> · Q o HD · Pack Plus · 2° decoder 129€/m · 4K 20€/m · Installazione 180€ Q · Attivazione 99€ HD / 150€ Q</li>
-        </ul>
+        <section class="pgroup" data-cat="tv">
+          <div class="pgroup-head">
+            <span class="pgroup-icon">📺</span>
+            <div>
+              <div class="pgroup-title">Only TV</div>
+              <div class="pgroup-sub">No backlog · Durata contratto 18 mesi</div>
+            </div>
+          </div>
+          <ul class="pgroup-list">
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Sky TV + Netflix</div>
+                <div class="poffer-price"><span class="po-price">14,99€</span><span class="po-unit">/mese × 18 mesi</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag pcode">Cod. 1100731 fino al 31/08</span>
+                <span class="ptag pcode">Cod. 1100806 dal 01/09</span>
+                <span class="ptag pwarn">Validità 17/08 – 27/09/2026</span>
+              </div>
+            </li>
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Sky TV + Sky Cinema + Sky Calcio</div>
+                <div class="poffer-price"><span class="po-price">19,99€</span><span class="po-unit">/mese × 18 mesi</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag pcode">Cod. 1100739</span>
+                <span class="ptag pwarn">Validità 17/08 – 27/09/2026</span>
+              </div>
+            </li>
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Sky TV + Netflix + Sky Cinema + UHD <span style="font-weight:600;color:#5b6b8b">(doppio sconto)</span></div>
+                <div class="poffer-price"><span class="po-price">14,99€</span><span class="po-unit">/mese primi 6 mesi</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag">Poi 24,99€/mese per 12 mesi</span>
+                <span class="ptag pcode">Cod. 1100771 fino al 31/08</span>
+                <span class="ptag pcode">Cod. 1100807 dal 01/09</span>
+                <span class="ptag pwarn">Validità 17/08 – 27/09/2026</span>
+              </div>
+            </li>
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Sky TV + Sky Sport + Sky Insider</div>
+                <div class="poffer-price"><span class="po-price">29,99€</span><span class="po-unit">/mese × 18 mesi</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag pcode">Cod. 1100800</span>
+                <span class="ptag">No backlog</span>
+                <span class="ptag pwarn">Validità 21/09 – 27/09/2026</span>
+              </div>
+            </li>
+          </ul>
+        </section>
 
-        <p>
-          <strong>💼 Sky WiFi Business</strong><br>
-          <em>Partita IVA · Prezzo bloccato 12 mesi · Senza vincoli contrattuali</em>
-        </p>
-        <ul style="margin:4px 0 8px 18px; padding:0;">
-          <li><strong>Sky WiFi BB Business (Standard)</strong> a <strong>24,50€ + IVA</strong>/mese (≈29,89€ IVA incl.) · Attivazione <strong>29€ + IVA</strong> · Voce consumo <strong>1401041</strong> · Voce Unlimited <strong>1401056</strong></li>
-          <li><strong>Sky WiFi Business (Open Fiber / FiberCop)</strong> a <strong>21,50€ + IVA</strong>/mese (≈26,23€ IVA incl.) · Attivazione <strong>29€ + IVA</strong> · Voce consumo <strong>1401208</strong> · Voce Unlimited <strong>1401209</strong> · <strong>Backlog 2 giorni</strong> · validità <strong>30/03 – 28/06/2026</strong></li>
-        </ul>
+        <section class="pgroup" data-cat="glass">
+          <div class="pgroup-head">
+            <span class="pgroup-icon">📺</span>
+            <div>
+              <div class="pgroup-title">Sky Glass</div>
+              <div class="pgroup-sub" id="glassPromoSub">No backlog · Validità 10/09/2026 – 13/01/2027</div>
+            </div>
+          </div>
+          <ul class="pgroup-list">
+            <!-- righe generate da GLASS all'avvio -->
+          </ul>
+        </section>
 
+        <section class="pgroup" data-cat="business">
+          <div class="pgroup-head">
+            <span class="pgroup-icon">🍺</span>
+            <div>
+              <div class="pgroup-title">Sky Bar · Solo TV Business</div>
+              <div class="pgroup-sub">Offerta assegnata dal tool interno in base alla P.IVA · Pack Sky Sport + Serie A + Coppe europee · Vincolo 12 mesi</div>
+            </div>
+          </div>
+          <ul class="pgroup-list">
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Offerta 1</div>
+                <div class="poffer-price"><span class="po-price">149€</span><span class="po-unit">/mese + IVA × 12 mesi</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag">Poi 199€/mese</span>
+                <span class="ptag pcode">Stream · 1800182</span>
+                <span class="ptag pcode">Stream + TV · 1800184</span>
+                <span class="ptag pcode">Q/HD · 1800218</span>
+                <span class="ptag pcode">Q/HD + TV · 1800213</span>
+                <span class="ptag">2 decoder HD 218€/mese</span>
+                <span class="ptag pcode">Prova 90 gg · 1800183</span>
+              </div>
+            </li>
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Offerta 2</div>
+                <div class="poffer-price"><span class="po-price">199€</span><span class="po-unit">/mese + IVA × 12 mesi</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag pcode">Stream · 8295</span>
+                <span class="ptag pcode">Stream + TV · 1800133</span>
+                <span class="ptag pcode">Q/HD · 1800214</span>
+                <span class="ptag pcode">Q/HD + TV · 1800215</span>
+                <span class="ptag">2 decoder HD 268€/mese</span>
+                <span class="ptag pcode">Prova 90 gg · 1800086</span>
+              </div>
+            </li>
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Offerta 3</div>
+                <div class="poffer-price"><span class="po-price">249€</span><span class="po-unit">/mese + IVA × 12 mesi</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag pcode">Stream · 8296</span>
+                <span class="ptag pcode">Stream + TV · 1800134</span>
+                <span class="ptag pcode">Q/HD · 1800221</span>
+                <span class="ptag pcode">Q/HD + TV · 1800215</span>
+                <span class="ptag">2 decoder HD 318€/mese</span>
+                <span class="ptag pcode">2 decoder HD + TV · 1800225</span>
+                <span class="ptag pcode">Prova 90 gg · 1800097</span>
+              </div>
+            </li>
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Offerta 4</div>
+                <div class="poffer-price"><span class="po-price">299€</span><span class="po-unit">/mese + IVA × 12 mesi</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag pcode">Stream · 8297</span>
+                <span class="ptag pcode">Stream + TV · 1800165</span>
+                <span class="ptag pcode">Q/HD · 1800222</span>
+                <span class="ptag pcode">Q/HD + TV · 1800226</span>
+                <span class="ptag">2 decoder HD 368€/mese</span>
+                <span class="ptag pcode">Prova 90 gg · 1800099</span>
+              </div>
+            </li>
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Offerta 5</div>
+                <div class="poffer-price"><span class="po-price">399€</span><span class="po-unit">/mese + IVA × 12 mesi</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag pcode">Stream · 8298</span>
+                <span class="ptag pcode">Stream + TV · 8301</span>
+                <span class="ptag pcode">Q/HD · 1800223</span>
+                <span class="ptag pcode">Q/HD + TV · 1800227</span>
+                <span class="ptag">2 decoder HD 468€/mese</span>
+                <span class="ptag pcode">Prova 90 gg · 1800098</span>
+              </div>
+            </li>
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Associazioni / Palestre indipendenti</div>
+                <div class="poffer-price"><span class="po-price">199€</span><span class="po-unit">/mese + IVA × 12 mesi</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag">Sky Q</span>
+                <span class="ptag pcode">Cod. 8269</span>
+                <span class="ptag pcode">Con TV · 1800206</span>
+                <span class="ptag">Installazione 100€ · attivazione inclusa</span>
+                <span class="ptag">4K incluso 12 mesi</span>
+                <span class="ptag pcode">Fan Club Calcio ago–mag · 8280</span>
+              </div>
+            </li>
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Gallerie Commerciali indipendenti</div>
+                <div class="poffer-price"><span class="po-price">599€</span><span class="po-unit">/mese + IVA · listino</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag">HD</span>
+                <span class="ptag">Pack Plus</span>
+                <span class="ptag">2° decoder 79€/mese</span>
+                <span class="ptag">Installazione 180€</span>
+              </div>
+            </li>
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Betting indipendenti</div>
+                <div class="poffer-price"><span class="po-price">599€</span><span class="po-unit">/mese + IVA · listino</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag">Q o HD</span>
+                <span class="ptag">Pack Plus</span>
+                <span class="ptag">2° decoder 129€/mese</span>
+                <span class="ptag">4K 20€/mese</span>
+                <span class="ptag">Installazione 180€ (Q)</span>
+                <span class="ptag">Attivazione 99€ HD / 150€ Q</span>
+              </div>
+            </li>
+            <li class="pnote"><b>Comune alle offerte 1–5:</b> 4K incluso 12 mesi (anziché 20€/mese) · Installazione 100€ anziché 180€ (Sky Q) · Attivazione 100€ (Stream) · 2° decoder 69€/mese anziché 129€</li>
+          </ul>
+        </section>
+
+        <section class="pgroup" data-cat="business">
+          <div class="pgroup-head">
+            <span class="pgroup-icon">💼</span>
+            <div>
+              <div class="pgroup-title">Sky WiFi Business</div>
+              <div class="pgroup-sub">Partita IVA · Prezzo bloccato 12 mesi · Senza vincoli contrattuali · Backlog 2 giorni · Validità fino al 27/09/2026</div>
+            </div>
+          </div>
+          <ul class="pgroup-list">
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Sky WiFi BB Business · Standard</div>
+                <div class="poffer-price"><span class="po-price">24,50€</span><span class="po-unit">/mese + IVA</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag">≈ 29,89€ IVA inclusa</span>
+                <span class="ptag">Attivazione 29€ + IVA</span>
+                <span class="ptag pcode">Voce consumo · 1401041</span>
+                <span class="ptag pcode">Voce Unlimited · 1401056</span>
+              </div>
+            </li>
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Sky WiFi Business · Open Fiber / FiberCop</div>
+                <div class="poffer-price"><span class="po-price">21,50€</span><span class="po-unit">/mese + IVA</span></div>
+              </div>
+              <div class="poffer-tags">
+                <span class="ptag">≈ 26,23€ IVA inclusa</span>
+                <span class="ptag">Attivazione 29€ + IVA</span>
+                <span class="ptag pcode">Voce consumo · 1401208</span>
+                <span class="ptag pcode">Voce Unlimited · 1401209</span>
+              </div>
+            </li>
+          </ul>
+        </section>
+          </div>
+        </div>
+      </section>
       </div>
-    </section>
+      <div class="dlgActions">
+        <button class="btn" id="promoDlgCloseBottom" type="button">Chiudi</button>
+      </div>
+    </dialog>
 
     <!-- FORM -->
     <section class="form-card" id="formCard" aria-labelledby="formTitle">
@@ -1337,7 +1942,7 @@
 
         <section class="recap" id="glassBox" style="display:none; margin-top:10px;">
           <h4>Sky Glass – opzioni di acquisto</h4>
-          <div class="recap-grid" style="row-gap:10px;">
+          <div class="recap-grid glass-scelte">
             <div class="recap-label">Taglia dispositivo</div>
             <div class="recap-value">
               <div class="chips" id="chipsGlassSize" aria-label="Seleziona taglia Sky Glass">
@@ -1346,12 +1951,17 @@
                 <button class="chip" data-group="glass_size" data-value="65" aria-pressed="false">Sky Glass 65"</button>
               </div>
             </div>
+            <div class="recap-label" id="glassColorLabel">Colore</div>
+            <div class="recap-value" id="glassColorValue">
+              <div class="chips" id="chipsGlassColor" aria-label="Seleziona colore Sky Glass"></div>
+              <div class="glass-hint" id="glassColorHint"></div>
+            </div>
             <div class="recap-label">Modalità di pagamento</div>
             <div class="recap-value">
               <div class="chips" id="chipsGlassPlan" aria-label="Seleziona modalità pagamento Sky Glass">
                 <button class="chip" data-group="glass_plan" data-value="unico" aria-pressed="true">Pagamento unico</button>
-                <button class="chip" data-group="glass_plan" data-value="rate48" aria-pressed="false" style="display:none">Rate 48 mesi</button>
                 <button class="chip" data-group="glass_plan" data-value="rate12" aria-pressed="false" style="display:none">Rate 12 mesi</button>
+                <button class="chip" data-group="glass_plan" data-value="rate48" aria-pressed="false" style="display:none">Rate 48 mesi</button>
               </div>
             </div>
           </div>
@@ -1360,10 +1970,10 @@
             <div class="recap-label">Canone offerta</div>
             <div class="recap-value" id="glassPromoMonthly">—</div>
 
-            <div class="recap-label">Rata Sky Glass</div>
+            <div class="recap-label" id="glassRateLabel">Rata Sky Glass</div>
             <div class="recap-value" id="glassRateMonthly">—</div>
 
-            <div class="recap-label">Totale mensile (promo + Glass)</div>
+            <div class="recap-label" id="glassTotalLabel">Totale mensile</div>
             <div class="recap-value" id="glassTotalMonthly">—</div>
           </div>
 
@@ -1938,17 +2548,111 @@
 
   const NF_MONTHLY = { base:4.99, standard:11.99, premium:17.99 };
 
+  // ============================ SKY GLASS ============================
+  // Come aggiornare:
+  //  - nuova colorazione  -> una riga in GLASS_COLORI + il nome dentro la
+  //                          fascia di prezzo giusta, sotto 'colori'
+  //  - promo su un colore -> si sposta quel nome in un'altra fascia, o si
+  //                          aggiunge una fascia nuova con il suo prezzo
+  //  - nuovi importi      -> si toccano solo i numeri: tutti i testi a
+  //                          schermo e nel messaggio WhatsApp vengono da qui
+  const GLASS_VALIDITA = 'validità 10/09/2026 – 13/01/2027';
+  const GLASS_ANTICIPO_LISTINO = 79;
+
+  const GLASS_COLORI = {
+    bianco:{ label:'Bianco', hex:'#f1eee8' },
+    blu:   { label:'Blu',    hex:'#1d3557' },
+    verde: { label:'Verde',  hex:'#2f4f3f' },
+    nero:  { label:'Nero',   hex:'#2b2b2b' },
+    rosa:  { label:'Rosa',   hex:'#d9a3ad' }
+  };
+
   const GLASS = {
     '43': {
-      unico:{ summary:'Sky Glass 43" — 99€ anziché 651€ · solo pagamento in unica soluzione · Cod. 1100825 · validità 10/09/2026 – 13/01/2027', monthly:0 }
+      codice:'1100825', listino:651,
+      fasce:[
+        { prezzo:99, colori:['bianco','blu','verde','nero'],
+          piani:{ unico:{} } }
+      ]
     },
     '55': {
-      unico:{ summary:'Sky Glass 55" — 499€ anziché 987€ (sconto fino al 50%) · colore rosa 399€ · Cod. 1100684 · validità 10/09/2026 – 13/01/2027', monthly:0 }
+      codice:'1100684', listino:987,
+      fasce:[
+        { prezzo:499, colori:['bianco','blu','verde','nero'],
+          piani:{ unico:{}, rate12:{ anticipo:19, nRate:12, rata:40 },
+                            rate48:{ anticipo:19, nRate:48, rata:10 } } },
+        { prezzo:399, colori:['rosa'],
+          piani:{ unico:{}, rate12:{ anticipo:15, nRate:12, rata:32 },
+                            rate48:{ anticipo:15, nRate:48, rata:8  } } }
+      ]
     },
     '65': {
-      unico:{ summary:'Sky Glass 65" — 649€ anziché 1.323€ (sconto fino al 50%) · colore rosa 549€ · Cod. 1100685 · validità 10/09/2026 – 13/01/2027', monthly:0 }
+      codice:'1100685', listino:1323,
+      fasce:[
+        { prezzo:649, colori:['bianco','blu','verde','nero'],
+          piani:{ unico:{}, rate12:{ anticipo:25, nRate:12, rata:52 },
+                            rate48:{ anticipo:25, nRate:48, rata:13 } } },
+        { prezzo:549, colori:['rosa'],
+          piani:{ unico:{}, rate12:{ anticipo:21, nRate:12, rata:44 },
+                            rate48:{ anticipo:21, nRate:48, rata:11 } } }
+      ]
     }
   };
+
+  // Separatore delle migliaia scritto a mano: su alcuni browser
+  // toLocaleString non lo applica e 1.323€ diventava 1323€.
+  const eurG = n => String(Math.round(Number(n))).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + '€';
+
+  // Indice colore -> fascia, piu' i controlli di integrita'.
+  (function _preparaGlass(){
+    Object.entries(GLASS).forEach(([taglia, cfgT]) => {
+      cfgT.perColore = {};
+      cfgT.fasce.forEach(fascia => {
+        // un piano a rate deve fare esattamente il prezzo del dispositivo,
+        // altrimenti viene tolto invece di mostrare una cifra sbagliata
+        Object.entries(fascia.piani).forEach(([nome, p]) => {
+          if(!p.nRate) return;
+          const somma = p.anticipo + p.nRate * p.rata;
+          if(somma !== fascia.prezzo){
+            console.error(`[Glass] ${taglia}" ${eurG(fascia.prezzo)} ${nome}: ` +
+              `${p.anticipo}€ + ${p.nRate}x${p.rata}€ = ${somma}€. Piano disattivato.`);
+            delete fascia.piani[nome];
+          }
+        });
+        fascia.colori.forEach(c => {
+          if(!GLASS_COLORI[c]){
+            console.error(`[Glass] ${taglia}": colore "${c}" non definito in GLASS_COLORI. Ignorato.`);
+            return;
+          }
+          if(cfgT.perColore[c]) console.error(`[Glass] ${taglia}": il colore "${c}" compare in piu' fasce.`);
+          cfgT.perColore[c] = fascia;
+        });
+      });
+      cfgT.ordineColori = Object.keys(GLASS_COLORI).filter(c => cfgT.perColore[c]);
+    });
+  })();
+
+  // Taglia, colore e piano realmente in uso, con i ripieghi se lo stato
+  // punta a una combinazione che non esiste (piu'), cosi' non si puo'
+  // restare agganciati a dati di una scelta precedente.
+  function glassSelezione(){
+    const taglia = GLASS[state.glassSize] ? state.glassSize : '43';
+    const cfgT = GLASS[taglia];
+    const colKey = cfgT.perColore[state.glassColor] ? state.glassColor : cfgT.ordineColori[0];
+    const fascia = cfgT.perColore[colKey];
+    const pianoKey = fascia.piani[state.glassPlan] ? state.glassPlan : 'unico';
+    return { taglia, cfgT, colKey, col: GLASS_COLORI[colKey], fascia,
+             pianoKey, piano: fascia.piani[pianoKey] };
+  }
+
+  function glassSummary(s){
+    let t = `Sky Glass ${s.taglia}" ${s.col.label.toLowerCase()}`;
+    t += ` — ${eurG(s.fascia.prezzo)} anziché ${eurG(s.cfgT.listino)}`;
+    t += s.piano.nRate
+      ? ` · anticipo ${eurG(s.piano.anticipo)} anziché ${eurG(GLASS_ANTICIPO_LISTINO)} + ${s.piano.nRate} rate da ${eurG(s.piano.rata)}/mese senza interessi`
+      : ` · pagamento in unica soluzione`;
+    return t + ` · Cod. ${s.cfgT.codice} · ${GLASS_VALIDITA}`;
+  }
 
   const PROMO = {
     tvOnly:[
@@ -2104,6 +2808,7 @@
     nf:'none',
     glassEnabled:false,
     glassSize:'43',
+    glassColor:'bianco',
     glassPlan:'unico',
     coverage3P:'standard',
     coverageWifi:'standard',
@@ -2952,62 +3657,189 @@
   buildDots();
   renderSlide();
 
+  // === Scheda Sky Glass della finestra promo ===
+  // Nasce dagli stessi dati del configuratore: un colore aggiunto o un
+  // prezzo cambiato in GLASS compare qui senza toccare l'HTML.
+  function _disegnaSchedaGlassPromo(){
+    const lista = qs('.pgroup[data-cat="glass"] .pgroup-list');
+    if(!lista) return;
+
+    const sub = qs('#glassPromoSub');
+    if(sub) sub.textContent = `No backlog · ${GLASS_VALIDITA.charAt(0).toUpperCase()}${GLASS_VALIDITA.slice(1)}`;
+
+    lista.innerHTML = Object.entries(GLASS).map(([taglia, cfgT]) => {
+      const [principale, ...altre] = cfgT.fasce;
+      const nomi = f => f.colori.filter(c => GLASS_COLORI[c]).map(c => GLASS_COLORI[c].label).join(', ');
+      const conRate = cfgT.fasce.filter(f => Object.values(f.piani).some(p => p.nRate));
+
+      const pallini = cfgT.ordineColori.map(c =>
+        `<span class="glass-dot" style="background:${GLASS_COLORI[c].hex}" title="${GLASS_COLORI[c].label}"></span>`
+      ).join('');
+
+      const tag = [`<span class="ptag">Anziché ${eurG(cfgT.listino)}</span>`];
+      altre.forEach(f => tag.push(`<span class="ptag">${nomi(f)} ${eurG(f.prezzo)}</span>`));
+      if(!conRate.length) tag.push(`<span class="ptag">Solo unica soluzione</span>`);
+      tag.push(`<span class="ptag pcode">Cod. ${cfgT.codice}</span>`);
+
+      // una riga per fascia di prezzo, ogni piano con il suo anticipo
+      const rate = conRate.map(f => {
+        const piani = Object.values(f.piani).filter(p => p.nRate)
+          .map(p => `anticipo ${eurG(p.anticipo)} + <b>${p.nRate} rate da ${eurG(p.rata)}</b>/mese`)
+          .join(' · oppure ');
+        return `<div>💳 <b>${nomi(f)} · ${eurG(f.prezzo)}</b> — ${piani}</div>`;
+      }).join('');
+
+      return `
+            <li class="poffer">
+              <div class="poffer-top">
+                <div class="poffer-name">Sky Glass ${taglia}"</div>
+                <div class="poffer-price"><span class="po-price">${eurG(principale.prezzo)}</span><span class="po-unit">una tantum</span></div>
+              </div>
+              <div class="glass-pallini" aria-label="Colori disponibili">${pallini}</div>
+              <div class="poffer-tags">${tag.join('')}</div>
+              ${rate ? `<div class="poffer-rate">${rate}<div class="pr-nota">Anticipo di listino ${eurG(GLASS_ANTICIPO_LISTINO)}. Rate senza interessi, con carta di credito o finanziamento Agos.</div></div>` : ''}
+            </li>`;
+    }).join('');
+  }
+
+  // === Filtri per categoria della card PROMO ===
+  // Niente const a livello di modulo: queste funzioni vengono richiamate
+  // anche dal pruning, che gira prima.
+  function _aggiornaVuotoPromo(){
+    const box = qs('.promo-groups'), vuoto = qs('#promoVuoto');
+    if(!box || !vuoto) return;
+    const cat = box.getAttribute('data-filtro') || 'tutte';
+    const schede = Array.from(box.querySelectorAll('.pgroup')).filter(g =>
+      g.style.display !== 'none' && (cat === 'tutte' || g.dataset.cat === cat));
+    vuoto.hidden = schede.length > 0;
+
+    const offerte = schede.reduce((tot, g) => tot +
+      Array.from(g.querySelectorAll('li.poffer')).filter(li => li.style.display !== 'none').length, 0);
+    const conteggio = qs('#promoConteggio');
+    if(conteggio){
+      conteggio.textContent = schede.length
+        ? `${schede.length} ${schede.length === 1 ? 'categoria' : 'categorie'} · ${offerte} ${offerte === 1 ? 'offerta attiva' : 'offerte attive'}`
+        : 'Nessuna offerta attiva';
+    }
+  }
+
+  function _applicaFiltroPromo(cat){
+    const box = qs('.promo-groups');
+    if(box) box.setAttribute('data-filtro', cat);
+    qsa('#promoFiltri .chip').forEach(b =>
+      b.setAttribute('aria-pressed', String(b.dataset.cat === cat)));
+    _aggiornaVuotoPromo();
+  }
+
   // === Pruning offerte scadute nel PROMO info card ===
-  // Cerca in ogni <li>/<p> dentro #promoCard una data DD/MM/YYYY.
-  // Se contiene "backlog N giorni" aggiunge N giorni. Se scaduto: display:none.
-  // Se ≤5 giorni all'expiration: badge giallo inline.
+  // Ogni scheda (.pgroup) ha un'intestazione con validita' e backlog; le
+  // singole offerte possono avere una data propria, che in quel caso vince.
+  // Offerta scaduta: display:none. Scheda con tutte le offerte scadute:
+  // via l'intera scheda. Entro 5 giorni dalla scadenza: pillola ambra.
   function _prunePromoCardExpired(){
     const card = qs('#promoCard');
     if(!card) return;
-    const items = Array.from(card.querySelectorAll('li'));
     const now = new Date();
-    let hidden = 0, badged = 0, checked = 0;
-    items.forEach(li => {
-      // Reset stato precedente per permettere ricalcolo idempotente
-      li.querySelectorAll('span[data-expire-badge]').forEach(el => el.remove());
-      li.style.display = '';
+    let conScadenza = 0, hidden = 0, badged = 0, gruppiNascosti = 0;
 
-      const text = li.textContent || '';
+    // Ultima data DD/MM/YYYY del testo, senza applicare il backlog.
+    const dataDa = (text) => {
       const dates = text.match(/(\d{2})\/(\d{2})\/(\d{4})(?![\d\/])/g);
-      if(!dates || !dates.length) return;
-      checked++;
-      const last = dates[dates.length - 1];
-      const p = last.match(/(\d{2})\/(\d{2})\/(\d{4})/);
-      if(!p) return;
-      let d = new Date(+p[3], +p[2] - 1, +p[1]);
-      const bl = text.match(/backlog\s+(\d+)\s+giorni/i);
-      if(bl) d.setDate(d.getDate() + (+bl[1]));
+      if(!dates || !dates.length) return null;
+      const p = dates[dates.length - 1].match(/(\d{2})\/(\d{2})\/(\d{4})/);
+      return p ? new Date(+p[3], +p[2] - 1, +p[1]) : null;
+    };
+    const backlogDa = (text) => {
+      const bl = text.match(/backlog\s+(\d+)\s+giorn[oi]/i);
+      return bl ? (+bl[1]) : 0;
+    };
+    const chiudiGiornata = (d, giorniBacklog) => {
+      if(!d) return null;
+      d.setDate(d.getDate() + giorniBacklog);
       d.setHours(23, 59, 59, 999);
-      if(now > d){
-        li.style.display = 'none';
-        hidden++;
-      } else {
-        const days = Math.ceil((d - now) / (86400000));
+      return d;
+    };
+
+    Array.from(card.querySelectorAll('.pgroup')).forEach(gruppo => {
+      gruppo.style.display = '';
+      const head = gruppo.querySelector('.pgroup-head');
+      const testoHead = head ? (head.textContent || '') : '';
+      const blGruppo = backlogDa(testoHead);
+      const scadGruppo = chiudiGiornata(dataDa(testoHead), blGruppo);
+
+      const items = Array.from(gruppo.querySelectorAll('li'));
+      let visibili = 0;
+
+      items.forEach(li => {
+        li.querySelectorAll('span[data-expire-badge]').forEach(el => el.remove());
+        li.style.display = '';
+        li.style.borderTop = '';
+
+        const testoLi = li.textContent || '';
+        const propria = dataDa(testoLi);
+        const scad = propria
+          ? chiudiGiornata(propria, backlogDa(testoLi) || blGruppo)
+          : scadGruppo;
+
+        if(!scad){ visibili++; return; }
+        conScadenza++;
+
+        if(now > scad){
+          li.style.display = 'none';
+          hidden++;
+          return;
+        }
+        visibili++;
+
+        const days = Math.ceil((scad - now) / 86400000);
         if(days <= 5){
           const badge = document.createElement('span');
           badge.setAttribute('data-expire-badge','1');
-          badge.textContent = ' ⚠️ Scade tra ' + days + ' giorn' + (days === 1 ? 'o' : 'i');
-          badge.style.cssText = 'display:inline-block;margin-left:6px;padding:2px 8px;background:#fff3e0;color:#7a3b00;border:1px solid #ffcc80;border-radius:12px;font-size:11px;font-weight:600;vertical-align:middle;';
-          li.appendChild(badge);
+          badge.className = 'ptag pwarn';
+          badge.textContent = '\u26a0\ufe0f Scade tra ' + days + ' giorn' + (days === 1 ? 'o' : 'i');
+          (li.querySelector('.poffer-tags') || li).appendChild(badge);
           badged++;
         }
+      });
+
+      if(!visibili){
+        gruppo.style.display = 'none';
+        gruppiNascosti++;
+      } else {
+        // La prima offerta ancora visibile non deve mostrare il filetto sopra
+        const primo = items.find(li => li.style.display !== 'none');
+        if(primo) primo.style.borderTop = 'none';
       }
     });
-    console.log('[PromoCard] Data browser:', now.toISOString().slice(0,10), '· Offerte controllate:', checked, '· Nascoste (scadute):', hidden, '· Badge in scadenza:', badged);
+
+    console.log('[PromoCard] Data browser:', now.toISOString().slice(0,10),
+      '\u00b7 Offerte con scadenza:', conScadenza,
+      '\u00b7 Nascoste (scadute):', hidden,
+      '\u00b7 Badge in scadenza:', badged,
+      '\u00b7 Schede nascoste:', gruppiNascosti);
+
+    _aggiornaVuotoPromo();
   }
+  _disegnaSchedaGlassPromo();
   _prunePromoCardExpired();
 
-  const promoCard = qs('#promoCard');
-  qs('#promoBtn').addEventListener('click', () => {
-    const show = promoCard.style.display !== 'block';
-    promoCard.style.display = show ? 'block' : 'none';
-    if (show) {
-      // Re-esegue il pruning ogni volta che l'utente apre il card
-      // (idempotente: rimuove i badge vecchi e ri-aggiunge se ancora in scadenza)
-      _prunePromoCardExpired();
-      promoCard.scrollIntoView({ behavior:'smooth', block:'start' });
-    }
+  qs('#promoFiltri')?.addEventListener('click', e => {
+    const b = e.target.closest('.chip');
+    if(b && b.dataset.cat) _applicaFiltroPromo(b.dataset.cat);
   });
+
+  const promoDlg = qs('#promoDlg');
+  qs('#promoBtn').addEventListener('click', () => {
+    // Ricontrollo le scadenze a ogni apertura: idempotente, toglie i badge
+    // vecchi e li rimette solo se l'offerta e' ancora in scadenza.
+    _prunePromoCardExpired();
+    if(!promoDlg.open) promoDlg.showModal();
+  });
+  const chiudiPromo = () => { if(promoDlg.open) promoDlg.close(); };
+  qs('#promoDlgClose').addEventListener('click', chiudiPromo);
+  qs('#promoDlgCloseBottom').addEventListener('click', chiudiPromo);
+  // click sullo sfondo scuro
+  promoDlg.addEventListener('click', e => { if(e.target === promoDlg) chiudiPromo(); });
 
   qs('#tipoCliente').addEventListener('change', e=>{
     state.tipo = e.target.value;
@@ -3070,6 +3902,12 @@
       qsa('#chipsGlassSize .chip').forEach(b=>b.setAttribute('aria-pressed','false'));
       btn.setAttribute('aria-pressed','true');
       state.glassSize = rawValue;
+      _syncGlassPlanChips();
+      if(lastBest && state.glassEnabled) updateGlassDetails(lastBest);
+
+    }else if(group==='glass_color'){
+      state.glassColor = rawValue;
+      _syncGlassPlanChips();
       if(lastBest && state.glassEnabled) updateGlassDetails(lastBest);
 
     }else if(group==='glass_plan'){
@@ -3436,11 +4274,62 @@
     }
   }
 
+  // Le rate non esistono su tutte le taglie (il 43" e' solo in unica
+  // soluzione): mostro i piani previsti per la taglia scelta e, se quello
+  // attivo non c'e', torno al pagamento unico.
+  // I pulsanti colore vengono ricostruiti solo quando cambia la taglia:
+  // a ogni click si tocca soltanto aria-pressed, che e' quasi gratis.
+  let _glassColoriDisegnatiPer = null;
+
+  function _disegnaChipColori(cfgT, taglia){
+    const box = qs('#chipsGlassColor');
+    if(!box) return;
+    box.innerHTML = cfgT.ordineColori.map(c => {
+      const col = GLASS_COLORI[c];
+      const prezzo = cfgT.perColore[c].prezzo;
+      const testo = `${col.label} · ${eurG(prezzo)}`;
+      return `<button class="chip" type="button" data-group="glass_color" data-value="${c}" ` +
+             `aria-pressed="false" title="${testo}" aria-label="Colore ${testo}">` +
+             `<span class="glass-dot" style="background:${col.hex}"></span>${testo}</button>`;
+    }).join('');
+    _glassColoriDisegnatiPer = taglia;
+  }
+
+  // Allinea i pulsanti allo stato: resta selezionabile solo cio' che
+  // esiste davvero per la combinazione in corso.
+  function _syncGlassPlanChips(){
+    const s = glassSelezione();
+    state.glassSize = s.taglia;
+    state.glassColor = s.colKey;
+    state.glassPlan = s.pianoKey;
+
+    qsa('#chipsGlassSize .chip').forEach(b =>
+      b.setAttribute('aria-pressed', String(b.dataset.value === s.taglia)));
+
+    if(_glassColoriDisegnatiPer !== s.taglia) _disegnaChipColori(s.cfgT, s.taglia);
+    qsa('#chipsGlassColor .chip').forEach(b =>
+      b.setAttribute('aria-pressed', String(b.dataset.value === s.colKey)));
+
+    const hint = qs('#glassColorHint');
+    if(hint) hint.textContent =
+      `${s.col.label} · ${eurG(s.fascia.prezzo)} anziché ${eurG(s.cfgT.listino)}`;
+
+    // Piani di pagamento previsti per la fascia di prezzo del colore scelto
+    qsa('#chipsGlassPlan .chip').forEach(b => {
+      const piano = s.fascia.piani[b.dataset.value];
+      b.style.display = piano ? '' : 'none';
+      b.setAttribute('aria-pressed', String(b.dataset.value === s.pianoKey));
+      if(piano){
+        b.title = piano.nRate
+          ? `Anticipo ${eurG(piano.anticipo)} + ${piano.nRate} rate da ${eurG(piano.rata)}/mese = ${eurG(s.fascia.prezzo)}`
+          : `Pagamento in unica soluzione: ${eurG(s.fascia.prezzo)}`;
+      }
+    });
+  }
+
   function getGlassConfig(){
-    const size = state.glassSize || '43';
-    const plan = state.glassPlan || 'unico';
-    const sizeCfg = GLASS[size] || GLASS['43'];
-    return sizeCfg[plan] || sizeCfg.unico;
+    const s = glassSelezione();
+    return { summary: glassSummary(s), monthly: s.piano.rata || 0 };
   }
 
   function updateGlassDetails(best){
@@ -3465,6 +4354,8 @@
       return;
     }
 
+    _syncGlassPlanChips();
+
     const cfg = getGlassConfig();
     const promoVal = Number(best.totalMonthly ?? best.totalValue ?? best.priceValue ?? 0);
     const rata = cfg.monthly || 0;
@@ -3477,8 +4368,23 @@
     }
     if(compDevice) compDevice.textContent = cfg.summary;
 
+    // In unica soluzione non esiste nessuna rata: al suo posto mostro il
+    // prezzo del dispositivo, che altrimenti si leggeva solo nella nota.
+    const s = glassSelezione();
+    const rateLab = qs('#glassRateLabel'), totalLab = qs('#glassTotalLabel');
+
     if(promoEl) promoEl.textContent = promoVal ? formatEUR(promoVal) : '—';
-    if(rateEl)  rateEl.textContent  = rata ? formatEUR(rata) : '— (solo pagamento unico)';
+
+    if(s.piano.nRate){
+      if(rateLab)  rateLab.textContent  = `Rata Sky Glass (${s.piano.nRate} mesi)`;
+      if(rateEl)   rateEl.textContent   = formatEUR(rata);
+      if(totalLab) totalLab.textContent = 'Totale mensile (offerta + Glass)';
+    } else {
+      if(rateLab)  rateLab.textContent  = 'Sky Glass (pagamento unico)';
+      if(rateEl)   rateEl.textContent   = `${eurG(s.fascia.prezzo)} una tantum`;
+      if(totalLab) totalLab.textContent = 'Totale mensile (solo offerta)';
+    }
+
     if(totalEl) totalEl.textContent = promoVal ? formatEUR(promoVal + rata) : '—';
   }
 
@@ -4995,6 +5901,26 @@
     const optExtra = [voce, nf].filter(Boolean);
     if(optExtra.length){
       lines.push(`OPZIONI SELEZIONATE: ${optExtra.join(' · ')}`);
+    }
+
+    // Il dispositivo Sky Glass non finiva nel messaggio: chi inseriva il
+    // contratto non sapeva taglia, colore ne' modalita' di pagamento.
+    if(state.glassEnabled){
+      const g = glassSelezione();
+      lines.push(``);
+      lines.push(`*SKY GLASS*`);
+      lines.push(`MODELLO: Sky Glass ${g.taglia}"`);
+      lines.push(`COLORE: ${g.col.label}`);
+      lines.push(`PREZZO DISPOSITIVO: ${eurG(g.fascia.prezzo)} anziché ${eurG(g.cfgT.listino)}`);
+      if(g.piano.nRate){
+        lines.push(`PAGAMENTO: ${g.piano.nRate} rate senza interessi`);
+        lines.push(`ANTICIPO: ${eurG(g.piano.anticipo)} anziché ${eurG(GLASS_ANTICIPO_LISTINO)}`);
+        lines.push(`RATA GLASS: ${eurG(g.piano.rata)}/mese`);
+        lines.push(`TOTALE MENSILE (offerta + Glass): ${formatEUR(Number(monthly||0) + g.piano.rata)}`);
+      } else {
+        lines.push(`PAGAMENTO: unica soluzione`);
+      }
+      lines.push(`CODICE GLASS: ${g.cfgT.codice}`);
     }
 
     if(best.note){
