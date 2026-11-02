@@ -859,6 +859,11 @@
     border-color:#ef4444 !important;
     box-shadow:0 0 0 2px rgba(239,68,68,.18) !important;
   }
+  /* Copertura: pulsanti grandi e affiancati, cosi' si vede che va scelta */
+  .cov-chips{ grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); }
+  .cov-chips .chip{ font-weight:700; font-size:15px; }
+  .cov-obbl{ color:#b0005f; font-weight:700; }
+
   .chips.invalid{
     border-color:#ef4444 !important;
     box-shadow:0 0 0 2px rgba(239,68,68,.18) !important;
@@ -1627,9 +1632,14 @@
       </div>
 
       <div id="coverage3PBlock" style="display:none; margin-top:10px;">
-        <label for="coverage3P">Copertura linea (solo 3P)</label>
-        <select id="coverage3P">
-          <option value="standard" selected>Standard</option>
+        <label>Copertura linea (solo 3P) <span class="cov-obbl">· scegli</span></label>
+        <div class="chips cov-chips" id="coverage3PChips" role="group" aria-label="Copertura">
+          <button class="chip" type="button" data-cov-per="coverage3P" data-value="standard" aria-pressed="false">Standard</button>
+          <button class="chip" type="button" data-cov-per="coverage3P" data-value="of" aria-pressed="false">Open Fiber</button>
+        </div>
+        <select id="coverage3P" hidden aria-hidden="true" tabindex="-1">
+          <option value="" selected></option>
+          <option value="standard">Standard</option>
           <option value="of">Open Fiber</option>
         </select>
         <div class="muted" style="margin-top:6px;font-size:12px;color:#55637f">
@@ -1638,9 +1648,14 @@
       </div>
 
       <div id="coverageWifiBlock" style="display:none; margin-top:10px;">
-        <label for="coverageWifi">Copertura Sky WiFi</label>
-        <select id="coverageWifi">
-          <option value="standard" selected>Standard</option>
+        <label>Copertura Sky WiFi <span class="cov-obbl">· scegli</span></label>
+        <div class="chips cov-chips" id="coverageWifiChips" role="group" aria-label="Copertura">
+          <button class="chip" type="button" data-cov-per="coverageWifi" data-value="standard" aria-pressed="false">Standard</button>
+          <button class="chip" type="button" data-cov-per="coverageWifi" data-value="of" aria-pressed="false">Open Fiber</button>
+        </div>
+        <select id="coverageWifi" hidden aria-hidden="true" tabindex="-1">
+          <option value="" selected></option>
+          <option value="standard">Standard</option>
           <option value="of">Open Fiber</option>
         </select>
         <div class="muted" style="margin-top:6px;font-size:12px;color:#55637f">
@@ -1752,9 +1767,15 @@
           </details>
         </div>
         <div class="skybar-choose">
-          <label for="office3PCoverage">Copertura Sky WiFi Business</label>
-          <select id="office3PCoverage">
-            <option value="standard" selected>Standard</option>
+          <label>Copertura Sky WiFi Business <span class="cov-obbl">· scegli</span></label>
+          <div class="chips cov-chips" id="office3PCoverageChips" role="group" aria-label="Copertura">
+            <button class="chip" type="button" data-cov-per="office3PCoverage" data-value="standard" aria-pressed="false">Standard</button>
+            <button class="chip" type="button" data-cov-per="office3PCoverage" data-value="of" aria-pressed="false">Open Fiber</button>
+            <button class="chip" type="button" data-cov-per="office3PCoverage" data-value="fc" aria-pressed="false">FiberCop</button>
+          </div>
+          <select id="office3PCoverage" hidden aria-hidden="true" tabindex="-1">
+            <option value="" selected></option>
+            <option value="standard">Standard</option>
             <option value="of">Open Fiber</option>
             <option value="fc">FiberCop</option>
           </select>
@@ -2923,13 +2944,13 @@
     glassSize:'43',
     glassColor:'bianco',
     glassPlan:'unico',
-    coverage3P:'standard',
-    coverageWifi:'standard',
+    coverage3P:null,
+    coverageWifi:null,
     businessForma:null,
     officeTech:null,
     officePV:1,
     officeAteco:null,       // 'green' | 'red' | 'grey' | null
-    office3PCoverage:'standard',
+    office3PCoverage:null,
     office3PTech:null,
     office3PPV:1,
     office3PAteco:null,     // 'green' | 'red' | 'grey' | null
@@ -3022,13 +3043,18 @@
     if(_locSec){ _locSec.style.display = (off === 'sky_bar') ? 'block' : 'none'; }
 
     if(off !== 'wifi_tv'){
-      qs('#coverage3P').value = 'standard';
-      state.coverage3P = 'standard';
+      qs('#coverage3P').value = '';
+      state.coverage3P = null;
     }
     if(off !== 'wifi'){
-      qs('#coverageWifi').value = 'standard';
-      state.coverageWifi = 'standard';
+      qs('#coverageWifi').value = '';
+      state.coverageWifi = null;
     }
+    if(off !== '3p_ufficio'){
+      const _o3 = qs('#office3PCoverage'); if(_o3) _o3.value = '';
+      state.office3PCoverage = null;
+    }
+    _syncTuttiChipCopertura();
 
     if (off === 'wifi_tv_glass'){
       qsa('#chipsNF .chip').forEach(b => b.setAttribute('aria-pressed','false'));
@@ -4147,12 +4173,31 @@
     syncBlocks();
   });
 
+  // Copertura: i pulsanti scrivono nel menu nascosto e ne lanciano il
+  // "change", cosi' tutto il codice esistente continua a funzionare.
+  function _syncChipCopertura(id){
+    const sel = qs('#' + id);
+    qsa(`.chip[data-cov-per="${id}"]`).forEach(b =>
+      b.setAttribute('aria-pressed', String(!!sel && sel.value !== '' && b.dataset.value === sel.value)));
+  }
+  function _syncTuttiChipCopertura(){
+    ['coverage3P', 'coverageWifi', 'office3PCoverage'].forEach(_syncChipCopertura);
+  }
+  qsa('.chip[data-cov-per]').forEach(b => b.addEventListener('click', () => {
+    const id = b.dataset.covPer, sel = qs('#' + id);
+    if(!sel) return;
+    sel.value = b.dataset.value;
+    sel.dispatchEvent(new Event('change', { bubbles:true }));
+    _syncChipCopertura(id);
+    qs('#' + id + 'Chips')?.classList.remove('invalid');
+  }));
+
   qs('#coverage3P').addEventListener('change', e=>{
-    state.coverage3P = e.target.value || 'standard';
+    state.coverage3P = e.target.value || null;
   });
 
   qs('#coverageWifi').addEventListener('change', e=>{
-    state.coverageWifi = e.target.value || 'standard';
+    state.coverageWifi = e.target.value || null;
     if(state.off === 'wifi'){
       renderResult(computeBest());
     }
@@ -4830,6 +4875,14 @@
   function computeBest(){
     if(!state.tipo || !state.off) return {error:'Seleziona tipologia cliente e offerta richiesta.'};
     const off=state.off, sel=new Set(state.tv), voce=state.voce, nf=state.nf;
+
+    // Standard e Open Fiber hanno prezzi e codici diversi: la copertura va
+    // scelta ogni volta, niente valore di partenza confermato senza guardarlo.
+    const _manca = (id, msg) => { qs('#' + id + 'Chips')?.classList.add('invalid'); return { error: msg }; };
+    if(off === 'wifi_tv' && !state.coverage3P) return _manca('coverage3P', 'Seleziona la copertura della linea: Standard o Open Fiber.');
+    if(off === 'wifi' && !state.coverageWifi) return _manca('coverageWifi', 'Seleziona la copertura Sky WiFi: Standard o Open Fiber.');
+    if(state.tipo === 'business' && off === '3p_ufficio' && !state.office3PCoverage)
+      return _manca('office3PCoverage', 'Seleziona la copertura Sky WiFi Business: Standard, Open Fiber o FiberCop.');
 
     // ==== Sky Bar (Business · Only TV) ====
     if(state.tipo==='business' && off==='sky_bar'){
@@ -7786,11 +7839,15 @@
     if(!off){ wrap.innerHTML=''; return; }
     if(pvBlock) pvBlock.style.display = (key === 'hd') ? 'block' : 'none';
     const _pv = (key === 'hd') ? Math.max(1,Math.min(5,Number(state.office3PPV)||1)) : 1;
-    const _cov = state.office3PCoverage || 'standard';
-    const _covLabel = _cov === 'of' ? 'Open Fiber' : (_cov === 'fc' ? 'FiberCop' : 'Standard');
+    // Raccoglitore, 3P Business: "Sky Wifi 24,50€ al mese + iva" senza prezzo
+    // diverso per Open Fiber. Il riquadro diceva 56,40€ (WiFi 21,50) mentre
+    // il calcolo usa 24,50 → 59,40€: allineato al calcolo e al raccoglitore.
+    const _cov = state.office3PCoverage;
+    const _covLabel = !_cov ? 'copertura da scegliere' : (_cov === 'of' ? 'Open Fiber' : (_cov === 'fc' ? 'FiberCop' : 'Standard'));
+    const _bundle = 'Bundle 59,40€/m + IVA (WiFi 24,50 + Ufficio 34,90)';
     wrap.innerHTML = `
       <div class="skybar-layer-card">
-        <div class="highlight">Bundle 56,40€/m + IVA (WiFi 21,50 + Ufficio 34,90)</div>
+        <div class="highlight">${_bundle}</div>
         <h4>Sky WiFi Business (${_covLabel}) + Sky Ufficio (${off.techLabel})</h4>
         <div class="meta">Attivazione: WiFi 29€ + IVA · Ufficio 19€ + IVA (totale 48€ + IVA) · Vincolo WiFi: nessuno · Vincolo Ufficio: 12 mesi</div>
         <div class="muted" style="font-size:12px;color:#5b6b8b;line-height:1.45;">${off.note}</div>
@@ -7817,7 +7874,7 @@
   const office3PCovSel = qs('#office3PCoverage');
   if(office3PCovSel){
     office3PCovSel.addEventListener('change', e => {
-      state.office3PCoverage = e.target.value || 'standard';
+      state.office3PCoverage = e.target.value || null;
       renderOffice3PDetails();
     });
   }
