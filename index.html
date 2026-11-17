@@ -608,6 +608,22 @@
   .banner-agg .btn{ background:#fff; color:#b0005f; min-height:0; padding:8px 16px; }
   .banner-x{ appearance:none; border:none; background:transparent; color:#fff; font-size:18px; cursor:pointer; padding:4px 6px; }
 
+  /* === Black Friday === */
+  .bf-badge:not([hidden]){
+    display:inline-flex; align-items:center; gap:8px; flex-wrap:wrap;
+    margin-top:8px; padding:6px 12px 6px 6px; border-radius:999px;
+    background:#111111; color:#ffffff; font-size:13px; font-weight:700;
+    box-shadow:0 6px 16px rgba(0,0,0,.25);
+  }
+  .bf-tag{
+    display:inline-block; padding:4px 10px; border-radius:999px;
+    background:#ffd400; color:#111111; font-weight:900; letter-spacing:.08em; font-size:12px;
+    animation:bfPulse 1.6s ease-in-out infinite;
+  }
+  @keyframes bfPulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(255,212,0,.7); } 50%{ box-shadow:0 0 0 6px rgba(255,212,0,0); } }
+  @media (prefers-reduced-motion: reduce){ .bf-tag{ animation:none; } }
+  .ptag.pbf{ background:#111111; border-color:#111111; color:#ffd400; font-weight:800; }
+
   .promo-dlg{
     max-width:920px;
     width:94%;
@@ -1358,8 +1374,9 @@
                 <div class="poffer-price"><span class="po-price">16,99€</span><span class="po-unit">/mese × 18 mesi</span></div>
               </div>
               <div class="poffer-tags">
+                <span class="ptag pbf">BLACK FRIDAY · + 1 anno Amazon Prime</span>
                 <span class="ptag pcode">Cod. 1100811</span>
-                <span class="ptag pwarn">Validità 28/09 – 29/11/2026</span>
+                <span class="ptag pwarn">Validità 28/09 – 30/11/2026</span>
               </div>
             </li>
             <li class="poffer">
@@ -1368,8 +1385,9 @@
                 <div class="poffer-price"><span class="po-price">19,99€</span><span class="po-unit">/mese × 18 mesi</span></div>
               </div>
               <div class="poffer-tags">
+                <span class="ptag pbf">BLACK FRIDAY · + 1 anno Amazon Prime</span>
                 <span class="ptag pcode">Cod. 1100739</span>
-                <span class="ptag pwarn">Validità 28/09 – 29/11/2026</span>
+                <span class="ptag pwarn">Validità 28/09 – 30/11/2026</span>
               </div>
             </li>
             <li class="poffer">
@@ -1379,8 +1397,9 @@
               </div>
               <div class="poffer-tags">
                 <span class="ptag">Poi 26,99€/mese per 12 mesi</span>
+                <span class="ptag pbf">BLACK FRIDAY · + 1 anno Amazon Prime</span>
                 <span class="ptag pcode">Cod. 1100812</span>
-                <span class="ptag pwarn">Validità 28/09 – 29/11/2026</span>
+                <span class="ptag pwarn">Validità 28/09 – 30/11/2026</span>
               </div>
             </li>
             <li class="poffer">
@@ -1771,13 +1790,11 @@
           <div class="chips cov-chips" id="office3PCoverageChips" role="group" aria-label="Copertura">
             <button class="chip" type="button" data-cov-per="office3PCoverage" data-value="standard" aria-pressed="false">Standard</button>
             <button class="chip" type="button" data-cov-per="office3PCoverage" data-value="of" aria-pressed="false">Open Fiber</button>
-            <button class="chip" type="button" data-cov-per="office3PCoverage" data-value="fc" aria-pressed="false">FiberCop</button>
           </div>
           <select id="office3PCoverage" hidden aria-hidden="true" tabindex="-1">
             <option value="" selected></option>
             <option value="standard">Standard</option>
             <option value="of">Open Fiber</option>
-            <option value="fc">FiberCop</option>
           </select>
         </div>
         <div class="skybar-choose">
@@ -1994,6 +2011,7 @@
           <div>
             <div class="muted" style="font-size:13px;color:#5b6b8b">Promo consigliata</div>
             <div class="result-name" id="bestName">-</div>
+            <div id="bfBadge" class="bf-badge" hidden></div>
             <div id="formulaBox" class="badge" style="display:none;margin-top:8px"></div>
           </div>
           <div>
@@ -2803,9 +2821,10 @@
         includesNetflixBase:true,
         attivazione:'Stream 19€',
         codice:'1100811',
-        scadenza:'29/11/2026 (no backlog)',
+        scadenza:'30/11/2026 (no backlog)',
+        blackFriday:{ dal:'2026-11-09', al:'2026-11-30', testo:'1 anno di Amazon Prime offerto da Sky' },
         durata:'18 mesi',
-        note:'Promo: Sky TV + Netflix 16,99€/mese per 18 mesi. Validità dal 28 settembre al 29 novembre 2026 (no backlog). Codice promo 1100811. Netflix Standard con pubblicità incluso; gli upgrade sono addebitati come delta.'
+        note:'Promo: Sky TV + Netflix 16,99€/mese per 18 mesi. Validità dal 28 settembre al 30 novembre 2026 (no backlog). BLACK FRIDAY dal 9 al 30 novembre: + 1 anno di Amazon Prime offerto da Sky. Codice promo 1100811. Netflix Standard con pubblicità incluso; gli upgrade sono addebitati come delta.'
       },
       {
         id:'TV_CINEMA_CALCIO_1999',
@@ -2817,9 +2836,10 @@
         includesNetflixBase:false,
         attivazione:'Stream 19€',
         codice:'1100739',
-        scadenza:'29/11/2026 (no backlog)',
+        scadenza:'30/11/2026 (no backlog)',
+        blackFriday:{ dal:'2026-11-09', al:'2026-11-30', testo:'1 anno di Amazon Prime offerto da Sky' },
         durata:'18 mesi',
-        note:'Promo: Sky TV + Sky Cinema + Sky Calcio 19,99€/mese per 18 mesi. Validità dal 28 settembre al 29 novembre 2026 (no backlog). Codice promo 1100739.'
+        note:'Promo: Sky TV + Sky Cinema + Sky Calcio 19,99€/mese per 18 mesi. Validità dal 28 settembre al 30 novembre 2026 (no backlog). BLACK FRIDAY dal 9 al 30 novembre: + 1 anno di Amazon Prime offerto da Sky. Codice promo 1100739.'
       },
       {
         id:'TV_NETFLIX_CINEMA_UHD_DOPPIO',
@@ -2835,9 +2855,10 @@
         includesNetflixBase:true,
         attivazione:'Stream 19€',
         codice:'1100812',
-        scadenza:'29/11/2026 (no backlog)',
+        scadenza:'30/11/2026 (no backlog)',
+        blackFriday:{ dal:'2026-11-09', al:'2026-11-30', testo:'1 anno di Amazon Prime offerto da Sky' },
         durata:'18 mesi',
-        note:'Promo DOPPIO SCONTO: Sky TV + Netflix + Sky Cinema + UHD a 16,99€/mese per i primi 6 mesi, poi 26,99€/mese per i restanti 12 mesi. Validità dal 28 settembre al 29 novembre 2026 (no backlog). Codice promo 1100812.'
+        note:'Promo DOPPIO SCONTO: Sky TV + Netflix + Sky Cinema + UHD a 16,99€/mese per i primi 6 mesi, poi 26,99€/mese per i restanti 12 mesi. Validità dal 28 settembre al 30 novembre 2026 (no backlog). BLACK FRIDAY dal 9 al 30 novembre: + 1 anno di Amazon Prime offerto da Sky. Codice promo 1100812.'
       },
       
       {
@@ -4447,6 +4468,14 @@
     return offer.codice;
   }
 
+  // Black Friday e simili: bonus attivo solo nella sua finestra di date.
+  function _bfAttivo(o){
+    const bf = o && o.blackFriday;
+    if(!bf) return false;
+    const oggi = new Date(); oggi.setHours(0,0,0,0);
+    return oggi >= new Date(bf.dal + 'T00:00:00') && oggi <= new Date(bf.al + 'T00:00:00');
+  }
+
   function isPromoAvailable(p){
     if(!p) return false;
     // Availability window start (availableFrom)
@@ -4882,7 +4911,7 @@
     if(off === 'wifi_tv' && !state.coverage3P) return _manca('coverage3P', 'Seleziona la copertura della linea: Standard o Open Fiber.');
     if(off === 'wifi' && !state.coverageWifi) return _manca('coverageWifi', 'Seleziona la copertura Sky WiFi: Standard o Open Fiber.');
     if(state.tipo === 'business' && off === '3p_ufficio' && !state.office3PCoverage)
-      return _manca('office3PCoverage', 'Seleziona la copertura Sky WiFi Business: Standard, Open Fiber o FiberCop.');
+      return _manca('office3PCoverage', 'Seleziona la copertura Sky WiFi Business: Standard o Open Fiber.');
 
     // ==== Sky Bar (Business · Only TV) ====
     if(state.tipo==='business' && off==='sky_bar'){
@@ -5407,6 +5436,8 @@
 
 
   function renderResult(r){
+    // l'etichetta Black Friday si riaccende solo sulle offerte che la prevedono
+    const _bf = qs('#bfBadge'); if(_bf){ _bf.hidden = true; _bf.innerHTML = ''; }
     const noRes = qs('#noResult');
     const res   = qs('#result');
     const contractCta = qs('#contractCta');
@@ -5705,6 +5736,11 @@
     qs('#codice').textContent      = best.codice || '-';
     _renderScadenzaCell(best.scadenza || '-');
     qs('#note').textContent        = best.note || '-';
+
+    if(_bfAttivo(best) && _bf){
+      _bf.innerHTML = '<span class="bf-tag">BLACK FRIDAY</span> + ' + escapeHtml(best.blackFriday.testo);
+      _bf.hidden = false;
+    }
 
     // Avviso sulle promo che vanno proposte solo come ultima opzione
     const _warnBox = qs('#offerWarning');
@@ -6287,6 +6323,7 @@
 
     lines.push(`*OFFERTA CONFERMATA*`);
     lines.push(`OFFERTA: ${best.name}`);
+    if(_bfAttivo(best)) lines.push(`*BLACK FRIDAY*: + ${best.blackFriday.testo}`);
     lines.push(`CANONE MENSILE: ${formatEUR(Number(monthly||0))}`);
     lines.push(`ATTIVAZIONE: ${attivazione}`);
     lines.push(`CODICE OFFERTA: ${codice}`);
