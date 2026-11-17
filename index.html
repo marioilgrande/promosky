@@ -3689,20 +3689,28 @@
   const LOC_ETICH = { skytv:'SKY TV', netflix:'NETFLIX', sport:'SKY SPORT', cinema:'SKY CINEMA', calcio:'SKY CALCIO', uhd:'UHD 4K', wifi:'SKY WIFI', modem:'SKY WIFI' };
 
   let _locFontPronti = null;
+  // I caratteri vengono passati come dati al motore dei font (FontFace):
+  // con un foglio di stile Safari poteva dichiararli pronti prima di averli
+  // letti, e il disegno usciva con un carattere di sistema e testi sovrapposti.
   function _locCaricaFont(){
     if(_locFontPronti) return _locFontPronti;
-    const st = document.createElement('style');
-    st.textContent =
-      `@font-face{font-family:"LocAnton";src:url(${LOC_FONT.anton}) format("woff2");font-display:block;}` +
-      `@font-face{font-family:"LocMont";src:url(${LOC_FONT.montserrat}) format("woff2");font-weight:600 900;font-display:block;}`;
-    document.head.appendChild(st);
-    _locFontPronti = Promise.all([
-      document.fonts.load('150px LocAnton', 'OFFERTA SKY'),
-      document.fonts.load('900 100px LocMont', '0123456789,€'),
-      document.fonts.load('800 40px LocMont', 'Sky TV'),
-      document.fonts.load('700 40px LocMont', 'per mesi')
-    ]).catch(() => {});
+    const byte = u => Uint8Array.from(atob(u.split(',')[1]), ch => ch.charCodeAt(0)).buffer;
+    _locFontPronti = (async () => {
+      try {
+        const facce = [ new FontFace('LocAnton', byte(LOC_FONT.anton)),
+                        new FontFace('LocMont', byte(LOC_FONT.montserrat), { weight:'600 900' }) ];
+        for(const f of facce){ await f.load(); document.fonts.add(f); }
+        await document.fonts.ready;
+      } catch(e){ console.warn('[Locandine] caratteri non caricati, uso quelli di sistema', e); }
+    })();
     return _locFontPronti;
+  }
+  // misure reali del testo disegnato (sopra e sotto la linea di base)
+  function _locMisura(c, t, font){
+    // le misure verticali dipendono da textBaseline: senza fissarla valgono
+    // rispetto all'allineamento lasciato dall'ultimo testo disegnato
+    c.font = font; c.textBaseline = 'alphabetic'; const m = c.measureText(t);
+    return { asc: m.actualBoundingBoxAscent || 0, desc: m.actualBoundingBoxDescent || 0, w: m.width };
   }
 
   const _locImmagini = {};
@@ -3772,7 +3780,8 @@
 
     const logo = await _locImg('logo');
     if(logo){ const lh = 150, lw = logo.width * lh / logo.height; c.drawImage(logo, (LOC_W - lw) / 2, 46, lw, lh); }
-    _locTesto(c, 'OFFERTA SKY', 540, 352, ANTON(150), '#0b1a5c');
+    let tf = 150; while(_locLargh(c, 'OFFERTA SKY', ANTON(tf)) > 900 && tf > 90) tf -= 4;
+    _locTesto(c, 'OFFERTA SKY', 540, 352, ANTON(tf), '#0b1a5c');
     g = c.createLinearGradient(220, 0, 860, 0);
     ['rgba(255,106,0,0)', '#ff6a00', '#e6007e', '#7a3cff', '#2d8cff', 'rgba(45,140,255,0)'].forEach((col, i, a) => g.addColorStop(i / (a.length - 1), col));
     c.save(); c.shadowColor = 'rgba(230,0,126,.6)'; c.shadowBlur = 18; c.fillStyle = g; _locRR(c, 220, 372, 640, 6, 3); c.fill(); c.restore();
@@ -3796,7 +3805,7 @@
     const imgH = singolo ? 400 : 280, tileH = imgH + 56;
     const blocchi = [
       { h: tileH, f: y => disegnaRiquadri(y) },
-      { h: 360, f: y => disegnaPrezzo(y) },
+      { h: Math.max(360, disegnaPrezzo(0, true)), f: y => disegnaPrezzo(y) },
     ];
     if(o.extra) blocchi.push({ h: 66, f: y => disegnaExtra(y) });
     if(o.poi) blocchi.push({ h: 150, f: y => disegnaPoi(y) });
@@ -3829,16 +3838,23 @@
         xx += tw;
       });
     }
-    function disegnaPrezzo(y){
+    function disegnaPrezzo(y, soloAltezza){
       const [i, d] = Number(o.prezzo).toFixed(2).split('.');
       const fI = MONT(900, 350), fD = MONT(900, 150), fM = MONT(800, 70);
       const wi = _locLargh(c, i, fI), wd = _locLargh(c, ',' + d + '€', fD), wm = _locLargh(c, '/mese', fM);
       const tot = wi + 8 + Math.max(wd, wm), x0 = (LOC_W - tot) / 2, base = y + 262;
+      // centesimi allineati alla cima del numero grande, "/mese" subito sotto
+      const mI = _locMisura(c, i, fI), mD = _locMisura(c, ',' + d + '€', fD), mM = _locMisura(c, '/mese', fM);
+      const bD = base - mI.asc + mD.asc, bM = bD + mD.desc + 14 + mM.asc;
+      // la durata va sotto a tutto cio' che sta sopra, qualunque carattere venga usato
+      const fDur = MONT(700, 44), mDur = _locMisura(c, o.durata, fDur);
+      const bDur = Math.max(base + mI.desc, bM + mM.desc) + 38 + mDur.asc;
+      if(soloAltezza) return bDur + mDur.desc + 8 - y;
       c.save(); c.shadowColor = 'rgba(0,0,0,.35)'; c.shadowBlur = 40; c.shadowOffsetY = 10;
       _locTesto(c, i, x0, base, fI, '#ffffff', 'left'); c.restore();
-      _locTesto(c, ',' + d + '€', x0 + wi + 8, base - 128, fD, '#ffffff', 'left');
-      _locTesto(c, '/mese', x0 + wi + 12, base - 40, fM, '#4fd8ff', 'left');
-      _locTesto(c, o.durata, 540, base + 70, MONT(700, 44), '#ffffff');
+      _locTesto(c, ',' + d + '€', x0 + wi + 8, bD, fD, '#ffffff', 'left');
+      _locTesto(c, '/mese', x0 + wi + 12, bM, fM, '#4fd8ff', 'left');
+      _locTesto(c, o.durata, 540, bDur, fDur, '#ffffff');
     }
     function disegnaExtra(y){
       let ef = 32; while(_locLargh(c, o.extra, MONT(800, ef)) > 880 && ef > 20) ef -= 2;
@@ -4042,7 +4058,7 @@
     // --- titolo: prima parola bianca, seconda in sfumatura
     let tf = 170;
     const parola = (t, x, y, sfumata) => {
-      c.save(); c.font = ANTON(tf); c.textAlign = 'left'; c.textBaseline = 'top';
+      c.save(); c.font = ANTON(tf); c.textAlign = 'left'; c.textBaseline = 'alphabetic';
       if(sfumata){
         const w = c.measureText(t).width;
         const gg = c.createLinearGradient(x, 0, x + w, 0);
@@ -4054,18 +4070,21 @@
     let fondoTitolo;
     if(o.lato){
       while(Math.max(_locLargh(c, o.titolo[0], ANTON(tf)), _locLargh(c, o.titolo[1], ANTON(tf))) > 560 && tf > 110) tf -= 6;
-      parola(o.titolo[0], 60, 250, false);
-      parola(o.titolo[1], 60, 250 + tf * .95, true);
-      fondoTitolo = 250 + tf * 1.9;
-      _locTesto(c, o.sotto, 60, fondoTitolo + 40, MONT(700, 36), '#d6dcff', 'left');
+      const m1 = _locMisura(c, o.titolo[0], ANTON(tf)), m2 = _locMisura(c, o.titolo[1], ANTON(tf));
+      const b1 = 262 + m1.asc, b2 = b1 + m1.desc + 18 + m2.asc;
+      parola(o.titolo[0], 60, b1, false);
+      parola(o.titolo[1], 60, b2, true);
+      fondoTitolo = b2 + m2.desc;
+      _locTesto(c, o.sotto, 60, fondoTitolo + 30 + _locMisura(c, o.sotto, MONT(700, 36)).asc, MONT(700, 36), '#d6dcff', 'left');
     } else {
       const sp = _locLargh(c, ' ', ANTON(tf));
       while(_locLargh(c, o.titolo[0], ANTON(tf)) + sp + _locLargh(c, o.titolo[1], ANTON(tf)) > 980 && tf > 110) tf -= 6;
       const w1 = _locLargh(c, o.titolo[0], ANTON(tf)), w2 = _locLargh(c, o.titolo[1], ANTON(tf));
       const x0 = (LOC_W - (w1 + sp + w2)) / 2;
-      parola(o.titolo[0], x0, 500, false);
-      parola(o.titolo[1], x0 + w1 + sp, 500, true);
-      _locTesto(c, o.sotto, 540, 500 + tf * .95 + 46, MONT(700, 38), '#d6dcff');
+      const mt = _locMisura(c, o.titolo[0] + o.titolo[1], ANTON(tf)), bt = 512 + mt.asc;
+      parola(o.titolo[0], x0, bt, false);
+      parola(o.titolo[1], x0 + w1 + sp, bt, true);
+      _locTesto(c, o.sotto, 540, bt + mt.desc + 26 + _locMisura(c, o.sotto, MONT(700, 38)).asc, MONT(700, 38), '#d6dcff');
     }
 
     // --- corpo
@@ -4095,21 +4114,29 @@
       }});
       blocchi.push({ h: 44, f: y => segmenti([['Offerta assegnata in base alla ', MONT(700, 30), '#d6dcff'], ['partita IVA', MONT(900, 30), '#ffffff'], [' del locale', MONT(700, 30), '#d6dcff']], y + 22) });
     } else {
-      blocchi.push({ h: 330, f: y => {
-        c.save(); c.shadowColor = 'rgba(122,44,240,.45)'; c.shadowBlur = 60; c.shadowOffsetY = 20;
-        const gg = c.createLinearGradient(X, y, X + W, y + 330);
-        gg.addColorStop(0, '#3b1fd1'); gg.addColorStop(.45, '#7a2cf0'); gg.addColorStop(1, '#e6007e');
-        c.fillStyle = gg; _locRR(c, X, y, W, 330, 40); c.fill(); c.restore();
-        c.save(); c.strokeStyle = 'rgba(255,255,255,.25)'; c.lineWidth = 2; _locRR(c, X + 1, y + 1, W - 2, 328, 40); c.stroke(); c.restore();
-        spaziatura('4px'); _locTesto(c, o.pre, 540, y + 50, MONT(800, 30), 'rgba(255,255,255,.9)', 'center', 'middle'); spaziatura('0px');
+      const prezzoBiz = (y, soloAltezza) => {
         const [i, d] = Number(o.prezzo).toFixed(2).split('.');
-        const fI = MONT(900, 250), fC = MONT(900, 116), fV = MONT(800, 44);
+        const fI = MONT(900, 250), fC = MONT(900, 116), fV = MONT(800, 44), fDur = MONT(700, 34);
         const wi = _locLargh(c, i, fI), wc = _locLargh(c, ',' + d + '€', fC), wv = _locLargh(c, '+ IVA / mese', fV);
         const x0 = 540 - (wi + 8 + Math.max(wc, wv)) / 2, base = y + 262;
+        const mI = _locMisura(c, i, fI), mC = _locMisura(c, ',' + d + '€', fC), mV = _locMisura(c, '+ IVA / mese', fV), mDur = _locMisura(c, o.durata, fDur);
+        const bC = base - mI.asc + mC.asc, bV = bC + mC.desc + 12 + mV.asc;
+        const bDur = Math.max(base + mI.desc, bV + mV.desc) + 16 + mDur.asc;
+        if(soloAltezza) return bDur + mDur.desc + 22 - y;
         _locTesto(c, i, x0, base, fI, '#ffffff', 'left');
-        _locTesto(c, ',' + d + '€', x0 + wi + 8, base - 96, fC, '#ffffff', 'left');
-        _locTesto(c, '+ IVA / mese', x0 + wi + 10, base - 30, fV, '#ffffff', 'left');
-        _locTesto(c, o.durata, 540, y + 302, MONT(700, 34), 'rgba(255,255,255,.95)', 'center', 'middle');
+        _locTesto(c, ',' + d + '€', x0 + wi + 8, bC, fC, '#ffffff', 'left');
+        _locTesto(c, '+ IVA / mese', x0 + wi + 10, bV, fV, '#ffffff', 'left');
+        _locTesto(c, o.durata, 540, bDur, fDur, 'rgba(255,255,255,.95)');
+      };
+      const hP = Math.max(330, prezzoBiz(0, true));
+      blocchi.push({ h: hP, f: y => {
+        c.save(); c.shadowColor = 'rgba(122,44,240,.45)'; c.shadowBlur = 60; c.shadowOffsetY = 20;
+        const gg = c.createLinearGradient(X, y, X + W, y + hP);
+        gg.addColorStop(0, '#3b1fd1'); gg.addColorStop(.45, '#7a2cf0'); gg.addColorStop(1, '#e6007e');
+        c.fillStyle = gg; _locRR(c, X, y, W, hP, 40); c.fill(); c.restore();
+        c.save(); c.strokeStyle = 'rgba(255,255,255,.25)'; c.lineWidth = 2; _locRR(c, X + 1, y + 1, W - 2, hP - 2, 40); c.stroke(); c.restore();
+        spaziatura('4px'); _locTesto(c, o.pre, 540, y + 50, MONT(800, 30), 'rgba(255,255,255,.9)', 'center', 'middle'); spaziatura('0px');
+        prezzoBiz(y);
       }});
       if(o.comp) blocchi.push({ h: 120, f: y => {
         const cw = (W - 22) / 2;
@@ -4119,8 +4146,9 @@
           c.save(); c.strokeStyle = 'rgba(255,255,255,.22)'; c.lineWidth = 1.5; _locRR(c, xx + .5, y + .5, cw - 1, 119, 26); c.stroke(); c.restore();
           _locTesto(c, n, xx + 24, y + 40, MONT(700, 28), '#c9d0ff', 'left', 'middle');
           const v = _locEuro(p) + '€';
-          _locTesto(c, v, xx + 24, y + 100, MONT(900, 56), '#ffffff', 'left');
-          _locTesto(c, ' + IVA', xx + 24 + _locLargh(c, v, MONT(900, 56)), y + 100, MONT(800, 26), '#ffffff', 'left');
+          let vf = 56; while(_locLargh(c, v + ' + IVA', MONT(900, vf)) > cw - 40 && vf > 34) vf -= 2;
+          _locTesto(c, v, xx + 24, y + 102, MONT(900, vf), '#ffffff', 'left');
+          _locTesto(c, ' + IVA', xx + 24 + _locLargh(c, v, MONT(900, vf)), y + 102, MONT(800, Math.round(vf * .46)), '#ffffff', 'left');
         });
       }});
       if(o.secondario) blocchi.push({ h: 80, f: y => {
