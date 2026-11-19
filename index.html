@@ -624,6 +624,12 @@
   .pac-card img{ display:block; width:100%; height:120px; object-fit:cover; }
   .pac-card .pc-testo{ padding:12px 14px 4px 24px; font-weight:800; font-size:14.5px; line-height:1.35; position:relative; }
   .pac-card .pc-testo::before{ content:''; position:absolute; left:12px; top:13px; bottom:6px; width:4px; border-radius:4px; background:var(--pc); }
+  .pac-card .pc-listino{ margin:8px 12px 0; padding:8px 12px; border-radius:12px; background:#f8fafc; border:1px solid #e5e7eb; }
+  .pac-card .pl-tit{ font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; color:#6b7280; margin-bottom:4px; }
+  .pac-card .pl-riga{ display:flex; justify-content:space-between; gap:10px; font-size:13.5px; font-weight:600; color:#374151; padding:2px 0; }
+  .pac-card .pl-riga b{ font-weight:800; color:#111827; white-space:nowrap; }
+  .pac-card .pl-riga.tot{ border-top:1px dashed #d1d5db; margin-top:3px; padding-top:5px; font-weight:800; }
+  .pac-card .pl-riga.tot b{ color:var(--pc); font-size:15px; }
   .pac-card .pc-prezzo{ margin:4px 14px 0 24px; font-weight:900; font-size:18px; color:var(--pc); }
   .pac-card .pc-motto{ margin:8px 12px 12px; padding:6px 10px; border-radius:999px; text-align:center; font-style:italic; font-weight:600; font-size:13px; background:color-mix(in srgb, var(--pc) 14%, #fff); color:#1f2937; }
 
@@ -4984,6 +4990,22 @@
     if(el.dataset.group === 'nf' && el.dataset.value !== 'none') return 'netflix_' + el.dataset.value;
     return null;
   }
+  // Prezzo di listino del solo pacchetto, dagli stessi prezzi usati dal
+  // calcolo (LISTINO e NF_MONTHLY): cambiato il listino, cambia la scheda.
+  function _listinoPacchetto(k, titolo){
+    const eu = n => Number(n).toFixed(2).replace('.', ',') + '€/mese';
+    const riga = (lab, val, cl = '') => `<div class="pl-riga ${cl}"><span>${lab}</span><b>${eu(val)}</b></div>`;
+    const tv = (typeof LISTINO !== 'undefined' && LISTINO.base) ? LISTINO.base.sky_tv : null;
+    let pac = null, lab = titolo || 'Pacchetto';
+    if(k === 'skytv'){
+      return tv == null ? '' : `<div class="pc-listino"><div class="pl-tit">Prezzo di listino</div>${riga('Sky TV', tv, 'tot')}</div>`;
+    }
+    if(k.startsWith('netflix_')){ pac = (typeof NF_MONTHLY !== 'undefined') ? NF_MONTHLY[k.slice(8)] : null; }
+    else if(typeof LISTINO !== 'undefined' && LISTINO.base && LISTINO.base.pacchetti) pac = LISTINO.base.pacchetti[k];
+    if(pac == null) return '';
+    return `<div class="pc-listino"><div class="pl-tit">Prezzo di listino</div>` +
+      riga(lab, pac, 'tot') + `</div>`;
+  }
   function _mostraPacchetto(el){
     const k = _chiavePacchetto(el), d = k && PACCHETTI_INFO[k];
     if(!d || !_pacCard) return;
@@ -4993,8 +5015,7 @@
       `<div class="pc-head" style="background:linear-gradient(135deg, ${d.colore}, color-mix(in srgb, ${d.colore} 55%, #0b1a5c))"><span>${d.ico}</span>${d.titolo}</div>` +
       `<img src="${d.foto}" alt="">` +
       `<div class="pc-testo">${d.testo}</div>` +
-      (k.startsWith('netflix_') && typeof NF_MONTHLY !== 'undefined' && NF_MONTHLY[k.slice(8)] != null
-        ? `<div class="pc-prezzo">${NF_MONTHLY[k.slice(8)].toFixed(2).replace('.', ',')}€/mese su Sky</div>` : '') +
+      _listinoPacchetto(k, d.titolo) +
       `<div class="pc-motto">${d.motto}</div>`;
     _pacCard.hidden = false;
     // sotto il pulsante, o sopra se in basso non c'e' spazio
