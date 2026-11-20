@@ -1218,7 +1218,7 @@
         <div class="pp-filtri">
           <div class="chips promo-filtri" id="promoFiltri" role="group" aria-label="Filtra le offerte per categoria">
             <button class="chip" type="button" data-cat="wifi" aria-pressed="true">Sky WiFi</button>
-            <button class="chip" type="button" data-cat="3p" aria-pressed="false">3P / 4P</button>
+            <button class="chip" type="button" data-cat="3p" aria-pressed="false">3P</button>
             <button class="chip" type="button" data-cat="tv" aria-pressed="false">Only TV</button>
             <button class="chip" type="button" data-cat="glass" aria-pressed="false">Sky Glass</button>
             <button class="chip" type="button" data-cat="business" aria-pressed="false">Business</button>
@@ -1376,36 +1376,6 @@
                 <span class="ptag pcode">Unlimited · 1300252</span>
                 <span class="ptag">Attivazione WiFi e TV 0€</span>
                 <span class="ptag pwarn">Validità 03/08 – 20/09/2026</span>
-              </div>
-            </li>
-          </ul>
-        </section>
-
-        <section class="pgroup" data-cat="3p">
-          <div class="pgroup-head">
-            <span class="pgroup-icon">🖥️</span>
-            <div>
-              <div class="pgroup-title">4P – Sky Glass + Sky WiFi + Sky TV + Netflix</div>
-              <div class="pgroup-sub">Durata 18 mesi · Attivazione Sky WiFi 0€ · Backlog 1 giorno · Solo Voce Unlimited · Validità fino al 30/08/2026</div>
-            </div>
-          </div>
-          <ul class="pgroup-list">
-            <li class="poffer">
-              <div class="poffer-top">
-                <div class="poffer-name">+ Sky Sport + Netflix</div>
-                <div class="poffer-price"><span class="po-price">40,89€</span><span class="po-unit">/mese</span></div>
-              </div>
-              <div class="poffer-tags">
-                <span class="ptag pcode">Cod. 1300224</span>
-              </div>
-            </li>
-            <li class="poffer">
-              <div class="poffer-top">
-                <div class="poffer-name">+ Sky Cinema + Netflix</div>
-                <div class="poffer-price"><span class="po-price">40,89€</span><span class="po-unit">/mese</span></div>
-              </div>
-              <div class="poffer-tags">
-                <span class="ptag pcode">Cod. 1300223</span>
               </div>
             </li>
           </ul>
@@ -1633,7 +1603,7 @@
             </li>
             <li class="poffer">
               <div class="poffer-top">
-                <div class="poffer-name">Sky WiFi Business · Open Fiber / FiberCop</div>
+                <div class="poffer-name">Sky WiFi Business · Open Fiber</div>
                 <div class="poffer-price"><span class="po-price">21,50€</span><span class="po-unit">/mese + IVA</span></div>
               </div>
               <div class="poffer-tags">
@@ -1682,7 +1652,6 @@
             <option value="only_tv">Only TV</option>
             <option value="wifi">Sky Wifi</option>
             <option value="wifi_tv">Sky Wifi + TV (3P)</option>
-            <option value="wifi_tv_glass">Sky wifi + Tv con GLASS (4P)</option>
             <option value="sky_bar">Sky Bar (Solo TV · Business)</option>
             <option value="sky_ufficio">Sky Ufficio (Solo TV · Business)</option>
             <option value="3p_ufficio">3P Ufficio · WiFi Business + Sky Ufficio</option>
@@ -1692,7 +1661,7 @@
       </div>
 
       <div id="voiceBlock" style="display:none; margin-top:10px;">
-        <label>Opzione Voce (solo per Sky Wifi o 3P/4P)</label>
+        <label>Opzione Voce (solo per Sky Wifi o 3P)</label>
         <div class="chips" id="chipsVoce" aria-label="Seleziona opzione voce">
           <button class="chip" data-group="voce" data-value="consumo" aria-pressed="false">Voce a consumo</button>
           <button class="chip" data-group="voce" data-value="unlimited" aria-pressed="false">Voce Unlimited</button>
@@ -1714,7 +1683,7 @@
           <option value="of">Open Fiber</option>
         </select>
         <div class="muted" style="margin-top:6px;font-size:12px;color:#55637f">
-          Per <b>Open Fiber</b> e <b>FiberCop</b> il sistema usa i codici promo dedicati e li riporta nel testo WhatsApp.
+          Per <b>Open Fiber</b> il sistema usa il codice promo dedicato e lo riporta nel testo WhatsApp.
         </div>
       </div>
 
@@ -2038,7 +2007,7 @@
           </div>
         </div>
         <div class="muted" style="margin-top:6px;font-size:13px;color:#55637f">
-          Seleziona i pacchetti desiderati. Le promo TV/3P/4P vengono proposte automaticamente.
+          Seleziona i pacchetti desiderati. Le promo TV/3P vengono proposte automaticamente.
           <br><b>Nota:</b> per <b>Only TV</b> puoi partire da <b>Sky TV 14,90€</b> e aggiungere i pacchetti; se selezioni <b>Sport</b> verrà considerata anche la promo <b>Sky TV + Sky Sport</b> (se conveniente).
         </div>
       </div>
@@ -2960,14 +2929,7 @@
         scadenza:'20/09/2026 (Backlog 2 giorni)', durata:'18 mesi', included:['calcio'],
         note:'Triple Play Open Fiber: Sky WiFi + Sky Calcio 27,90€/mese per 18 mesi. Voce Unlimited inclusa per 18 mesi. Attivazione Sky WiFi e Sky TV 0€ (anziché 49€ e 148€). Validità 3 agosto – 20 settembre 2026 (2 giorni di backlog).' }
     ],
-    fourP:[
-      { id:'4P_SPORT_NF', name:'Sky Glass + WiFi + TV + Sport + Netflix (4P)', priceValue:40.89, attivazione:'Attivazione Sky WiFi 0€',
-        codice:'1300224', scadenza:'30/08/2026 (Backlog 1 giorno)', durata:'18 mesi', included:['sport'], includesNetflixBase:true,
-        note:'Validità 30/03 – 31/07/2026. Backlog 2 giorni. Codice voce: Unlimited 1300224.' },
-      { id:'4P_CINEMA_NF', name:'Sky Glass + WiFi + TV + Cinema + Netflix (4P)', priceValue:40.89, attivazione:'Attivazione Sky WiFi 0€',
-        codice:'1300223', scadenza:'30/08/2026 (Backlog 1 giorno)', durata:'18 mesi', included:['cinema'], includesNetflixBase:true,
-        note:'Validità 30/03 – 31/07/2026. Backlog 2 giorni. Codice voce: Unlimited 1300223.' }
-    ],
+    fourP:[],
     wifi:[
       {
         id:'WIFI_STD_ATT29',
@@ -3000,10 +2962,10 @@
         codiceVoce:{consumo:'1401041', unlimited:'1401056'}, scadenza:'06/12/2026 (Backlog 2 giorni)', durata:'Prezzo bloccato 12 mesi · senza vincoli',
         coverage:'standard', noCommitment:true,
         note:'Offerta business Sky WiFi BB copertura Standard: canone 24,50€ + IVA per 12 mesi a prezzo bloccato, senza vincoli contrattuali.' },
-      { id:'BIZ_WIFI_OF_FC', name:'Sky WiFi Business (Copertura Open Fiber / FiberCop)', priceValue:26.23, attivazione:'35,38€ (29€ + IVA)',
+      { id:'BIZ_WIFI_OF_FC', name:'Sky WiFi Business (Copertura Open Fiber)', priceValue:26.23, attivazione:'35,38€ (29€ + IVA)',
         codiceVoce:{consumo:'1401208', unlimited:'1401209'}, scadenza:'06/12/2026 (Backlog 2 giorni)', durata:'Prezzo bloccato 12 mesi · senza vincoli',
         coverage:'of_fc', noCommitment:true,
-        note:'Offerta business Sky WiFi su copertura Open Fiber / FiberCop: canone 21,50€ + IVA al mese per 12 mesi (26,23€ IVA inclusa) a prezzo bloccato, senza vincoli contrattuali. Attivazione 29€ (Partita IVA). Validità dal 30 marzo al 27 settembre 2026. Backlog 2 giorni.' }
+        note:'Offerta business Sky WiFi su copertura Open Fiber: canone 21,50€ + IVA al mese per 12 mesi (26,23€ IVA inclusa) a prezzo bloccato, senza vincoli contrattuali. Attivazione 29€ (Partita IVA). Validità dal 30 marzo al 27 settembre 2026. Backlog 2 giorni.' }
     ]
   };
 
@@ -3381,7 +3343,6 @@
     add('Only TV (Privato)',        daArray(PROMO.tvOnly, 'tvOnly'));
     add('3P – Standard',            daArray(PROMO.threeP, 'threeP'));
     add('3P – Open Fiber',          daArray(PROMO.threeP_OF, 'threeP_OF'));
-    add('4P – Sky Glass',           daArray(PROMO.fourP, 'fourP'));
     add('Sky WiFi (Privato)',       daArray(PROMO.wifi, 'wifi'));
     add('Sky WiFi Business',        daArray(PROMO.businessWifi, 'businessWifi'));
 
@@ -5884,7 +5845,6 @@
       if(!_wifi || !isPromoAvailable(_wifi)) return {error:'La promo Sky WiFi Business (componente 3P Ufficio) per questa copertura è scaduta.'};
       let _covLabel = 'Standard';
       if(_cov === 'of') _covLabel = 'Open Fiber';
-      else if(_cov === 'fc') _covLabel = 'FiberCop';
       const _pv = state.office3PTech === 'hd' ? Math.max(1, Math.min(5, Number(state.office3PPV)||1)) : 1;
       return {
         context:'office_3p',
@@ -5907,8 +5867,7 @@
       if(!ch || !isPromoAvailable(ch)) return {error:'La promo Sky WiFi Business per questa copertura è scaduta.'};
       let coverageLabel = 'Standard';
       if(cov === 'of') coverageLabel = 'Open Fiber';
-      else if(cov === 'fc') coverageLabel = 'FiberCop';
-      else if(cov === 'of_fc') coverageLabel = 'Open Fiber / FiberCop';
+      else if(cov === 'of_fc') coverageLabel = 'Open Fiber';
       const best={
         ...ch,
         totalMonthly:ch.priceValue,
@@ -8714,7 +8673,7 @@
     // diverso per Open Fiber. Il riquadro diceva 56,40€ (WiFi 21,50) mentre
     // il calcolo usa 24,50 → 59,40€: allineato al calcolo e al raccoglitore.
     const _cov = state.office3PCoverage;
-    const _covLabel = !_cov ? 'copertura da scegliere' : (_cov === 'of' ? 'Open Fiber' : (_cov === 'fc' ? 'FiberCop' : 'Standard'));
+    const _covLabel = !_cov ? 'copertura da scegliere' : (_cov === 'of' ? 'Open Fiber' : 'Standard');
     const _bundle = 'Bundle 59,40€/m + IVA (WiFi 24,50 + Ufficio 34,90)';
     wrap.innerHTML = `
       <div class="skybar-layer-card">
